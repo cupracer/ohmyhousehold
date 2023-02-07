@@ -7,8 +7,14 @@ services:
   web:
     environment:
       APP_ENV: dev
+      MAILER_DSN: smtp://mailer:1025
       SSL_SUBJECT: /C=XY/ST=Unknown/L=Unknown/O=Unknown/OU=Unknown/CN=localhost
     volumes:
       - .:/var/www/html
+    depends_on:
+      - mailer
 
-
+  mailer:
+    image: schickling/mailcatcher
+    ports:
+      - ${MAILCATCHER_HTTP:-1080}:1080
