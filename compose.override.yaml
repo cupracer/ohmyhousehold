@@ -1,0 +1,14 @@
+services:
+
+  db:
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+
+  web:
+    environment:
+      APP_ENV: dev
+      SSL_SUBJECT: /C=XY/ST=Unknown/L=Unknown/O=Unknown/OU=Unknown/CN=localhost
+    volumes:
+      - .:/var/www/html
+
+
