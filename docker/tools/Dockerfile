@@ -1,4 +1,23 @@
-FROM php:8.2-apache AS tools
+FROM php:8.2-apache as common_base
+
+ARG APP_ENV
+
+RUN mkdir /certs
+
+COPY docker/tools/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY docker/tools/apache/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
+
+RUN /usr/sbin/a2enmod rewrite \
+	&& /usr/sbin/a2enmod ssl
+
+COPY ./docker/tools/start.sh /start.sh
+COPY ./docker/tools/www.sh /usr/local/sbin/www.sh
+
+RUN chmod 750 /start.sh /usr/local/sbin/www.sh
+
+###
+
+FROM common_base AS dev_build
 
 # Symfony CLI repo
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash
@@ -40,11 +59,8 @@ RUN mkdir /var/www/.composer /var/www/.config /var/www/.cache /var/www/.local /v
     chown www-data: /var/www/.composer /var/www/.config /var/www/.cache /var/www/.local /var/www/.npm /var/www/.yarn /var/www/.yarnrc /var/www/.symfony5
 
 COPY docker/tools/setup.sh /setup.sh
+
 RUN chmod 755 /setup.sh
-
-###
-
-FROM tools AS webserver
 
 RUN docker-php-ext-enable opcache
 
@@ -57,38 +73,37 @@ RUN curl https://pecl.php.net/get/APCu -o /tmp/apcu.tar.gz \
 
 RUN pecl install xdebug
 
-COPY ./docker/tools/99-xdebug.ini /usr/local/etc/php/conf.d/99-xdebug.ini
-
-RUN mkdir /certs
-
-COPY docker/tools/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
-COPY docker/tools/apache/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
-
-RUN /usr/sbin/a2enmod rewrite \
-	&& /usr/sbin/a2enmod ssl
-
-COPY ./docker/tools/start.sh /start.sh
-COPY ./docker/tools/www.sh /usr/local/sbin/www.sh
-
-RUN chmod 750 /start.sh /usr/local/sbin/www.sh
+COPY ./docker/tools/99-xdebug.ini.config /usr/local/etc/php/conf.d/99-xdebug.ini.config
 
 CMD [ "/start.sh" ]
 
 ###
 
-FROM webserver AS app
+FROM dev_build AS thick_app
 
-ARG APP_ENV
 ENV APP_ENV=${APP_ENV:-prod}
 
-RUN rm -f /usr/local/etc/php/conf.d/99-xdebug.ini
-
-COPY . /var/www/html
+COPY --chown=www-data:www-data . /var/www/html
 
 RUN echo APP_ENV=$APP_ENV > /var/www/html/.env.local
 
-RUN chown -R www-data: /var/www/html
-
-RUN /setup.sh
+RUN XDEBUG_MODE=off /setup.sh
 
 HEALTHCHECK CMD curl -f http://localhost/ping || exit 1
+
+###
+
+FROM common_base as production_ready
+
+#ARG APP_ENV
+ENV APP_ENV=${APP_ENV:-prod}
+
+COPY --from=thick_app /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions
+COPY --from=thick_app /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d
+COPY --from=thick_app --chown=www-data:www-data /var/www/html/ /var/www/html
+
+RUN echo APP_ENV=$APP_ENV > /var/www/html/.env.local
+
+HEALTHCHECK CMD curl -f http://localhost/ping || exit 1
+
+CMD [ "/start.sh" ]

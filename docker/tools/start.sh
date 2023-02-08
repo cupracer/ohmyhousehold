@@ -16,9 +16,12 @@ fi
 case "${APP_ENV}" in
 	dev)
 		cp -a /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
+		test -f /usr/local/etc/php/conf.d/99-xdebug.ini.config && \
+		    ln -sf /usr/local/etc/php/conf.d/99-xdebug.ini.config /usr/local/etc/php/conf.d/99-xdebug.ini
 		;;
 	*)
 		cp -a /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
+		test -e /usr/local/etc/php/conf.d/99-xdebug.ini && rm -f /usr/local/etc/php/conf.d/99-xdebug.ini
 		;;
 esac
 

@@ -15,7 +15,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/tools/Dockerfile
-      target: webserver
+      target: dev_build
     environment:
       APP_SECRET: ${APP_SECRET:-secret}
       DATABASE_URL: mysql://${MYSQL_USER:-app}:${MYSQL_PASSWORD:-app}@db/${MYSQL_DATABASE:-app}

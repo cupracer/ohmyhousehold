@@ -7,7 +7,7 @@ services:
 
   web:
     build:
-      target: app
+      target: production_ready
       args:
         APP_ENV: prod
     environment:
