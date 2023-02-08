@@ -17,3 +17,9 @@ docker compose -f compose.yaml -f compose.prod.yaml up -d
 ```shell
  docker compose run -e XDEBUG_MODE=off web /setup.sh 
 ```
+
+## Jobs
+### Sending queued (async) e-mails:
+```shell
+php bin/console messenger:consume async -vv
+```
