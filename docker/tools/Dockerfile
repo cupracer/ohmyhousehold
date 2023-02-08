@@ -1,3 +1,4 @@
+# TODO: check version regularly
 FROM php:8.2-apache as common_base
 
 ARG APP_ENV
@@ -71,9 +72,14 @@ RUN curl https://pecl.php.net/get/APCu -o /tmp/apcu.tar.gz \
         && docker-php-ext-install apcu \
         && rm /tmp/apcu.tar.gz
 
-RUN pecl install xdebug
+# TODO: check version regularly
+RUN pecl install xdebug-3.2.0
+
+# TODO: check version regularly
+RUN pecl install redis-5.3.7
 
 COPY ./docker/tools/99-xdebug.ini.config /usr/local/etc/php/conf.d/99-xdebug.ini.config
+COPY ./docker/tools/99-redis.ini /usr/local/etc/php/conf.d/99-redis.ini
 
 CMD [ "/start.sh" ]
 

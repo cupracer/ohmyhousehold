@@ -18,6 +18,7 @@ services:
       target: dev_build
     environment:
       APP_SECRET: ${APP_SECRET:-secret}
+      APP_SESSION_TTL: 600
       DATABASE_URL: mysql://${MYSQL_USER:-app}:${MYSQL_PASSWORD:-app}@db/${MYSQL_DATABASE:-app}
       SITE_URI: http://127.0.0.1:${WEB_HTTP_PORT:-8000}/
       MAILER_DSN: null://null
@@ -30,5 +31,9 @@ services:
       - "${WEB_HTTPS_PORT:-8443}:443"
     depends_on:
       - db
+      - redis
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+  redis:
+    image: redis:7.0.8

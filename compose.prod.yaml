@@ -12,8 +12,9 @@ services:
         APP_ENV: prod
     environment:
       APP_ENV: prod
-    depends_on:
-      - db
+    restart: unless-stopped
+
+  redis:
     restart: unless-stopped
 
 volumes:
