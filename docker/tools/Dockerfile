@@ -1,6 +1,12 @@
 FROM php:8.2-apache AS tools
 
+# Symfony CLI repo
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash
+
+# NodeJS + Yarn repo
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
+    curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | tee /usr/share/keyrings/yarnkey.gpg >/dev/null && \
+    echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | tee /etc/apt/sources.list.d/yarn.list
 
 RUN apt-get update && apt-get install -y  \
     apt-transport-https \
@@ -10,13 +16,10 @@ RUN apt-get update && apt-get install -y  \
     libicu-dev \
     locales-all \
     lsb-release \
-    npm  \
     symfony-cli \
     unzip \
-    yarnpkg \
-    vim
-
-RUN ln -s /usr/bin/yarnpkg /usr/local/bin/yarn
+    vim \
+    yarn
 
 RUN docker-php-ext-configure intl
 
