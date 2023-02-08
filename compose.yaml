@@ -26,7 +26,6 @@ services:
       APP_MAILER_SENDER_ADDRESS: changeme@example.com
       APP_MAILER_SENDER_NAME: ChangeMe
       APP_MAILER_DEV_RECIPIENT:
-      APP_DATATABLES_USE_FIXED_COLUMNS: 0
     ports:
       - "${WEB_HTTP_PORT:-8000}:80"
       - "${WEB_HTTPS_PORT:-8443}:443"
