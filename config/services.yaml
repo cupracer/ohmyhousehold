@@ -26,4 +26,4 @@ services:
     Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler:
         arguments:
             - '@Redis'
-            - { 'ttl': %env(APP_SESSION_TTL)% }
+            - { 'ttl': '%env(APP_SESSION_TTL)%' }
