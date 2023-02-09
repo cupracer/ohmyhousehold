@@ -69,6 +69,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'datetime')]
     private DateTimeInterface $updatedAt;
 
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?UserProfile $userProfile = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -182,9 +185,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[ORM\PrePersist]
-    public function setCreatedAtValue()
+    public function setCreatedAtValue(): self
     {
         $this->createdAt = new DateTimeImmutable();
+        return $this;
     }
 
     /**
@@ -197,7 +201,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @param DateTimeInterface $updatedAt
-     * @return User
+     * @return self
      */
     public function setUpdatedAt(DateTimeInterface $updatedAt): self
     {
@@ -207,8 +211,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
-    public function setUpdatedAtValue()
+    public function setUpdatedAtValue(): self
     {
         $this->updatedAt = new DateTimeImmutable();
+        return $this;
+    }
+
+    public function getUserProfile(): ?UserProfile
+    {
+        return $this->userProfile;
+    }
+
+    public function setUserProfile(UserProfile $userProfile): self
+    {
+        // set the owning side of the relation if necessary
+        if ($userProfile->getUser() !== $this) {
+            $userProfile->setUser($this);
+        }
+
+        $this->userProfile = $userProfile;
+
+        return $this;
     }
 }
