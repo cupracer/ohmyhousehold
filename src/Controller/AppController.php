@@ -62,7 +62,13 @@ class AppController extends AbstractController
         return new Response($msg, 200);
     }
 
-    #[Route('/user/locale/{_locale<%app.supported_locales%>}/', name: 'app_setlocale')]
+    #[Route(path: '/logout', name: 'app_logout')]
+    public function logout(): void
+    {
+        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
+    #[Route('/locale/{_locale<%app.supported_locales%>}/', name: 'app_set_locale')]
     public function setUserLocale(string $_locale, SessionInterface $session, ManagerRegistry $managerRegistry): Response
     {
         /** @var User $user */

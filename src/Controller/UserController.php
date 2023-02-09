@@ -35,11 +35,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
-class RegistrationController extends AbstractController
+#[Route('/{_locale<%app.supported_locales%>}/user')]
+class UserController extends AbstractController
 {
     private EmailVerifier $emailVerifier;
 
@@ -48,7 +50,7 @@ class RegistrationController extends AbstractController
         $this->emailVerifier = $emailVerifier;
     }
 
-    #[Route('/{_locale<%app.supported_locales%>}/register', name: 'app_register')]
+    #[Route('/register', name: 'user_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, LoginFormControllerAuthenticator $authenticator, EntityManagerInterface $entityManager, LoggerInterface $logger, SessionInterface $session): Response
     {
         $user = new User();
@@ -70,11 +72,11 @@ class RegistrationController extends AbstractController
             $entityManager->flush();
 
             // generate a signed url and email it to the user
-            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+            $this->emailVerifier->sendEmailConfirmation('user_verify_email', $user,
                 (new TemplatedEmail())
                     ->to($user->getEmail())
                     ->subject('Please Confirm your Email')
-                    ->htmlTemplate('registration/confirmation_email.html.twig')
+                    ->htmlTemplate('user/register_confirmation_email.html.twig')
             );
 
             // do anything else you need here, like send an email
@@ -87,24 +89,24 @@ class RegistrationController extends AbstractController
             );
         }
 
-        return $this->render('registration/register.html.twig', [
+        return $this->render('user/register.html.twig', [
             'registrationForm' => $form->createView(),
         ]);
     }
 
-    #[Route('/{_locale<%app.supported_locales%>}/verify/email', name: 'app_verify_email')]
+    #[Route('/verify/email', name: 'user_verify_email')]
     public function verifyUserEmail(Request $request, TranslatorInterface $translator, UserRepository $userRepository, LoggerInterface $logger): Response
     {
         $id = $request->get('id');
 
         if (null === $id) {
-            return $this->redirectToRoute('app_register');
+            return $this->redirectToRoute('user_register');
         }
 
         $user = $userRepository->find($id);
 
         if (null === $user) {
-            return $this->redirectToRoute('app_register');
+            return $this->redirectToRoute('user_register');
         }
 
         // validate email confirmation link, sets User::isVerified=true and persists
@@ -113,7 +115,7 @@ class RegistrationController extends AbstractController
         } catch (VerifyEmailExceptionInterface $exception) {
             $this->addFlash('verify_email_error', $translator->trans($exception->getReason(), [], 'VerifyEmailBundle'));
 
-            return $this->redirectToRoute('app_register');
+            return $this->redirectToRoute('user_register');
         }
 
         // @TODO Change the redirect on success and handle or remove the flash message in your templates
@@ -121,5 +123,26 @@ class RegistrationController extends AbstractController
         $logger->info("E-mail address for User '{username}' has just been verified.", ['username' => $user->getUserIdentifier()]);
 
         return $this->redirectToRoute('app_start');
+    }
+
+    #[Route(path: '/login', name: 'user_login')]
+    public function login(AuthenticationUtils $authenticationUtils, LoggerInterface $logger): Response
+    {
+        $user = $this->getUser();
+        if($user) {
+            $logger->info("User '{username}' successfully logged in.", ['username' => $user->getUserIdentifier()]);
+            return $this->redirectToRoute('app_start');
+        }
+
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+        // last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        if($error) {
+            $logger->info("Failed login attempt for User '{username}'.", ['username' => $lastUsername]);
+        }
+
+        return $this->render('user/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }
 }
