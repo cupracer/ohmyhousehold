@@ -21,27 +21,38 @@
 
 namespace App\Controller;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class AppController extends AbstractController
+class SecurityController extends AbstractController
 {
-    #[Route('/', name: 'app_start')]
-    public function start(): Response
+    #[Route(path: '/login', name: 'app_login')]
+    public function login(AuthenticationUtils $authenticationUtils, LoggerInterface $logger): Response
     {
-        $msg = 'Welcome';
-
-        if($this->getUser()) {
-            $msg.= ", {$this->getUser()->getUserIdentifier()}";
+        $user = $this->getUser();
+        if($user) {
+            $logger->info("User '{username}' successfully logged in.", ['username' => $user->getUserIdentifier()]);
+            return $this->redirectToRoute('app_start');
         }
 
-        return new Response($msg, 200);
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+        // last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        if($error) {
+            $logger->info("Failed login attempt for User '{username}'.", ['username' => $lastUsername]);
+        }
+
+        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }
 
-    #[Route('/ping', name: 'app_ping')]
-    public function ping(): Response
+    #[Route(path: '/logout', name: 'app_logout')]
+    public function logout(): void
     {
-        return new Response("PONG", 200);
+        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 }

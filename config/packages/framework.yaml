@@ -1,7 +1,10 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
     secret: '%env(APP_SECRET)%'
-    #csrf_protection: true
+    # TODO: Read and implement "Working with Edge Side Includes"
+    # see: Moreover, this means that you cannot fully cache pages that include CSRF protected forms [...]
+    # https://symfony.com/doc/current/security/csrf.html
+    csrf_protection: true
     http_method_override: false
     handle_all_throwables: true
 
