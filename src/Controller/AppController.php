@@ -21,14 +21,37 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AppController extends AbstractController
 {
+    #[Route('/ping', name: 'app_ping')]
+    public function ping(): Response
+    {
+        return new Response("PONG", 200);
+    }
+
     #[Route('/', name: 'app_start')]
-    public function start(): Response
+    public function indexNoLocale(SessionInterface $session): Response
+    {
+        if($session->get('_locale')) {
+            return $this->redirectToRoute('app_start_localized', [
+                '_locale' => $session->get('_locale')
+            ]);
+        }else {
+            return $this->redirectToRoute('app_start_localized', [
+                '_locale' => 'en'
+            ]);
+        }
+    }
+
+    #[Route('/{_locale<%app.supported_locales%>}/', name: 'app_start_localized')]
+    public function indexWithLocale(): Response
     {
         $msg = 'Welcome';
 
@@ -39,9 +62,19 @@ class AppController extends AbstractController
         return new Response($msg, 200);
     }
 
-    #[Route('/ping', name: 'app_ping')]
-    public function ping(): Response
+    #[Route('/user/locale/{_locale<%app.supported_locales%>}/', name: 'app_setlocale')]
+    public function setUserLocale(string $_locale, SessionInterface $session, ManagerRegistry $managerRegistry): Response
     {
-        return new Response("PONG", 200);
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if($user) {
+            $user->getUserProfile()->setLocale($session->get('_locale'));
+            $em = $managerRegistry->getManager();
+            $em->persist($user);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('app_start_localized', ['_locale' => $_locale]);
     }
 }

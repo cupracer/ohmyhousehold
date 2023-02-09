@@ -29,7 +29,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    #[Route(path: '/login', name: 'app_login')]
+    #[Route(path: '/{_locale<%app.supported_locales%>}/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils, LoggerInterface $logger): Response
     {
         $user = $this->getUser();
