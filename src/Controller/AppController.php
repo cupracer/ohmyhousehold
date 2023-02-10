@@ -53,13 +53,9 @@ class AppController extends AbstractController
     #[Route('/{_locale<%app.supported_locales%>}/', name: 'app_start_localized')]
     public function indexWithLocale(): Response
     {
-        $msg = 'Welcome';
-
-        if($this->getUser()) {
-            $msg.= ", {$this->getUser()->getUserIdentifier()}";
-        }
-
-        return new Response($msg, 200);
+        return $this->render('base.html.twig', [
+            'pageTitle' => 'Welcome'
+        ]);
     }
 
     #[Route(path: '/logout', name: 'app_logout')]

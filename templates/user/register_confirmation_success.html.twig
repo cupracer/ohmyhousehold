@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ pageTitle|trans }}{% endblock %}
+
+{% block page_content_body %}
+<div class="row">
+    <div class="col-md"></div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                Your e-mail address has been confirmed. Please <a href="{{ path('user_login') }}">login</a>.
+            </div>
+        </div>
+    </div>
+    <div class="col-md"></div>
+</div>
+{% endblock page_content_body %}
