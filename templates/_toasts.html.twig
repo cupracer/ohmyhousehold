@@ -1,0 +1,17 @@
+<script type="text/javascript">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+        $(document).Toasts('create', {
+            title: '{{ label }}',
+            class: 'bg-{{ label }}',
+            body: '{{ message }}',
+            autohide: true,
+            delay: 20000,
+            close: true,
+            progressBar: true,
+            icon: 'fas fa-exclamation-triangle',
+            position: 'topRight',
+        });
+        {% endfor %}
+    {% endfor %}
+</script>
