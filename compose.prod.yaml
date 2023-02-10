@@ -14,6 +14,15 @@ services:
       APP_ENV: prod
     restart: unless-stopped
 
+  messenger:
+    build:
+      target: production_ready
+      args:
+        APP_ENV: prod
+    environment:
+      APP_ENV: prod
+    restart: unless-stopped
+
   redis:
     restart: unless-stopped
 

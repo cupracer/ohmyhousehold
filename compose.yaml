@@ -22,7 +22,7 @@ services:
       DATABASE_URL: mysql://${MYSQL_USER:-app}:${MYSQL_PASSWORD:-secret}@db/${MYSQL_DATABASE:-app}
       SITE_URI: http://127.0.0.1:${WEB_HTTP_PORT:-8000}/
       MAILER_DSN: null://null
-      SUPER_ADMIN_EMAIL: admin@example.com
+#      SUPER_ADMIN_EMAIL: admin@example.com
       SSL_SUBJECT:
       MAILER_SENDER_ADDRESS: changeme@example.com
       MAILER_SENDER_NAME: ChangeMe
@@ -34,6 +34,29 @@ services:
       - redis
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+  messenger:
+    build:
+      context: .
+      dockerfile: ./docker/tools/Dockerfile
+      target: dev_build
+    environment:
+#      APP_SECRET: ${APP_SECRET:-secret}
+#      APP_SESSION_TTL: 600
+      DATABASE_URL: mysql://${MYSQL_USER:-app}:${MYSQL_PASSWORD:-secret}@db/${MYSQL_DATABASE:-app}
+#      SITE_URI: http://127.0.0.1:${WEB_HTTP_PORT:-8000}/
+      MAILER_DSN: null://null
+      SUPER_ADMIN_EMAIL: admin@example.com
+#      SSL_SUBJECT:
+      MAILER_SENDER_ADDRESS: changeme@example.com
+      MAILER_SENDER_NAME: ChangeMe
+    depends_on:
+      - db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    user: www-data
+    working_dir: /var/www/html
+    command: ["php", "bin/console", "messenger:consume", "async", "-vv"]
 
   redis:
     image: redis:7.0.8

@@ -11,6 +11,13 @@ services:
       SSL_SUBJECT: /C=XY/ST=Unknown/L=Unknown/O=Unknown/OU=Unknown/CN=localhost
     volumes:
       - .:/var/www/html
+
+  messenger:
+    environment:
+      APP_ENV: dev
+      MAILER_DSN: smtp://mailer:1025
+    volumes:
+      - .:/var/www/html
     depends_on:
       - mailer
 
