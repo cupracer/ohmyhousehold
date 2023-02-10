@@ -157,4 +157,9 @@ class UserProfile
         $this->updatedAt = new DateTimeImmutable();
         return $this;
     }
+
+    public function getNaturalName(): string
+    {
+        return "{$this->forename} {$this->surname}";
+    }
 }
