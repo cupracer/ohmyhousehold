@@ -88,7 +88,7 @@ class UserController extends AbstractController
 //                $authenticator,
 //                $request
 //            );
-            return $this->render('user/register_confirmation.html.twig', [
+            return $this->render('user/register_confirmation_sent.html.twig', [
                 'pageTitle' => 'app.register.confirmation',
             ]);
         }
@@ -120,6 +120,7 @@ class UserController extends AbstractController
         } catch (VerifyEmailExceptionInterface $exception) {
             $this->addFlash('verify_email_error', $translator->trans($exception->getReason(), [], 'VerifyEmailBundle'));
 
+            // TODO: Redirect to some better location (info page?) instead of showing the registration form
             return $this->redirectToRoute('user_register');
         }
 
@@ -127,7 +128,9 @@ class UserController extends AbstractController
         $this->addFlash('success', 'Your email address has been verified.');
         $logger->info("E-mail address for User '{username}' has just been verified.", ['username' => $user->getUserIdentifier()]);
 
-        return $this->redirectToRoute('app_start');
+        return $this->render('user/register_confirmation_success.html.twig', [
+            'pageTitle' => 'app.register.confirmation_success',
+        ]);
     }
 
     #[Route(path: '/login', name: 'user_login')]
