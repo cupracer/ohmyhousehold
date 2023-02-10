@@ -15,13 +15,12 @@
                             </div>
                         {% endif %}
 
-                        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
                         <div class="form-group">
-                            <label for="inputUsername">Username</label>
+                            <label for="inputUsername">{{ 'form.user.username'|trans|capitalize }}</label>
                             <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" autocomplete="username" required autofocus>
                         </div>
                         <div class="form-group">
-                            <label for="inputPassword">Password</label>
+                            <label for="inputPassword">{{ 'form.user.password'|trans|capitalize }}</label>
                             <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
                         </div>
 
@@ -41,7 +40,7 @@
                 </div>
                 <div class="row">
                     <div class="col-12 text-right mt-3">
-                        <button type="submit" class="btn btn-lg btn-primary text-right">{{ 'app.sign-in'|trans }}</button>
+                        <button type="submit" class="btn btn-lg btn-primary text-right">{{ 'app.sign-in'|trans|title }}</button>
                     </div>
                 </div>
             </form>

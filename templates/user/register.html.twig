@@ -14,14 +14,12 @@
                 {{ form_row(registrationForm.userProfile.surname) }}
                 {{ form_row(registrationForm.username) }}
                 {{ form_row(registrationForm.email) }}
-                {{ form_row(registrationForm.plainPassword, {
-                    label: 'Password'
-                }) }}
+                {{ form_row(registrationForm.plainPassword) }}
             </div>
         </div>
         <div class="row">
             <div class="col-12 text-right mt-3">
-                <button type="submit" class="btn btn-primary text-right">{{ 'app.register'|trans }}</button>
+                <button type="submit" class="btn btn-primary text-right">{{ 'app.register'|trans|title }}</button>
             </div>
         </div>
     {{ form_end(registrationForm) }}

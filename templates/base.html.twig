@@ -3,7 +3,7 @@
 {% block htmltag %}<html lang="{{ app.request.locale }}">{% endblock htmltag %}
 
 {% block title %}
-    {% if pageTitle is defined %}{{ pageTitle|trans }} - {% endif %}{{ siteName }}
+    {% if pageTitle is defined %}{{ pageTitle|trans|title }} - {% endif %}{{ siteName }}
 {% endblock title %}
 
 {% block stylesheets %}
@@ -165,7 +165,7 @@ As a workaround, text-sm is instead set on navbar_tag, sidebar_tag and main_cont
                             <div class="col-lg">
                                 <h3 class="card-title page-title">
                                     {% block page_header %}
-                                        {% if pageTitle is defined %}{{ pageTitle|trans }}{% endif %}
+                                        {% if pageTitle is defined %}{{ pageTitle|trans|title }}{% endif %}
                                     {% endblock page_header %}
                                 </h3>
                             </div>

@@ -54,7 +54,7 @@ class AppController extends AbstractController
     public function indexWithLocale(): Response
     {
         return $this->render('base.html.twig', [
-            'pageTitle' => 'Welcome'
+            'pageTitle' => 'welcome'
         ]);
     }
 
