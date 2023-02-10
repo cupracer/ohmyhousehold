@@ -4,15 +4,11 @@
 
 {% block page_content_body %}
     <div class="row">
-        <div class="col-md"></div>
-        <div class="col-md-6">
+        <div class="col"></div>
+        <div class="col-md-4 col-lg-3">
             <form method="post">
                 <div class="row">
-                    <div class="col-md-12">
-                        {% if error %}
-                            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                        {% endif %}
-
+                    <div class="col-12">
                         {% if app.user %}
                             <div class="mb-3">
                                 You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
@@ -44,13 +40,13 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12 text-right mt-3">
+                    <div class="col-12 text-right mt-3">
                         <button type="submit" class="btn btn-lg btn-primary text-right">{{ 'app.sign-in'|trans }}</button>
                     </div>
                 </div>
             </form>
 
         </div>
-        <div class="col-md"></div>
+        <div class="col"></div>
     </div>
 {% endblock page_content_body %}
