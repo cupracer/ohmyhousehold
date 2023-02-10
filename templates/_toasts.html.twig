@@ -2,14 +2,24 @@
     {% for label, messages in app.flashes %}
         {% for message in messages %}
         $(document).Toasts('create', {
-            title: '{{ label }}',
+            {#title: '{{ label|trans }}',#}
             class: 'bg-{{ label }}',
             body: '{{ message }}',
             autohide: true,
-            delay: 20000,
-            close: true,
-            progressBar: true,
-            icon: 'fas fa-exclamation-triangle',
+            delay: 3500,
+{#            {% if label == 'success' %}#}
+{#                icon: 'fas fa-badge-check',#}
+{#            {% elseif label == 'info' %}#}
+{#                icon: 'fas fa-user',#}
+{#            {% elseif label == 'warning' %}#}
+{#               icon: 'fas fa-exclamation-triangle',#}
+{#            {% elseif label == 'danger' %}#}
+{#               icon: 'fas fa-wheel',#}
+{#            {% elseif label == 'maroon' %}#}
+{#               icon: 'fas fa-wheel2',#}
+{#            {% else %}#}
+{#               icon: 'fas fa-bird',#}
+{#            {% endif %}#}
             position: 'topRight',
         });
         {% endfor %}

@@ -24,7 +24,6 @@ namespace App\Controller;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -40,8 +39,6 @@ class AppController extends AbstractController
     #[Route('/', name: 'app_start')]
     public function indexNoLocale(SessionInterface $session): Response
     {
-        $this->addFlash("success", "huhu, das ist flash");
-
         if($session->get('_locale')) {
             return $this->redirectToRoute('app_start_localized', [
                 '_locale' => $session->get('_locale')

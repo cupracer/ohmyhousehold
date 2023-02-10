@@ -19,14 +19,12 @@
 
 import 'source-sans/source-sans-3.css';
 import 'admin-lte/plugins/fontawesome-free/css/all.css';
-import 'toastr/build/toastr.css';
 import 'admin-lte/dist/css/adminlte.css';
 
 global.$ = global.jQuery = $;
 
 import 'admin-lte/plugins/bootstrap/js/bootstrap.bundle';
 import 'admin-lte/dist/js/adminlte';
-import 'admin-lte/plugins/toastr/toastr.min';
 
 // start the Stimulus application
 import './bootstrap';
