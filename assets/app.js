@@ -33,5 +33,5 @@ import './bootstrap';
 import './styles/app.css';
 
 $(document).ready(function () {
-    $("#toasts").load("/toasts");
+    //$("#toasts").load("/toasts");
 });

@@ -80,9 +80,9 @@ class AppController extends AbstractController
         return $this->redirectToRoute('app_start_localized', ['_locale' => $_locale]);
     }
 
-    #[Route(path: '/toasts', name: 'app_toasts')]
-    public function toasts(): Response
-    {
-        return $this->render('_toasts.html.twig');
-    }
+//    #[Route(path: '/toasts', name: 'app_toasts')]
+//    public function toasts(): Response
+//    {
+//        return $this->render('_toasts.html.twig');
+//    }
 }
