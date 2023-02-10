@@ -82,15 +82,20 @@ class UserController extends AbstractController
             // do anything else you need here, like send an email
             $logger->info("New registration for User '{username}'", ['username' => $user->getUserIdentifier()]);
 
-            return $userAuthenticator->authenticateUser(
-                $user,
-                $authenticator,
-                $request
-            );
+            // automatically authenticate user after registration
+//            return $userAuthenticator->authenticateUser(
+//                $user,
+//                $authenticator,
+//                $request
+//            );
+            return $this->render('user/register_confirmation.html.twig', [
+                'pageTitle' => 'app.register.confirmation',
+            ]);
         }
 
         return $this->render('user/register.html.twig', [
             'registrationForm' => $form->createView(),
+            'pageTitle' => 'app.register',
         ]);
     }
 
@@ -143,6 +148,10 @@ class UserController extends AbstractController
             $logger->info("Failed login attempt for User '{username}'.", ['username' => $lastUsername]);
         }
 
-        return $this->render('user/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+        return $this->render('user/login.html.twig', [
+            'pageTitle' => 'app.sign-in',
+            'last_username' => $lastUsername,
+            'error' => $error,
+        ]);
     }
 }
