@@ -28,14 +28,19 @@ use Doctrine\Persistence\ObjectManager;
 
 class CategoryFixtures extends Fixture implements FixtureGroupInterface
 {
+    public const NUM_OBJECTS = 10;
+    public const REFERENCE_ID = 'supplies-category-';
+
     public function load(ObjectManager $manager): void
     {
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= self::NUM_OBJECTS; $i++) {
             $category = new Category();
             $category->setName('Category_' . $i);
             $manager->persist($category);
-            $manager->flush();
+            $this->addReference(self::REFERENCE_ID . $i, $category);
         }
+
+        $manager->flush();
     }
 
     public static function getGroups(): array
