@@ -28,14 +28,19 @@ use Doctrine\Persistence\ObjectManager;
 
 class StorageLocationFixtures extends Fixture implements FixtureGroupInterface
 {
+    public const NUM_OBJECTS = 3;
+    public const REFERENCE_ID = 'supplies-storagelocation-';
+
     public function load(ObjectManager $manager): void
     {
-        for ($i = 1; $i <= 3; $i++) {
+        for ($i = 1; $i <= self::NUM_OBJECTS; $i++) {
             $storageLocation = new StorageLocation();
             $storageLocation->setName('StorageLocation_' . $i);
             $manager->persist($storageLocation);
-            $manager->flush();
+            $this->addReference(self::REFERENCE_ID . $i, $storageLocation);
         }
+
+        $manager->flush();
     }
 
     public static function getGroups(): array
