@@ -17,6 +17,7 @@ services:
       dockerfile: ./docker/tools/Dockerfile
       target: dev_build
     environment:
+      TZ: Europe/Berlin
       APP_SECRET: ${APP_SECRET:-secret}
       APP_SESSION_TTL: 600
       DATABASE_URL: mysql://${MYSQL_USER:-app}:${MYSQL_PASSWORD:-secret}@db/${MYSQL_DATABASE:-app}
@@ -41,6 +42,7 @@ services:
       dockerfile: ./docker/tools/Dockerfile
       target: dev_build
     environment:
+      TZ: Europe/Berlin
 #      APP_SECRET: ${APP_SECRET:-secret}
 #      APP_SESSION_TTL: 600
       DATABASE_URL: mysql://${MYSQL_USER:-app}:${MYSQL_PASSWORD:-secret}@db/${MYSQL_DATABASE:-app}
