@@ -46,18 +46,17 @@ fi
 #test -z $APP_MAILER_DEV_RECIPIENT || echo "APP_MAILER_DEV_RECIPIENT='${APP_MAILER_DEV_RECIPIENT}'" >> /var/www/html/.env.local
 #test -z $APP_DATATABLES_USE_FIXED_COLUMNS || echo "APP_DATATABLES_USE_FIXED_COLUMNS='${APP_DATATABLES_USE_FIXED_COLUMNS}'" >> /var/www/html/.env.local
 
-#if [ "${APP_ENV}" == "prod" ]; then
-#  su www-data --shell=/bin/bash -c "XDEBUG_MODE=off php bin/console --no-interaction --env=${APP_ENV} doctrine:schema:update -f"
-#fi
+if [ "${APP_ENV}" == "prod" ]; then
+  su www-data --shell=/bin/bash -c "XDEBUG_MODE=off php bin/console --no-interaction --env=${APP_ENV} doctrine:migrations:migrate"
+else
+  echo '***'
+  echo '*** Remember to run "php bin/console doctrine:migrations:migrate" after DB structure changes ***'
+  echo '***'
+fi
 
 su www-data --shell=/bin/bash -c "XDEBUG_MODE=off php bin/console --env=${APP_ENV} cache:clear"
 
 RC=$?
-
-#TODO: Is doctrine:schema:update required when using doctrine:migrations:migrate?
-echo '***'
-echo '*** Remember to run "php bin/console doctrine:migrations:migrate" after DB structure changes ***'
-echo '***'
 
 if [ $RC -eq 0 ]; then
   apache2-foreground
