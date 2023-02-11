@@ -29,7 +29,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class CommodityFixtures extends Fixture implements FixtureGroupInterface
 {
-    public const NUM_OBJECTS = 10;
+    public const NUM_OBJECTS = 50;
     public const REFERENCE_ID = 'supplies-commodity-';
 
     public function __construct(
@@ -38,14 +38,13 @@ class CommodityFixtures extends Fixture implements FixtureGroupInterface
     {
     }
 
-
     public function load(ObjectManager $manager): void
     {
         $categories = $this->categoryRepository->findAll();
 
         for ($i = 1; $i <= self::NUM_OBJECTS; $i++) {
             $commodity = new Commodity();
-            $commodity->setName('Brand_' . $i);
+            $commodity->setName('Commodity_' . $i);
             $commodity->setCategory($categories[array_rand($categories)]);
             $manager->persist($commodity);
             $this->addReference(self::REFERENCE_ID . $i, $commodity);
