@@ -22,40 +22,36 @@
 namespace App\DataFixtures;
 
 use App\Entity\User;
+use App\Entity\UserProfile;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserFixtures extends Fixture implements FixtureGroupInterface
+class UserProfileFixtures extends Fixture implements FixtureGroupInterface, DependentFixtureInterface
 {
-
-    public const ADMIN_USER_REFERENCE = 'admin-user';
-
-    public function __construct(
-        private UserPasswordHasherInterface $userPasswordHasher
-    )
-    {
-    }
+    public const ADMIN_USER_PROFILE_REFERENCE = 'admin-user-profile';
 
     public function load(ObjectManager $manager): void
     {
-        $adminUser = new User();
-        $adminUser
-            ->setUsername('admin')
-            ->setEmail('admin@example.local')
-            ->setIsVerified(true)
-            ->setPassword(
-                $this->userPasswordHasher->hashPassword(
-                    $adminUser,
-                    'secret'
-                )
-            );
-        $manager->persist($adminUser);
+        $adminUserProfile = new UserProfile();
+        $adminUserProfile
+            ->setForename('Admin')
+            ->setSurname('User')
+            ->setLocale('de')
+            ->setUser($this->getReference(UserFixtures::ADMIN_USER_REFERENCE, User::class));
+        $manager->persist($adminUserProfile);
 
         $manager->flush();
 
-        $this->addReference(self::ADMIN_USER_REFERENCE, $adminUser);
+        $this->addReference(self::ADMIN_USER_PROFILE_REFERENCE, $adminUserProfile);
+    }
+
+    public function getDependencies(): array
+    {
+        return [
+            UserFixtures::class,
+        ];
     }
 
     public static function getGroups(): array
