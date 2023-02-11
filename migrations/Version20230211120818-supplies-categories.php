@@ -36,7 +36,7 @@ final class Version20230211120818 extends AbstractMigration
 
     public function getDescription(): string
     {
-        return 'add records to supplies_categories';
+        return 'add records to supplies_category';
     }
 
     public function up(Schema $schema): void
