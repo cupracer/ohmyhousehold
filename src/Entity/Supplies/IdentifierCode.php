@@ -33,7 +33,23 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[UniqueEntity(fields: ['type', 'code'], message: 'form.supplies.identifiercode.not-unique')]
 class IdentifierCode
 {
-    public const TYPES = ['EAN',];
+    public const TYPES = [
+        [
+            'name' => 'EAN-8',
+            'prefix' => null,
+            'length' => 8,
+        ],
+        [
+            'name' => 'EAN-13',
+            'prefix' => null,
+            'length' => 13,
+        ],
+        [
+            'name' => 'PZN',
+            'prefix' => 'PZN',
+            'length' => 8,
+        ]
+    ];
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
