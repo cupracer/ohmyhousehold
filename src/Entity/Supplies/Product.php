@@ -70,10 +70,10 @@ class Product
     #[ORM\OneToMany(mappedBy: 'product', targetEntity: MinimumProductStock::class, orphanRemoval: true)]
     private Collection $minimumStocks;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
     private DateTimeInterface $createdAt;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
     private DateTimeInterface $updatedAt;
 
     #[ORM\OneToMany(mappedBy: 'product', targetEntity: IdentifierCode::class, orphanRemoval: true)]

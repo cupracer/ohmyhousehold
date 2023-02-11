@@ -46,10 +46,10 @@ class IdentifierCode
     #[ORM\Column(length: 255)]
     private ?string $code = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
     private DateTimeInterface $createdAt;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
     private DateTimeInterface $updatedAt;
 
     #[ORM\ManyToOne(inversedBy: 'identifierCodes')]
