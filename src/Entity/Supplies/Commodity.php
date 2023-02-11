@@ -30,6 +30,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: CommodityRepository::class)]
+#[ORM\Table(name: 'supplies_commodity')]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['name'], message: 'form.supplies.commodity.name.not-unique')]
 class Commodity

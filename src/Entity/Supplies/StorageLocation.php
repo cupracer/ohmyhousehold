@@ -30,6 +30,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: StorageLocationRepository::class)]
+#[ORM\Table(name: 'supplies_storage_location')]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['name'], message: 'form.supplies.storagelocation.name.not-unique')]
 class StorageLocation

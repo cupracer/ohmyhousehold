@@ -28,6 +28,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: IdentifierCodeRepository::class)]
+#[ORM\Table(name: 'supplies_identifier_code')]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['type', 'code'], message: 'form.supplies.identifiercode.not-unique')]
 class IdentifierCode

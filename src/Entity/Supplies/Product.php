@@ -31,6 +31,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[ORM\Table(name: 'supplies_product')]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: [
         'name', 'commodity', 'brand', 'measure', 'quantity', 'organicCertification', 'packaging',

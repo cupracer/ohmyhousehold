@@ -28,6 +28,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: MinimumProductStockRepository::class)]
+#[ORM\Table(name: 'supplies_minimum_product_stock')]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['product', 'storageLocation'], message: 'form.supplies.minimumproductstock.not-unique')]
 class MinimumProductStock
