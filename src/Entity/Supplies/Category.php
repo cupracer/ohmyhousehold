@@ -24,6 +24,8 @@ namespace App\Entity\Supplies;
 use App\Repository\Supplies\CategoryRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -37,7 +39,7 @@ class Category
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $name = null;
 
     #[ORM\Column(type: 'datetime')]
@@ -45,6 +47,14 @@ class Category
 
     #[ORM\Column(type: 'datetime')]
     private DateTimeInterface $updatedAt;
+
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Commodity::class)]
+    private Collection $commodities;
+
+    public function __construct()
+    {
+        $this->commodities = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -111,6 +121,36 @@ class Category
     public function setUpdatedAtValue(): self
     {
         $this->updatedAt = new DateTimeImmutable();
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Commodity>
+     */
+    public function getCommodities(): Collection
+    {
+        return $this->commodities;
+    }
+
+    public function addCommodity(Commodity $commodity): self
+    {
+        if (!$this->commodities->contains($commodity)) {
+            $this->commodities->add($commodity);
+            $commodity->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommodity(Commodity $commodity): self
+    {
+        if ($this->commodities->removeElement($commodity)) {
+            // set the owning side to null (unless already changed)
+            if ($commodity->getCategory() === $this) {
+                $commodity->setCategory(null);
+            }
+        }
+
         return $this;
     }
 }

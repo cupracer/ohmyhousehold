@@ -21,7 +21,7 @@
 
 namespace App\Entity\Supplies;
 
-use App\Repository\Supplies\BrandRepository;
+use App\Repository\Supplies\MeasureRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -29,10 +29,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-#[ORM\Entity(repositoryClass: BrandRepository::class)]
+#[ORM\Entity(repositoryClass: MeasureRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity(fields: ['name'], message: 'form.supplies.brand.name.not-unique')]
-class Brand
+#[UniqueEntity(fields: ['name'], message: 'form.supplies.measure.name.not-unique')]
+#[UniqueEntity(fields: ['unit'], message: 'form.supplies.measure.unit.not-unique')]
+class Measure
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -42,14 +43,20 @@ class Brand
     #[ORM\Column(length: 255, unique: true)]
     private ?string $name = null;
 
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $unit = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $physicalQuantity = null;
+
+    #[ORM\OneToMany(mappedBy: 'measure', targetEntity: Product::class)]
+    private Collection $products;
+
     #[ORM\Column(type: 'datetime')]
     private DateTimeInterface $createdAt;
 
     #[ORM\Column(type: 'datetime')]
     private DateTimeInterface $updatedAt;
-
-    #[ORM\OneToMany(mappedBy: 'brand', targetEntity: Product::class)]
-    private Collection $products;
 
     public function __construct()
     {
@@ -69,6 +76,60 @@ class Brand
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getUnit(): ?string
+    {
+        return $this->unit;
+    }
+
+    public function setUnit(string $unit): self
+    {
+        $this->unit = $unit;
+
+        return $this;
+    }
+
+    public function getPhysicalQuantity(): ?string
+    {
+        return $this->physicalQuantity;
+    }
+
+    public function setPhysicalQuantity(string $physicalQuantity): self
+    {
+        $this->physicalQuantity = $physicalQuantity;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Product>
+     */
+    public function getProducts(): Collection
+    {
+        return $this->products;
+    }
+
+    public function addProduct(Product $product): self
+    {
+        if (!$this->products->contains($product)) {
+            $this->products->add($product);
+            $product->setMeasure($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduct(Product $product): self
+    {
+        if ($this->products->removeElement($product)) {
+            // set the owning side to null (unless already changed)
+            if ($product->getMeasure() === $this) {
+                $product->setMeasure(null);
+            }
+        }
 
         return $this;
     }
@@ -121,36 +182,6 @@ class Brand
     public function setUpdatedAtValue(): self
     {
         $this->updatedAt = new DateTimeImmutable();
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Product>
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
-
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products->add($product);
-            $product->setBrand($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): self
-    {
-        if ($this->products->removeElement($product)) {
-            // set the owning side to null (unless already changed)
-            if ($product->getBrand() === $this) {
-                $product->setBrand(null);
-            }
-        }
-
         return $this;
     }
 }

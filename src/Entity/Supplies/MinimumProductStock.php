@@ -4,43 +4,48 @@
  * Copyright (c) 2023. Thomas Schulte <thomas@cupracer.de>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
- * and associated documentation files (the “Software”), to deal in the Software without restriction,
- * including without limitation the rights to use, copy, modify, merge, publish, distribute,
- * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * and associated documentation files (the “Software”), to deal in the Software without restriction, 
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute, 
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is 
  * furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in all copies or
  * substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 namespace App\Entity\Supplies;
 
-use App\Repository\Supplies\BrandRepository;
+use App\Repository\Supplies\MinimumProductStockRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-#[ORM\Entity(repositoryClass: BrandRepository::class)]
+#[ORM\Entity(repositoryClass: MinimumProductStockRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity(fields: ['name'], message: 'form.supplies.brand.name.not-unique')]
-class Brand
+#[UniqueEntity(fields: ['product', 'storageLocation'], message: 'form.supplies.minimumproductstock.not-unique')]
+class MinimumProductStock
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, unique: true)]
-    private ?string $name = null;
+    #[ORM\ManyToOne(inversedBy: 'minimumStocks')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Product $product = null;
+
+    #[ORM\ManyToOne(inversedBy: 'minimumProductStocks')]
+    private ?StorageLocation $storageLocation = null;
+
+    #[ORM\Column]
+    private ?int $count = null;
 
     #[ORM\Column(type: 'datetime')]
     private DateTimeInterface $createdAt;
@@ -48,27 +53,43 @@ class Brand
     #[ORM\Column(type: 'datetime')]
     private DateTimeInterface $updatedAt;
 
-    #[ORM\OneToMany(mappedBy: 'brand', targetEntity: Product::class)]
-    private Collection $products;
-
-    public function __construct()
-    {
-        $this->products = new ArrayCollection();
-    }
-
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getProduct(): ?Product
     {
-        return $this->name;
+        return $this->product;
     }
 
-    public function setName(string $name): self
+    public function setProduct(?Product $product): self
     {
-        $this->name = $name;
+        $this->product = $product;
+
+        return $this;
+    }
+
+    public function getStorageLocation(): ?StorageLocation
+    {
+        return $this->storageLocation;
+    }
+
+    public function setStorageLocation(?StorageLocation $storageLocation): self
+    {
+        $this->storageLocation = $storageLocation;
+
+        return $this;
+    }
+
+    public function getCount(): ?int
+    {
+        return $this->count;
+    }
+
+    public function setCount(int $count): self
+    {
+        $this->count = $count;
 
         return $this;
     }
@@ -121,36 +142,6 @@ class Brand
     public function setUpdatedAtValue(): self
     {
         $this->updatedAt = new DateTimeImmutable();
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Product>
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
-
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products->add($product);
-            $product->setBrand($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): self
-    {
-        if ($this->products->removeElement($product)) {
-            // set the owning side to null (unless already changed)
-            if ($product->getBrand() === $this) {
-                $product->setBrand(null);
-            }
-        }
-
         return $this;
     }
 }

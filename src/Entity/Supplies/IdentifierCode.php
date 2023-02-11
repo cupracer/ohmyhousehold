@@ -21,26 +21,27 @@
 
 namespace App\Entity\Supplies;
 
-use App\Repository\Supplies\BrandRepository;
+use App\Repository\Supplies\IdentifierCodeRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-#[ORM\Entity(repositoryClass: BrandRepository::class)]
+#[ORM\Entity(repositoryClass: IdentifierCodeRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity(fields: ['name'], message: 'form.supplies.brand.name.not-unique')]
-class Brand
+#[UniqueEntity(fields: ['type', 'code'], message: 'form.supplies.identifiercode.not-unique')]
+class IdentifierCode
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, unique: true)]
-    private ?string $name = null;
+    #[ORM\Column(length: 10)]
+    private ?string $type = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $code = null;
 
     #[ORM\Column(type: 'datetime')]
     private DateTimeInterface $createdAt;
@@ -48,27 +49,35 @@ class Brand
     #[ORM\Column(type: 'datetime')]
     private DateTimeInterface $updatedAt;
 
-    #[ORM\OneToMany(mappedBy: 'brand', targetEntity: Product::class)]
-    private Collection $products;
-
-    public function __construct()
-    {
-        $this->products = new ArrayCollection();
-    }
+    #[ORM\ManyToOne(inversedBy: 'identifierCodes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Product $product = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getType(): ?string
     {
-        return $this->name;
+        return $this->type;
     }
 
-    public function setName(string $name): self
+    public function setType(string $type): self
     {
-        $this->name = $name;
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): self
+    {
+        $this->code = $code;
 
         return $this;
     }
@@ -124,32 +133,14 @@ class Brand
         return $this;
     }
 
-    /**
-     * @return Collection<int, Product>
-     */
-    public function getProducts(): Collection
+    public function getProduct(): ?Product
     {
-        return $this->products;
+        return $this->product;
     }
 
-    public function addProduct(Product $product): self
+    public function setProduct(?Product $product): self
     {
-        if (!$this->products->contains($product)) {
-            $this->products->add($product);
-            $product->setBrand($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): self
-    {
-        if ($this->products->removeElement($product)) {
-            // set the owning side to null (unless already changed)
-            if ($product->getBrand() === $this) {
-                $product->setBrand(null);
-            }
-        }
+        $this->product = $product;
 
         return $this;
     }

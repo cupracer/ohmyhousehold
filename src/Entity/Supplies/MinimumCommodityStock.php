@@ -21,26 +21,31 @@
 
 namespace App\Entity\Supplies;
 
-use App\Repository\Supplies\BrandRepository;
+use App\Repository\Supplies\MinimumCommodityStockRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-#[ORM\Entity(repositoryClass: BrandRepository::class)]
+#[ORM\Entity(repositoryClass: MinimumCommodityStockRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity(fields: ['name'], message: 'form.supplies.brand.name.not-unique')]
-class Brand
+#[UniqueEntity(fields: ['commodity', 'storageLocation'], message: 'form.supplies.minimumcommoditystock.not-unique')]
+class MinimumCommodityStock
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, unique: true)]
-    private ?string $name = null;
+    #[ORM\ManyToOne(inversedBy: 'minimumCommodityStocks')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Commodity $commodity = null;
+
+    #[ORM\ManyToOne(inversedBy: 'minimumCommodityStocks')]
+    private ?StorageLocation $storageLocation = null;
+
+    #[ORM\Column]
+    private ?int $count = null;
 
     #[ORM\Column(type: 'datetime')]
     private DateTimeInterface $createdAt;
@@ -48,27 +53,43 @@ class Brand
     #[ORM\Column(type: 'datetime')]
     private DateTimeInterface $updatedAt;
 
-    #[ORM\OneToMany(mappedBy: 'brand', targetEntity: Product::class)]
-    private Collection $products;
-
-    public function __construct()
-    {
-        $this->products = new ArrayCollection();
-    }
-
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getCommodity(): ?Commodity
     {
-        return $this->name;
+        return $this->commodity;
     }
 
-    public function setName(string $name): self
+    public function setCommodity(?Commodity $commodity): self
     {
-        $this->name = $name;
+        $this->commodity = $commodity;
+
+        return $this;
+    }
+
+    public function getStorageLocation(): ?StorageLocation
+    {
+        return $this->storageLocation;
+    }
+
+    public function setStorageLocation(?StorageLocation $storageLocation): self
+    {
+        $this->storageLocation = $storageLocation;
+
+        return $this;
+    }
+
+    public function getCount(): ?int
+    {
+        return $this->count;
+    }
+
+    public function setCount(int $count): self
+    {
+        $this->count = $count;
 
         return $this;
     }
@@ -121,36 +142,6 @@ class Brand
     public function setUpdatedAtValue(): self
     {
         $this->updatedAt = new DateTimeImmutable();
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Product>
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
-
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products->add($product);
-            $product->setBrand($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): self
-    {
-        if ($this->products->removeElement($product)) {
-            // set the owning side to null (unless already changed)
-            if ($product->getBrand() === $this) {
-                $product->setBrand(null);
-            }
-        }
-
         return $this;
     }
 }

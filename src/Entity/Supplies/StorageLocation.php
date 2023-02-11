@@ -21,7 +21,7 @@
 
 namespace App\Entity\Supplies;
 
-use App\Repository\Supplies\BrandRepository;
+use App\Repository\Supplies\StorageLocationRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -29,10 +29,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-#[ORM\Entity(repositoryClass: BrandRepository::class)]
+#[ORM\Entity(repositoryClass: StorageLocationRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity(fields: ['name'], message: 'form.supplies.brand.name.not-unique')]
-class Brand
+#[UniqueEntity(fields: ['name'], message: 'form.supplies.storagelocation.name.not-unique')]
+class StorageLocation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -42,18 +42,22 @@ class Brand
     #[ORM\Column(length: 255, unique: true)]
     private ?string $name = null;
 
+    #[ORM\OneToMany(mappedBy: 'storageLocation', targetEntity: MinimumCommodityStock::class)]
+    private Collection $minimumCommodityStocks;
+
+    #[ORM\OneToMany(mappedBy: 'storageLocation', targetEntity: MinimumProductStock::class)]
+    private Collection $minimumProductStocks;
+
     #[ORM\Column(type: 'datetime')]
     private DateTimeInterface $createdAt;
 
     #[ORM\Column(type: 'datetime')]
     private DateTimeInterface $updatedAt;
 
-    #[ORM\OneToMany(mappedBy: 'brand', targetEntity: Product::class)]
-    private Collection $products;
-
     public function __construct()
     {
-        $this->products = new ArrayCollection();
+        $this->minimumCommodityStocks = new ArrayCollection();
+        $this->minimumProductStocks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -69,6 +73,66 @@ class Brand
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MinimumCommodityStock>
+     */
+    public function getMinimumCommodityStocks(): Collection
+    {
+        return $this->minimumCommodityStocks;
+    }
+
+    public function addMinimumCommodityStock(MinimumCommodityStock $minimumCommodityStock): self
+    {
+        if (!$this->minimumCommodityStocks->contains($minimumCommodityStock)) {
+            $this->minimumCommodityStocks->add($minimumCommodityStock);
+            $minimumCommodityStock->setStorageLocation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMinimumCommodityStock(MinimumCommodityStock $minimumCommodityStock): self
+    {
+        if ($this->minimumCommodityStocks->removeElement($minimumCommodityStock)) {
+            // set the owning side to null (unless already changed)
+            if ($minimumCommodityStock->getStorageLocation() === $this) {
+                $minimumCommodityStock->setStorageLocation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MinimumProductStock>
+     */
+    public function getMinimumProductStocks(): Collection
+    {
+        return $this->minimumProductStocks;
+    }
+
+    public function addMinimumProductStock(MinimumProductStock $minimumProductStock): self
+    {
+        if (!$this->minimumProductStocks->contains($minimumProductStock)) {
+            $this->minimumProductStocks->add($minimumProductStock);
+            $minimumProductStock->setStorageLocation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMinimumProductStock(MinimumProductStock $minimumProductStock): self
+    {
+        if ($this->minimumProductStocks->removeElement($minimumProductStock)) {
+            // set the owning side to null (unless already changed)
+            if ($minimumProductStock->getStorageLocation() === $this) {
+                $minimumProductStock->setStorageLocation(null);
+            }
+        }
 
         return $this;
     }
@@ -121,36 +185,6 @@ class Brand
     public function setUpdatedAtValue(): self
     {
         $this->updatedAt = new DateTimeImmutable();
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Product>
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
-
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products->add($product);
-            $product->setBrand($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): self
-    {
-        if ($this->products->removeElement($product)) {
-            // set the owning side to null (unless already changed)
-            if ($product->getBrand() === $this) {
-                $product->setBrand(null);
-            }
-        }
-
         return $this;
     }
 }
