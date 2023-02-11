@@ -28,14 +28,19 @@ use Doctrine\Persistence\ObjectManager;
 
 class BrandFixtures extends Fixture implements FixtureGroupInterface
 {
+    public const NUM_OBJECTS = 10;
+    public const REFERENCE_ID = 'supplies-brand-';
+
     public function load(ObjectManager $manager): void
     {
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= self::NUM_OBJECTS; $i++) {
             $brand = new Brand();
             $brand->setName('Brand_' . $i);
             $manager->persist($brand);
-            $manager->flush();
+            $this->addReference(self::REFERENCE_ID . $i, $brand);
         }
+
+        $manager->flush();
     }
 
     public static function getGroups(): array
