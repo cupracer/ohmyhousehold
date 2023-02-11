@@ -48,10 +48,10 @@ class UserProfile
     #[ORM\Column(length: 10)]
     private ?string $locale = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
     private DateTimeInterface $createdAt;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
     private DateTimeInterface $updatedAt;
 
     public function getId(): ?int
