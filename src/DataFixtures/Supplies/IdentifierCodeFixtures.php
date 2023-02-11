@@ -21,26 +21,49 @@
 
 namespace App\DataFixtures\Supplies;
 
-use App\Entity\Supplies\Category;
+use App\Entity\Supplies\IdentifierCode;
+use App\Entity\Supplies\Product;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class CategoryFixtures extends Fixture implements FixtureGroupInterface
+class IdentifierCodeFixtures extends Fixture implements FixtureGroupInterface, DependentFixtureInterface
 {
-    public const NUM_OBJECTS = 10;
-    public const REFERENCE_ID = 'supplies-category-';
+    public const NUM_OBJECTS = 50;
+    public const REFERENCE_ID = 'supplies-identifiercode-';
 
     public function load(ObjectManager $manager): void
     {
         for ($i = 1; $i <= self::NUM_OBJECTS; $i++) {
-            $category = new Category();
-            $category->setName('Category_' . $i);
-            $manager->persist($category);
-            $this->addReference(self::REFERENCE_ID . $i, $category);
+            $type = IdentifierCode::TYPES[array_rand(IdentifierCode::TYPES)];
+
+            $identifierCode = new IdentifierCode();
+            $identifierCode->setType($type['name']);
+
+            $identifierCode->setCode(mt_rand(
+                (int) str_pad("1", $type['length'], "0", STR_PAD_RIGHT),
+                (int) str_pad("9", $type['length'], "9", STR_PAD_RIGHT)
+            ));
+
+            $identifierCode->setProduct(
+                $this->getReference(
+                    ProductFixtures::REFERENCE_ID . mt_rand(1, ProductFixtures::NUM_OBJECTS),
+                    Product::class
+            ));
+
+            $manager->persist($identifierCode);
+            $this->addReference(self::REFERENCE_ID . $i, $identifierCode);
         }
 
         $manager->flush();
+    }
+
+    public function getDependencies(): array
+    {
+        return [
+            ProductFixtures::class,
+        ];
     }
 
     public static function getGroups(): array
