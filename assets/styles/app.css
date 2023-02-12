@@ -23,3 +23,10 @@ body {
 [class*="sidebar-light-"] .nav-treeview > .nav-item > .nav-link.active:hover {
     background-color: #20c997;
 }
+
+.btn-teal {
+    color: #fff;
+    background-color: #20c997;
+    border-color: #20c997;
+    box-shadow: none;
+}
