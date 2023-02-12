@@ -2,9 +2,11 @@
 datatables:
     # Set options, as documented at https://datatables.net/reference/option/
     options:
-        lengthMenu : [10, 25, 50, 100, 250, 500, 1000, 2500]
-        pageLength: 50
-        dom: "<'row' <'col-sm-12' tr>><'row' <'col-sm-6'l><'col-sm-6 text-right'pi>>"
+        lengthMenu : [[10, 25, 50, 100, 250, 500, -1], [10, 25, 50, 100, 250, 500, "All"]],
+        pageLength: 10
+        searching: true
+        dom: "<'row' <'col-sm-6'l><'col-sm-6 text-right'f>><'row' <'col-sm-12' tr>><'row' <'col-sm-12 text-left'i>> <'row' <'col-sm-12 text-center'p>>"
+        pagingType: simple_numbers
 
     template_parameters:
         # Example classes to integrate nicely with Bootstrap 3.x
@@ -12,3 +14,4 @@ datatables:
 
     # You can for example override this to "tables" to keep the translation domains separated nicely
     translation_domain: 'messages'
+    language_from_cdn: false
