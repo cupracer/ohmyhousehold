@@ -1,7 +1,7 @@
 <li class="nav-header">{{ 'app.supplies.title'|trans|upper }}</li>
 <li class="nav-item {% if app.request.pathInfo starts with path('app_supplies_index') %}menu-open{% endif %}">
     <a href="#" class="nav-link">
-        <i class="nav-icon fas fa-chart-line"></i>
+        <i class="nav-icon fas fa-cubes"></i>
         <p>{{ 'app.supplies.components.title'|trans|title }} <i class="right fas fa-angle-left"></i></p>
     </a>
     <ul class="nav nav-treeview" style="display: {% if app.request.pathInfo starts with path('app_supplies_components_index') %}block{% else %}none{% endif %};">
