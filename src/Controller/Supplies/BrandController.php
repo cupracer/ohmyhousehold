@@ -30,9 +30,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Translation\TranslatableMessage;
 
-#[Route('/{_locale<%app.supported_locales%>}/supplies/brand')]
+#[IsGranted('ROLE_USER')]
+#[Route('/{_locale<%app.supported_locales%>}/supplies/components/brand')]
 class BrandController extends AbstractController
 {
     #[Route('/', name: 'app_supplies_brand_index')]
@@ -63,7 +65,7 @@ class BrandController extends AbstractController
 
         return $this->render('supplies/brand/form.html.twig', [
             'form' => $form,
-            'pageTitle' => 'app.supplies.brand.form.create',
+            'pageTitle' => 'app.supplies.brand.form.create.title',
         ]);
     }
 }
