@@ -175,7 +175,7 @@
 
   {% block sidebar_block %}
   <!-- Main Sidebar Container -->
-  {% block sidebar_tag %}<aside class="main-sidebar sidebar-dark-primary elevation-4">{% endblock sidebar_tag %}
+  {% block sidebar_container_tag %}<aside class="main-sidebar sidebar-dark-primary elevation-4">{% endblock sidebar_container_tag %}
     {% block sidebar_logo %}
     <!-- Brand Logo -->
     <a href="../../index3.html" class="brand-link">
@@ -185,7 +185,9 @@
     {% endblock sidebar_logo %}
 
     <!-- Sidebar -->
+    {% block sidebar_tag %}
     <div class="sidebar">
+    {% endblock sidebar_tag %}
       {% block sidebar_user %}
       <!-- Sidebar user (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
