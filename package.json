@@ -21,6 +21,7 @@
     },
     "dependencies": {
         "admin-lte": "^3.2",
+        "file-loader": "^6",
         "source-sans": "^3.46.0"
     }
 }
