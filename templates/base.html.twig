@@ -26,7 +26,7 @@ As a workaround, text-sm is instead set on navbar_tag, sidebar_tag and main_cont
 {% endblock navbar_tag %}
 
 
-{% block sidebar_tag %}<aside class="main-sidebar sidebar-light-teal elevation-4">{% endblock sidebar_tag %}
+{% block sidebar_container_tag %}<aside class="main-sidebar sidebar-light-teal elevation-4">{% endblock sidebar_container_tag %}
 
 {% block sidebar_logo %}
     <!-- Brand Logo -->
@@ -35,6 +35,11 @@ As a workaround, text-sm is instead set on navbar_tag, sidebar_tag and main_cont
         <span class="brand-text font-weight-light">{{ siteName }}</span>
     </a>
 {% endblock sidebar_logo %}
+
+
+{% block sidebar_tag %}
+    <div class="sidebar  os-theme-dark">
+{% endblock sidebar_tag %}
 
 
 {% block sidebar_user %}
