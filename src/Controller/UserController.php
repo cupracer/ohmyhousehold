@@ -66,7 +66,9 @@ class UserController extends AbstractController
                 )
             );
 
-            $user->getUserProfile()->setLocale($session->get('_locale'));
+            // see LocaleSubscriber to learn how $request->getLocale() is implemented.
+            // also see AppController -> setUserLocale()
+            $user->getUserProfile()->setLocale($request->getLocale());
 
             $entityManager->persist($user);
             $entityManager->flush();
@@ -134,11 +136,20 @@ class UserController extends AbstractController
     }
 
     #[Route(path: '/login', name: 'user_login')]
-    public function login(AuthenticationUtils $authenticationUtils, LoggerInterface $logger): Response
+    public function login(AuthenticationUtils $authenticationUtils, LoggerInterface $logger, SessionInterface $session): Response
     {
+        /** @var User $user */
         $user = $this->getUser();
         if($user) {
             $logger->info("User '{username}' successfully logged in.", ['username' => $user->getUserIdentifier()]);
+
+            // If this session as already a _locale set explicitly (see LocaleSubscriber),
+            // the persistent locale from the user profile is ignored during login.
+            // TODO: Should the profile be updated according to the recently chosen locale?
+            if(!$session->has('_locale')) {
+                $session->set('_locale', $user->getUserProfile()->getLocale());
+            }
+
             return $this->redirectToRoute('app_start');
         }
 
