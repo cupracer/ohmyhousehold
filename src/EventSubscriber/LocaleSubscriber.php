@@ -19,43 +19,52 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/* Making the Locale "Sticky" during a User's Session:
- * Symfony stores the locale setting in the Request, which means that this setting is not automatically saved ("sticky")
- * across requests. But, you can store the locale in the session, so that it's used on subsequent requests.
- *
+/*
  * Source: https://symfony.com/doc/current/session.html
- * TODO: Implement: Setting the Locale Based on the User's Preferences
  * TODO: Implement: Encryption of Session Data
  */
 
 namespace App\EventSubscriber;
 
+use App\Service\LocaleService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class LocaleSubscriber implements EventSubscriberInterface
 {
-    private string $defaultLocale;
-
-    public function __construct(string $defaultLocale = 'en')
+    public function __construct(
+        private readonly LocaleService $localeService
+    )
     {
-        $this->defaultLocale = $defaultLocale;
     }
 
     public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
-        if (!$request->hasPreviousSession()) {
-            return;
-        }
 
-        // try to see if the locale has been set as a _locale routing parameter
-        if ($locale = $request->attributes->get('_locale')) {
-            $request->getSession()->set('_locale', $locale);
-        } else {
-            // if no explicit locale has been set on this request, use one from the session
-            $request->setLocale($request->getSession()->get('_locale', $this->defaultLocale));
+        // Upon every request this Subscriber is setting the request's locale.
+        // If "_locale" is already available as a session variable (see AppController -> setUserLocale() ),
+        // the detection of available and preferred locales is skipped.
+
+        if(!$request->getSession()->has('_locale')) {
+
+            // This array contains the App's default locale as the first element. This is also used as fallback.
+            // All other elements are the App's supported locales.
+            $availableOrderedLocales = array_unique(
+                array_merge(
+                    [$this->localeService->getDefaultLocale()],
+                    array_keys($this->localeService->getSupportedLocales())
+                )
+            );
+
+            // This chooses a matching language as requested by the browser
+            // or the first element of the array if not match exists (see fallback above).
+            $detectedLocale = $request->getPreferredLanguage($availableOrderedLocales);
+
+            $request->setLocale($detectedLocale);
+        }else {
+            $request->setLocale($request->getSession()->get('_locale'));
         }
     }
 

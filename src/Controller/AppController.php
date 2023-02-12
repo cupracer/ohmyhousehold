@@ -24,6 +24,7 @@ namespace App\Controller;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -37,17 +38,14 @@ class AppController extends AbstractController
     }
 
     #[Route('/', name: 'app_start')]
-    public function indexNoLocale(SessionInterface $session): Response
+    public function indexNoLocale(Request $request): Response
     {
-        if($session->get('_locale')) {
-            return $this->redirectToRoute('app_start_localized', [
-                '_locale' => $session->get('_locale')
-            ]);
-        }else {
-            return $this->redirectToRoute('app_start_localized', [
-                '_locale' => 'en'
-            ]);
-        }
+        return $this->redirectToRoute('app_start_localized', [
+
+            // Since no locale was provided with the request, this method just uses
+            // whatever was detected and chosen by the LocaleSubscriber:
+            '_locale' => $request->getLocale()
+        ]);
     }
 
     #[Route('/{_locale<%app.supported_locales%>}/', name: 'app_start_localized')]
@@ -67,6 +65,11 @@ class AppController extends AbstractController
     #[Route('/locale/{_locale<%app.supported_locales%>}/', name: 'app_set_locale')]
     public function setUserLocale(string $_locale, SessionInterface $session, ManagerRegistry $managerRegistry): Response
     {
+        // The requester explicitly decided to use a specified locale.
+        // This is going to be persisted in the current session:
+        $session->set('_locale', $_locale);
+
+        // If the requester is a logged in use, the locale is also persisted in the database for further sessions.
         /** @var User $user */
         $user = $this->getUser();
 
