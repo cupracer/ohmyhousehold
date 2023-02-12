@@ -38,3 +38,9 @@ body {
     background-color: #38a685;
     border-color: #246a55;
 }
+
+/* Set table column to minimum width */
+   td.min {
+       width: 1px;
+       white-space: nowrap;
+   }
