@@ -25,14 +25,26 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LocaleService
 {
+    private string $defaultLocale;
+
     private array $supportedLocales;
     private TranslatorInterface $translator;
 
-    public function __construct(string $supportedLocales, TranslatorInterface $translator)
+    public function __construct(string $defaultLocale, string $supportedLocales, TranslatorInterface $translator)
     {
+        $this->defaultLocale = $defaultLocale;
+
         // explode creates an array from string, array_filter removes empty elements, array_values creates new index
         $this->supportedLocales = array_values(array_filter(explode('|', $supportedLocales)));
         $this->translator = $translator;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultLocale(): string
+    {
+        return $this->defaultLocale;
     }
 
     public function getSupportedLocales(bool $reverse = false): array

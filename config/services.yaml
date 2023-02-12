@@ -36,4 +36,5 @@ services:
 
     App\Service\LocaleService:
         arguments:
+            $defaultLocale: "%kernel.default_locale%"
             $supportedLocales: '%app.supported_locales%'
