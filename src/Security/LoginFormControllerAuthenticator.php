@@ -21,6 +21,7 @@
 
 namespace App\Security;
 
+use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -61,6 +62,16 @@ class LoginFormControllerAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        /** @var User $user */
+        $user = $token->getUser();
+
+        // If this session as already a _locale set explicitly (see LocaleSubscriber),
+        // the persistent locale from the user profile is ignored during login.
+        // TODO: Should the profile be updated according to the recently chosen locale?
+        if(!$request->getSession()->has('_locale')) {
+            $request->getSession()->set('_locale', $user->getUserProfile()->getLocale());
+        }
+
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
