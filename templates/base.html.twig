@@ -110,7 +110,7 @@ As a workaround, text-sm is instead set on navbar_tag, sidebar_tag and main_cont
     {% if is_granted('ROLE_USER') %}
         <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
-                {{ app.user.userProfile.naturalName }} <i class="text-success far fa-user ml-2"></i>
+                {{ app.user.userProfile.naturalName }} <i class="text-teal far fa-user ml-2"></i>
             </a>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                 <a href="#" class="dropdown-item">
