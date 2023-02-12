@@ -25,9 +25,16 @@ body {
     color: white;
 }
 
+/* Theme-styled button */
 .btn-teal {
     color: #fff;
     background-color: #20c997;
     border-color: #20c997;
     box-shadow: none;
+}
+
+/* Theme-styled success alert, but not as bright as teal */
+.alert-success {
+    background-color: #38a685;
+    border-color: #246a55;
 }
