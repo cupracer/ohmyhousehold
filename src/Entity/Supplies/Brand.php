@@ -44,7 +44,7 @@ class Brand
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 255)]
-    #[Assert\Regex(pattern: '/^[\w\s][\w\s-]*[\w\s]$/', message: 'form.regex.invalid')]
+    #[Assert\Regex(pattern: '/^[\w][\w\s-]*[\w]$/', message: 'form.regex.invalid')]
     private ?string $name = null;
 
     #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
