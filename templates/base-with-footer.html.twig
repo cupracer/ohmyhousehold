@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block page_content_footer %}
+    <div class="card-footer">
+        <div class="row">
+            <div class="col-lg">
+                {% block page_content_footer_body %}{% endblock page_content_footer_body %}
+            </div>
+        </div>
+    </div>
+{% endblock page_content_footer %}
