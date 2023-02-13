@@ -115,13 +115,20 @@ class BrandController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_supplies_brand_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Brand $brand, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Brand $brand, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
         $form = $this->createForm(BrandType::class, $brand);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+
+            $logger->info("Brand '{name}' ({id}) was updated.", ['name' => $brand->getName(), 'id' => $brand->getId()]);
+            $this->addFlash('success', new TranslatableMessage(
+                "app.supplies.brand.form.success.updated", [
+                    '%name%' => $brand->getName(),
+                    '%id%' => $brand->getId()
+                ]));
 
             return $this->redirectToRoute('app_supplies_brand_show', ['id' => $brand->getId()]);
         }
