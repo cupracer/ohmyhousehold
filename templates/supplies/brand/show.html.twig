@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base-with-footer.html.twig' %}
 
 {% block page_content_body %}
 <div class="row">
@@ -36,3 +36,16 @@
     <div class="col-md"></div>
 </div>
 {% endblock page_content_body %}
+
+{% block page_content_footer_body %}
+    <form method="post" action="{{ path('app_supplies_brand_delete', {'id': brand.id}) }}"
+          onsubmit="return confirm('{{ 'app.supplies.brand.form.delete.confirm'|trans({'name': brand.name}) }}');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete_brand_' ~ brand.id) }}">
+        <button class="btn btn-xs text-danger btn-delete">
+                                            <span class="icon mr-1">
+                                                <i class="far fa-trash-alt"></i>
+                                            </span>
+            <span class="text">{{ 'app.delete'|trans|u.title }}</span>
+        </button>
+    </form>
+{% endblock page_content_footer_body %}

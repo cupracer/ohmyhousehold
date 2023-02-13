@@ -1,5 +1,16 @@
 {% extends 'base.html.twig' %}
 
+{% block page_header_buttons %}
+    <div class="col-lg-3 text-right">
+        <a href="{{ path('app_supplies_brand_new') }}" class="btn btn-teal btn-icon-split btn-sm">
+                    <span class="icon text mr-1">
+                        <i class="far fa-edit"></i>
+                    </span>
+            <span class="text">{{ 'app.supplies.brand.form.create.title'|trans|capitalize }}</span>
+        </a>
+    </div>
+{% endblock page_header_buttons %}
+
 {% block page_content_body %}
     <div class="row">
         <div class="col"></div>
