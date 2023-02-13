@@ -40,7 +40,12 @@ body {
 }
 
 /* Set table column to minimum width */
-   td.min {
-       width: 1px;
-       white-space: nowrap;
-   }
+td.min {
+   width: 1px;
+   white-space: nowrap;
+}
+
+/* Force bigger card title text to enlarge the row at least to the height of buttons */
+.card-title {
+    font-size: 1.7rem !important;
+}
