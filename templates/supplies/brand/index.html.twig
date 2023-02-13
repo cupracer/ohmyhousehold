@@ -1,20 +1,33 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello BrandController!{% endblock %}
-
 {% block page_content_body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/var/www/html/src/Controller/BrandController.php'|file_link(0) }}">src/Controller/BrandController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/var/www/html/templates/brand/index.html.twig'|file_link(0) }}">templates/brand/index.html.twig</a></code></li>
-    </ul>
-</div>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-md-10 col-lg-8">
+            <!-- Insert this where you want the table to appear -->
+            <div id="brands">Loading...</div>
+        </div>
+        <div class="col"></div>
+    </div>
 {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    {{ encore_entry_link_tags('datatables') }}
+{% endblock stylesheets %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {{ encore_entry_script_tags('datatables') }}
+{% endblock javascripts %}
+
+{% block javascripts_inline %}
+    <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
+    <script>
+        $(function() {
+            $('#brands').initDataTables({{ datatable_settings(datatable) }});
+        });
+    </script>
+{% endblock javascripts_inline %}

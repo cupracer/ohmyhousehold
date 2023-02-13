@@ -6,9 +6,9 @@
     </a>
     <ul class="nav nav-treeview" style="display: {% if app.request.pathInfo starts with path('app_supplies_components_index') %}block{% else %}none{% endif %};">
         <li class="nav-item">
-            <a href="{{ path('app_supplies_brand_create') }}" class="nav-link {% if app.request.pathInfo starts with path('app_supplies_brand_create') %}active{% endif %}">
+            <a href="{{ path('app_supplies_brand_index') }}" class="nav-link {% if app.request.pathInfo starts with path('app_supplies_brand_index') %}active{% endif %}">
                 <i class="nav-icon fas fa-copyright"></i>
-                <p>{{ 'app.supplies.brand.form.create.title'|trans|capitalize }}</p>
+                <p>{{ 'app.supplies.brands.title'|trans|capitalize }}</p>
             </a>
         </li>
     </ul>

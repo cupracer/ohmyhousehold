@@ -24,6 +24,10 @@ namespace App\Controller\Supplies;
 use App\Entity\Supplies\Brand;
 use App\Form\Supplies\BrandType;
 use Doctrine\ORM\EntityManagerInterface;
+use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Column\DateTimeColumn;
+use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\DataTableFactory;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,16 +41,47 @@ use Symfony\Component\Translation\TranslatableMessage;
 #[Route('/{_locale<%app.supported_locales%>}/supplies/components/brand')]
 class BrandController extends AbstractController
 {
-    #[Route('/', name: 'app_supplies_brand_index')]
-    public function index(): Response
+    #[Route('/', name: 'app_supplies_brand_index', methods: ['GET', 'POST'])]
+    public function index(Request $request, DataTableFactory $dataTableFactory): Response
     {
+        $table = $dataTableFactory->create()
+            ->add('name', TextColumn::class, [
+                'label' => 'form.brand.name',
+                'render' => function($value, Brand $brand) {
+                    return sprintf(
+                        '<a href="%s">%s</a>',
+                        $this->generateUrl('app_supplies_brand_show', ['id' => $brand->getId()]),
+                        $value);
+                },
+            ])
+            ->add('createdAt', DateTimeColumn::class, [
+                'label' => 'label.createdAt',
+                'format' => 'Y-m-d H:i:s',
+                'className' => 'min',
+            ])
+            ->add('updatedAt', DateTimeColumn::class, [
+                'label' => 'label.updatedAt',
+                'format' => 'Y-m-d H:i:s',
+                'className' => 'min',
+            ])
+            ->addOrderBy('name')
+            ->createAdapter(ORMAdapter::class, [
+                'entity' => Brand::class,
+            ])
+            ->handleRequest($request);
+
+        if ($table->isCallback()) {
+            return $table->getResponse();
+        }
+
         return $this->render('supplies/brand/index.html.twig', [
-            'controller_name' => 'BrandController',
+            'pageTitle' => 'app.supplies.brands.title',
+            'datatable' => $table,
         ]);
     }
 
-    #[Route('/create', name: 'app_supplies_brand_create')]
-    public function register(Request $request, EntityManagerInterface $entityManager, LoggerInterface $logger, SessionInterface $session): Response
+    #[Route('/new', name: 'app_supplies_brand_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager, LoggerInterface $logger, SessionInterface $session): Response
     {
         $brand = new Brand();
         $form = $this->createForm(BrandType::class, $brand);
@@ -60,12 +95,43 @@ class BrandController extends AbstractController
             $this->addFlash('success', new TranslatableMessage(
                 "app.supplies.brand.form.success.created", ['%name%' => $brand->getName()]));
 
-            return $this->redirectToRoute('app_supplies_brand_create');
+            return $this->redirectToRoute('app_supplies_brand_new');
         }
 
         return $this->render('supplies/brand/form.html.twig', [
             'form' => $form,
             'pageTitle' => 'app.supplies.brand.form.create.title',
+        ]);
+    }
+
+    #[Route('/{id}', name: 'app_supplies_brand_show', methods: ['GET'])]
+    public function show(Brand $brand): Response
+    {
+        return $this->render('supplies/brand/show.html.twig', [
+            'pageTitle' => new TranslatableMessage(
+                "app.supplies.brand.title", ['%name%' => $brand->getName()]),
+            'brand' => $brand,
+        ]);
+    }
+
+    #[Route('/{id}/edit', name: 'app_supplies_brand_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Brand $brand, EntityManagerInterface $entityManager): Response
+    {
+        $form = $this->createForm(BrandType::class, $brand);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_supplies_brand_show', ['id' => $brand->getId()]);
+        }
+
+        return $this->render('supplies/brand/form.html.twig', [
+            'pageTitle' => new TranslatableMessage(
+                "app.supplies.brand.form.edit.title", ['%name%' => $brand->getName()]),
+            'form' => $form->createView(),
+            'brand' => $brand,
+            'button_label' => 'app.update',
         ]);
     }
 }

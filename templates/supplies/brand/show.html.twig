@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block page_content_body %}
+<div class="row">
+    <div class="col"></div>
+    <div class="col-md-5 col-lg-4">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <label>Name</label>
+                    <div>{{ brand.name }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6 mt-3">
+                <a href="{{ path('app_supplies_brand_index') }}" class="btn btn-outline-secondary btn-icon-split mr-4">
+                    <span class="icon text-secondary mr-1">
+                        <i class="far fa-arrow-circle-left"></i>
+                    </span>
+                    <span class="text">{{ 'app.back'|trans }}</span>
+                </a>
+            </div>
+            <div class="col-6 text-right mt-3">
+                <a href="{{ path('app_supplies_brand_edit', {id: brand.id}) }}" class="btn btn-teal btn-icon-split mr-4">
+                    <span class="icon text mr-1">
+                        <i class="far fa-edit"></i>
+                    </span>
+                    <span class="text">{{ 'app.edit'|trans|title }}</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md"></div>
+</div>
+{% endblock page_content_body %}

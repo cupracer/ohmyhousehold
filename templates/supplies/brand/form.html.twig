@@ -12,8 +12,21 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-12 text-right mt-3">
-                <button type="submit" class="btn btn-teal text-right">{{ 'app.create'|trans|title }}</button>
+            <div class="col-6 mt-3">
+                <a href="{{ path('app_supplies_brand_show', {id: brand.id}) }}" class="btn btn-outline-secondary btn-icon-split mr-4">
+                    <span class="icon text-secondary mr-1">
+                        <i class="far fa-times-circle"></i>
+                    </span>
+                    <span class="text">{{ 'app.cancel'|trans }}</span>
+                </a>
+            </div>
+            <div class="col-6 text-right mt-3">
+                <button type="submit" class="btn btn-teal text-right">
+                    <span class="icon text mr-1">
+                        <i class="far fa-save"></i>
+                    </span>
+                    {{ button_label|default('app.create')|trans|u.title }}
+                </button>
             </div>
         </div>
     {{ form_end(form) }}
