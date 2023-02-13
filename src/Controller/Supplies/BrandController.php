@@ -23,7 +23,9 @@ namespace App\Controller\Supplies;
 
 use App\Entity\Supplies\Brand;
 use App\Form\Supplies\BrandType;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
@@ -140,5 +142,34 @@ class BrandController extends AbstractController
             'brand' => $brand,
             'button_label' => 'app.update',
         ]);
+    }
+
+    #[Route('/{id}', name: 'app_supplies_brand_delete', methods: ['POST'])]
+    public function delete(Request $request, Brand $brand, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
+    {
+        $id = $brand->getId();
+
+        try {
+            if ($this->isCsrfTokenValid('delete_brand_' . $brand->getId(), $request->request->get('_token'))) {
+                $entityManager->remove($brand);
+                $entityManager->flush();
+
+                $logger->info("Brand '{name}' ({id}) was deleted.", ['name' => $brand->getName(), 'id' => $id]);
+                $this->addFlash('success', new TranslatableMessage(
+                    "app.supplies.brand.form.success.deleted", ['%name%' => $brand->getName(), '%id%' => $id]));
+            }else {
+                $logger->error("Invalid CSRF token used while deleting brand '{name}' ({id}).", ['name' => $brand->getName(), 'id' => $id]);
+                throw new Exception('invalid CSRF token');
+            }
+        } catch (ForeignKeyConstraintViolationException) {
+            $this->addFlash('error', new TranslatableMessage(
+                "app.supplies.brand.form.delete.error.inuse", ['%name%' => $brand->getName(), '%id%' => $id]));
+        }catch (Exception $e) {
+            $logger->error('Error occuring during brand deletion: {error}', ['error' => $e->getMessage()]);
+            $this->addFlash('error', new TranslatableMessage(
+                "app.supplies.brand.form.delete.error", ['%name%' => $brand->getName(), '%id%' => $id]));
+        }
+
+        return $this->redirectToRoute('app_supplies_brand_index');
     }
 }
