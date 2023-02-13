@@ -30,6 +30,10 @@ services:
             - '@Redis'
             - { 'ttl': '%env(APP_SESSION_TTL)%' }
 
+    # at least required by omines/datatables-bundle (see TwigStringColumn)
+    Twig\Extension\StringLoaderExtension:
+        tags: [ twig.extension ]
+
     App\EventSubscriber\TwigEventSubscriber:
         arguments:
             $siteName: '%app.site_name%'
