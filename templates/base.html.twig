@@ -178,9 +178,7 @@ As a workaround, text-sm is instead set on navbar_tag, sidebar_tag and main_cont
                                     {% endblock page_header %}
                                 </h3>
                             </div>
-                            <div class="col-lg text-right">
-                                {% block page_header_buttons %}{% endblock page_header_buttons %}
-                            </div>
+                            {% block page_header_buttons %}{% endblock page_header_buttons %}
                         </div>
                     </div>
                     <div class="card-body">
