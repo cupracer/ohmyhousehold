@@ -34,7 +34,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -83,7 +82,7 @@ class BrandController extends AbstractController
     }
 
     #[Route('/new', name: 'app_supplies_brand_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, LoggerInterface $logger, SessionInterface $session): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
         $brand = new Brand();
         $form = $this->createForm(BrandType::class, $brand);
