@@ -11,6 +11,10 @@
                     <label>{{ 'form.commodity.name'|trans|capitalize }}</label>
                     <div>{{ commodity.name }}</div>
                 </div>
+                <div class="form-group">
+                    <label>{{ 'form.commodity.category'|trans|capitalize }}</label>
+                    <div>{{ commodity.category.name|default('-')|trans }}</div>
+                </div>
             </div>
         </div>
         <div class="row">
