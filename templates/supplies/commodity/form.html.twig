@@ -12,6 +12,18 @@
                 {{ form_row(form.category) }}
             </div>
         </div>
+        <div id="container">
+            <div class="subform"
+                 data-index="{{ form.minimumStocks|length > 0 ? form.minimumStocks|last.vars.name + 1 : 0 }}"
+                 data-prototype="{{ form_widget(form.minimumStocks.vars.prototype)|e('html_attr') }}"
+            >
+                {% for minimumStock in form.minimumStocks %}
+                    {{ form_row(minimumStock.storageLocation) }}
+                    {{ form_row(minimumStock.count) }}
+                {% endfor %}
+            </div>
+            <button type="button" class="add_item_link" data-collection-holder-class="subform">Add a tag</button>
+        </div>
         <div class="row">
             <div class="col-6 mt-3">
                 {% if commodity is defined %}
@@ -34,3 +46,56 @@
     <div class="col-md"></div>
 </div>
 {% endblock page_content_body %}
+
+{% block javascripts_inline %}
+    {{ parent() }}
+    <script type="text/javascript">
+        const addTagFormDeleteLink = (item) => {
+            const removeFormButton = document.createElement('button');
+            removeFormButton.innerText = 'Delete';
+
+            item.append(removeFormButton);
+
+            removeFormButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                // remove the li for the tag form
+                item.remove();
+            });
+        }
+
+        const addFormToCollection = (e) => {
+            const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+
+            const item = document.createElement('div');
+
+            item.innerHTML = collectionHolder
+                .dataset
+                .prototype
+                .replace(
+                    /__name__/g,
+                    collectionHolder.dataset.index
+                );
+
+            collectionHolder.appendChild(item);
+
+            collectionHolder.dataset.index++;
+
+            // add a delete link to the new form
+            addTagFormDeleteLink(item);
+        };
+
+        $(document).ready(function() {
+            document
+                .querySelectorAll('.add_item_link')
+                .forEach(btn => {
+                    btn.addEventListener("click", addFormToCollection)
+                });
+
+            document
+                .querySelectorAll('div.subform div')
+                .forEach((tag) => {
+                    addTagFormDeleteLink(tag)
+                })
+        });
+    </script>
+{% endblock javascripts_inline %}
