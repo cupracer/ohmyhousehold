@@ -140,7 +140,6 @@ class BrandController extends AbstractController
                 "app.supplies.brand.form.edit.title", ['%name%' => $brand->getName()]),
             'form' => $form->createView(),
             'brand' => $brand,
-            'button_label' => 'app.update',
         ]);
     }
 

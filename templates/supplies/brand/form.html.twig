@@ -14,24 +14,17 @@
         <div class="row">
             <div class="col-6 mt-3">
                 {% if brand is defined %}
-                    {% set target_path = path('app_supplies_brand_show', {id: brand.id}) %}
+                    {% set targetUrl = path('app_supplies_brand_show', {id: brand.id}) %}
                 {% else %}
-                    {% set target_path = path('app_supplies_brand_index') %}
+                    {% set targetUrl = path('app_supplies_brand_index') %}
                 {% endif %}
-                <a href="{{ target_path }}" class="btn btn-outline-secondary btn-icon-split mr-4">
-                    <span class="icon text-secondary mr-1">
-                        <i class="far fa-times-circle"></i>
-                    </span>
-                    <span class="text">{{ 'app.cancel'|trans }}</span>
-                </a>
+
+                {% include '_button_cancel.html.twig' with {
+                    'targetUrl': targetUrl,
+                } %}
             </div>
             <div class="col-6 text-right mt-3">
-                <button type="submit" class="btn btn-teal text-right">
-                    <span class="icon text mr-1">
-                        <i class="far fa-save"></i>
-                    </span>
-                    {{ button_label|default('app.create')|trans|u.title }}
-                </button>
+                {% include '_button_submit.html.twig' %}
             </div>
         </div>
     {{ form_end(form) }}
