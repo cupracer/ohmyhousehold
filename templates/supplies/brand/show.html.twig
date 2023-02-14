@@ -15,20 +15,14 @@
         </div>
         <div class="row">
             <div class="col-6 mt-3">
-                <a href="{{ path('app_supplies_brand_index') }}" class="btn btn-outline-secondary btn-icon-split mr-4">
-                    <span class="icon text-secondary mr-1">
-                        <i class="far fa-arrow-circle-left"></i>
-                    </span>
-                    <span class="text">{{ 'app.back'|trans }}</span>
-                </a>
+                {% include '_button_back.html.twig' with {
+                    'targetUrl': path('app_supplies_brand_index'),
+                } %}
             </div>
             <div class="col-6 text-right mt-3">
-                <a href="{{ path('app_supplies_brand_edit', {id: brand.id}) }}" class="btn btn-teal btn-icon-split mr-4">
-                    <span class="icon text mr-1">
-                        <i class="far fa-edit"></i>
-                    </span>
-                    <span class="text">{{ 'app.edit'|trans|title }}</span>
-                </a>
+                {% include '_button_edit.html.twig' with {
+                    'targetUrl': path('app_supplies_brand_edit', {id: brand.id}),
+                } %}
             </div>
         </div>
 
@@ -38,14 +32,9 @@
 {% endblock page_content_body %}
 
 {% block page_content_footer_body %}
-    <form method="post" action="{{ path('app_supplies_brand_delete', {'id': brand.id}) }}"
-          onsubmit="return confirm('{{ 'app.supplies.brand.form.delete.confirm'|trans({'name': brand.name}) }}');">
-        <input type="hidden" name="_token" value="{{ csrf_token('delete_brand_' ~ brand.id) }}">
-        <button class="btn btn-xs text-danger btn-delete">
-                                            <span class="icon mr-1">
-                                                <i class="far fa-trash-alt"></i>
-                                            </span>
-            <span class="text">{{ 'app.delete'|trans|u.title }}</span>
-        </button>
-    </form>
+    {% include '_button_delete_form.html.twig' with {
+        'targetUrl': path('app_supplies_brand_delete', {'id': brand.id}),
+        'confirmMessage': 'app.supplies.brand.form.delete.confirm'|trans({'name': brand.name}),
+        'csrfToken': csrf_token('delete_brand_' ~ brand.id),
+    } %}
 {% endblock page_content_footer_body %}
