@@ -13,13 +13,13 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-6 mt-3">
+        <div class="row mt-5">
+            <div class="col-6">
                 {% include '_button_back.html.twig' with {
                     'targetUrl': path('app_supplies_brand_index'),
                 } %}
             </div>
-            <div class="col-6 text-right mt-3">
+            <div class="col-6 text-right">
                 {% include '_button_edit.html.twig' with {
                     'targetUrl': path('app_supplies_brand_edit', {id: brand.id}),
                 } %}
