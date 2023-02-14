@@ -1,0 +1,10 @@
+<form method="post" action="{{ targetUrl }}"
+      onsubmit="return confirm('{{ confirmMessage|capitalize }}');">
+    <input type="hidden" name="_token" value="{{ csrfToken }}">
+    <button class="btn btn-xs text-danger btn-delete {{ extraClasses|default('') }}">
+        <span class="icon mr-1">
+            <i class="far fa-trash-alt"></i>
+        </span>
+        <span class="text">{{ titleKey|default('app.delete')|trans|capitalize }}</span>
+    </button>
+</form>
