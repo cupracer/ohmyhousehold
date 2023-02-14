@@ -85,3 +85,4 @@ app.supplies.commodity.form.delete.error: 'Die Ware "{name}" konnte aufgrund ein
 app.supplies.commodity.form.delete.error.inuse: 'Die Ware "{name}" wird noch verwendet und kann nicht gelöscht werden.'
 app.supplies.commodity.title: 'Ware "{name}"'
 app.supplies.commodities.title: 'Ware'
+app.supplies.commodity.minimumstocks.title: 'Mindestbestände'

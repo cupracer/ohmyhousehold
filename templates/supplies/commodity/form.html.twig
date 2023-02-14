@@ -10,22 +10,29 @@
             <div class="col-12">
                 {{ form_row(form.name, {'attr': {'autofocus': 'autofocus'}}) }}
                 {{ form_row(form.category) }}
+
+                <h5 class="mt-4 mb-4">{{ 'app.supplies.commodity.minimumstocks.title'|trans|capitalize }}</h5>
+
+                {% set minimumStockHtml = include('supplies/commodity/_form_minimum_stock.html.twig', { 'item': form.minimumStocks.vars.prototype }) %}
+                <div class="js-minimum-stock-wrapper"
+                    data-index="{{ form.minimumStocks|length > 0 ? form.minimumStocks|last.vars.name + 1 : 0 }}"
+                    data-prototype="{{ minimumStockHtml|e('html_attr') }}">
+                    {% for minimumStockForm in form.minimumStocks %}
+                        {{ include('supplies/commodity/_form_minimum_stock.html.twig', { 'item': minimumStockForm }) }}
+                    {% endfor %}
+
+                    <a href="#" class="js-minimum-stock-add">
+                        <span class="icon text mr-1">
+                            <i class="far fa-plus-circle"></i>
+                        </span>
+                        <span class="text">{{ 'app.add'|trans|capitalize }}...</span>
+                    </a>
+                </div>
             </div>
         </div>
-        <div id="container">
-            <div class="subform"
-                 data-index="{{ form.minimumStocks|length > 0 ? form.minimumStocks|last.vars.name + 1 : 0 }}"
-                 data-prototype="{{ form_widget(form.minimumStocks.vars.prototype)|e('html_attr') }}"
-            >
-                {% for minimumStock in form.minimumStocks %}
-                    {{ form_row(minimumStock.storageLocation) }}
-                    {{ form_row(minimumStock.count) }}
-                {% endfor %}
-            </div>
-            <button type="button" class="add_item_link" data-collection-holder-class="subform">Add a tag</button>
-        </div>
-        <div class="row">
-            <div class="col-6 mt-3">
+
+        <div class="row mt-5">
+            <div class="col-6">
                 {% if commodity is defined %}
                     {% set targetUrl = path('app_supplies_commodity_show', {id: commodity.id}) %}
                 {% else %}
@@ -36,7 +43,7 @@
                     'targetUrl': targetUrl,
                 } %}
             </div>
-            <div class="col-6 text-right mt-3">
+            <div class="col-6 text-right">
                 {% include '_button_submit.html.twig' %}
             </div>
         </div>
@@ -49,53 +56,32 @@
 
 {% block javascripts_inline %}
     {{ parent() }}
+
     <script type="text/javascript">
-        const addTagFormDeleteLink = (item) => {
-            const removeFormButton = document.createElement('button');
-            removeFormButton.innerText = 'Delete';
+        // original source: https://symfonycasts.com/screencast/collections/add-new-collection-prototype
+        jQuery(document).ready(function() {
+            let $wrapper = $('.js-minimum-stock-wrapper');
 
-            item.append(removeFormButton);
-
-            removeFormButton.addEventListener('click', (e) => {
+            $wrapper.on('click', '.js-remove-minimum-stock', function(e) {
                 e.preventDefault();
-                // remove the li for the tag form
-                item.remove();
+                $(this).closest('.js-minimum-stock-item')
+                    .fadeOut()
+                    .remove();
             });
-        }
-
-        const addFormToCollection = (e) => {
-            const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
-
-            const item = document.createElement('div');
-
-            item.innerHTML = collectionHolder
-                .dataset
-                .prototype
-                .replace(
-                    /__name__/g,
-                    collectionHolder.dataset.index
-                );
-
-            collectionHolder.appendChild(item);
-
-            collectionHolder.dataset.index++;
-
-            // add a delete link to the new form
-            addTagFormDeleteLink(item);
-        };
-
-        $(document).ready(function() {
-            document
-                .querySelectorAll('.add_item_link')
-                .forEach(btn => {
-                    btn.addEventListener("click", addFormToCollection)
-                });
-
-            document
-                .querySelectorAll('div.subform div')
-                .forEach((tag) => {
-                    addTagFormDeleteLink(tag)
-                })
+            $wrapper.on('click', '.js-minimum-stock-add', function(e) {
+                e.preventDefault();
+                // Get the data-prototype explained earlier
+                let prototype = $wrapper.data('prototype');
+                // get the new index
+                let index = $wrapper.data('index');
+                // Replace '__name__' in the prototype's HTML to
+                // instead be a number based on how many items we have
+                let newForm = prototype.replace(/__name__/g, index);
+                // increase the index with one for the next item
+                $wrapper.data('index', index + 1);
+                // Display the form in the page before the "new" link
+                $(this).before(newForm);
+            });
         });
     </script>
 {% endblock javascripts_inline %}
