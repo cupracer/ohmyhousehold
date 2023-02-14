@@ -21,19 +21,38 @@
 
 namespace App\Form\Supplies;
 
+use App\Entity\Supplies\Category;
 use App\Entity\Supplies\Commodity;
+use App\Repository\Supplies\CategoryRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CommodityType extends AbstractType
 {
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+        private readonly CategoryRepository $categoryRepository,
+    )
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('name', TextType::class, [
                 'label_format' => 'form.commodity.%name%',
+            ])
+            ->add('category', EntityType::class, [
+                'class' => Category::class,
+                'label_format' => 'form.commodity.%name%',
+                'choices' => $this->getTranslatedAndSortedCategoryChoices(),
+                'choice_label' => function($choice) {
+                    return $this->translator->trans($choice->getName());
+                },
             ])
         ;
     }
@@ -46,5 +65,23 @@ class CommodityType extends AbstractType
             'csrf_field_name' => '_token',
             'csrf_token_id'   => 'commodity',
         ]);
+    }
+
+    /**
+     * Get the translated and sorted category choices
+     * @return array
+     */
+    private function getTranslatedAndSortedCategoryChoices(): array
+    {
+        $choices = $this->categoryRepository->findAll();
+
+        // Translate and sort the choices
+        usort($choices, function ($a, $b) {
+            /** @var Category $a */
+            /** @var Category $b */
+            return strcmp($this->translator->trans($a->getName()), $this->translator->trans($b->getName()));
+        });
+
+        return $choices;
     }
 }
