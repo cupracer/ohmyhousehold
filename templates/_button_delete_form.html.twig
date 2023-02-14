@@ -1,5 +1,5 @@
 <form method="post" action="{{ targetUrl }}"
-      onsubmit="return confirm('{{ confirmMessage|capitalize }}');">
+      onsubmit="return confirm('{{ confirmMessage }}');">
     <input type="hidden" name="_token" value="{{ csrfToken }}">
     <button class="btn btn-xs text-danger btn-delete {{ extraClasses|default('') }}">
         <span class="icon mr-1">
