@@ -21,6 +21,7 @@
 
 namespace App\Controller\Supplies;
 
+use App\Entity\Supplies\Category;
 use App\Entity\Supplies\Commodity;
 use App\Form\Supplies\CommodityType;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
@@ -37,13 +38,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use function Symfony\Component\Translation\t;
 
 #[IsGranted('ROLE_USER')]
 #[Route('/{_locale<%app.supported_locales%>}/supplies/commodity')]
 class CommodityController extends AbstractController
 {
     #[Route('/', name: 'app_supplies_commodity_index', methods: ['GET', 'POST'])]
-    public function index(Request $request, DataTableFactory $dataTableFactory): Response
+    public function index(Request $request, DataTableFactory $dataTableFactory, TranslatorInterface $translator): Response
     {
         $table = $dataTableFactory->create()
             ->add('name', TextColumn::class, [
@@ -53,6 +56,14 @@ class CommodityController extends AbstractController
                         '<a href="%s">%s</a>',
                         $this->generateUrl('app_supplies_commodity_show', ['id' => $commodity->getId()]),
                         $value);
+                },
+            ])
+            // TODO: find a way to fix sorting and filtering translated strings instead of message keys
+            ->add('category', TextColumn::class, [
+                'label' => 'form.commodity.category',
+                'field' => 'category.name',
+                'render' => function($value) use ($translator) {
+                    return $translator->trans($value);
                 },
             ])
             ->add('createdAt', DateTimeColumn::class, [
