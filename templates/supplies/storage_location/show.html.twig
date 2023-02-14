@@ -1,0 +1,40 @@
+{% extends 'base-with-footer.html.twig' %}
+
+{% block page_content_body %}
+<div class="row">
+    <div class="col"></div>
+    <div class="col-md-5 col-lg-4">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <label>Name</label>
+                    <div>{{ storageLocation.name }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6 mt-3">
+                {% include '_button_back.html.twig' with {
+                    'targetUrl': path('app_supplies_storagelocation_index'),
+                } %}
+            </div>
+            <div class="col-6 text-right mt-3">
+                {% include '_button_edit.html.twig' with {
+                    'targetUrl': path('app_supplies_storagelocation_edit', {id: storageLocation.id}),
+                } %}
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md"></div>
+</div>
+{% endblock page_content_body %}
+
+{% block page_content_footer_body %}
+    {% include '_button_delete_form.html.twig' with {
+        'targetUrl': path('app_supplies_storagelocation_delete', {'id': storageLocation.id}),
+        'confirmMessage': 'app.supplies.storagelocation.form.delete.confirm'|trans({'name': storageLocation.name}),
+        'csrfToken': csrf_token('delete_storagelocation_' ~ storageLocation.id),
+    } %}
+{% endblock page_content_footer_body %}
