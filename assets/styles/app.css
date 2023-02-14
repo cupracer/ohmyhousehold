@@ -13,9 +13,14 @@ body {
 }*/
 
 /* Remove background-color from nav-menu folders */
-[class*="sidebar-light-"] .nav-sidebar > .nav-item.menu-open > .nav-link,
-[class*="sidebar-light-"] .nav-sidebar > .nav-item:hover > .nav-link {
+[class*="sidebar-light-"] .nav-sidebar > .nav-item.menu-open > .nav-link
+ {
     background-color: revert;
+}
+
+/* Don't use the default color for nav-links */
+[class*="sidebar-light-"] .nav-treeview > .nav-item > .nav-link {
+    color: black;
 }
 
 /* Set background-color for active nav-links */
