@@ -18,21 +18,23 @@
             </div>
         </div>
 
-        <h5 class="mt-4 mb-4 text-center">{{ 'app.supplies.commodity.minimumstocks.title'|trans|capitalize }}</h5>
+        {% if commodity.minimumStocks is not empty %}
+            <h5 class="mt-4 mb-4 text-center">{{ 'app.supplies.commodity.minimumstocks.title'|trans|capitalize }}</h5>
 
-        {% for minimumStock in commodity.minimumStocks %}
-        <div class="row mt-2 mb-2">
-            <div class="col"></div>
-            <div class="col-6">
-                {{ minimumStock.storageLocation.name|default('-')|trans }}
+            {% for minimumStock in commodity.minimumStocks %}
+            <div class="row mt-2 mb-2">
+                <div class="col"></div>
+                <div class="col-6">
+                    {{ minimumStock.storageLocation.name|default('-')|trans }}
+                </div>
+                <div class="col-2 text-right">
+                    {{ minimumStock.count|default('-') }}
+                </div>
+                <div class="col"></div>
             </div>
-            <div class="col-2 text-right">
-                {{ minimumStock.count|default('-') }}
-            </div>
-            <div class="col"></div>
-        </div>
-        <hr>
-        {% endfor %}
+            <hr>
+            {% endfor %}
+        {% endif %}
 
         <div class="row mt-5">
             <div class="col-6">
