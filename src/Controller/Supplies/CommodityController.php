@@ -21,7 +21,6 @@
 
 namespace App\Controller\Supplies;
 
-use App\Entity\Supplies\Category;
 use App\Entity\Supplies\Commodity;
 use App\Form\Supplies\CommodityType;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
@@ -39,7 +38,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use function Symfony\Component\Translation\t;
 
 #[IsGranted('ROLE_USER')]
 #[Route('/{_locale<%app.supported_locales%>}/supplies/commodity')]
