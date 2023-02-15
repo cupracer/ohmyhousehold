@@ -31,7 +31,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: MinimumCommodityStockRepository::class)]
 #[ORM\Table(name: 'supplies_minimum_commodity_stock')]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity(fields: ['commodity', 'storageLocation'], message: 'form.supplies.minimumcommoditystock.not-unique')]
+#[UniqueEntity(fields: ['commodity', 'storageLocation'], message: 'form.supplies.minimumcommoditystock.not-unique', errorPath: 'storageLocation')]
 class MinimumCommodityStock
 {
     #[ORM\Id]
@@ -47,6 +47,11 @@ class MinimumCommodityStock
     #[ORM\ManyToOne(inversedBy: 'minimumCommodityStocks')]
     #[Assert\NotBlank]
     private ?StorageLocation $storageLocation = null;
+
+    // how to Configure an assert message to appear on a different field
+
+
+
 
     #[ORM\Column]
     #[Assert\NotBlank]
