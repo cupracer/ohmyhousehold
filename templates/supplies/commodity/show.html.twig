@@ -18,17 +18,17 @@
             </div>
         </div>
 
-        {% if commodity.minimumStocks is not empty %}
+        {% if commodity.minimumCommodityStocks is not empty %}
             <h5 class="mt-4 mb-4 text-center">{{ 'app.supplies.commodity.minimumstocks.title'|trans|capitalize }}</h5>
 
-            {% for minimumStock in commodity.minimumStocks %}
+            {% for minimumCommodityStock in commodity.minimumCommodityStocks %}
             <div class="row mt-2 mb-2">
                 <div class="col"></div>
                 <div class="col-6">
-                    {{ minimumStock.storageLocation.name|default('-') }}
+                    {{ minimumCommodityStock.storageLocation.name|default('-') }}
                 </div>
                 <div class="col-2 text-right">
-                    {{ minimumStock.count|default('-') }}
+                    {{ minimumCommodityStock.count|default('-') }}
                 </div>
                 <div class="col"></div>
             </div>

@@ -55,7 +55,7 @@ class Commodity
 
     #[ORM\OneToMany(mappedBy: 'commodity', targetEntity: MinimumCommodityStock::class, cascade: ['persist'], orphanRemoval: true)]
     #[Assert\Valid]
-    private Collection $minimumStocks;
+    private Collection $minimumCommodityStocks;
 
     #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
     private DateTimeInterface $createdAt;
@@ -66,7 +66,7 @@ class Commodity
     public function __construct()
     {
         $this->products = new ArrayCollection();
-        $this->minimumStocks = new ArrayCollection();
+        $this->minimumCommodityStocks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -131,27 +131,27 @@ class Commodity
     /**
      * @return Collection<int, MinimumCommodityStock>
      */
-    public function getMinimumStocks(): Collection
+    public function getMinimumCommodityStocks(): Collection
     {
-        return $this->minimumStocks;
+        return $this->minimumCommodityStocks;
     }
 
-    public function addMinimumStock(MinimumCommodityStock $minimumStock): self
+    public function addMinimumCommodityStock(MinimumCommodityStock $minimumCommodityStock): self
     {
-        if (!$this->minimumStocks->contains($minimumStock)) {
-            $this->minimumStocks->add($minimumStock);
-            $minimumStock->setCommodity($this);
+        if (!$this->minimumCommodityStocks->contains($minimumCommodityStock)) {
+            $this->minimumCommodityStocks->add($minimumCommodityStock);
+            $minimumCommodityStock->setCommodity($this);
         }
 
         return $this;
     }
 
-    public function removeMinimumStock(MinimumCommodityStock $minimumStock): self
+    public function removeMinimumCommodityStock(MinimumCommodityStock $minimumCommodityStock): self
     {
-        if ($this->minimumStocks->removeElement($minimumStock)) {
+        if ($this->minimumCommodityStocks->removeElement($minimumCommodityStock)) {
             // set the owning side to null (unless already changed)
-            if ($minimumStock->getCommodity() === $this) {
-                $minimumStock->setCommodity(null);
+            if ($minimumCommodityStock->getCommodity() === $this) {
+                $minimumCommodityStock->setCommodity(null);
             }
         }
 

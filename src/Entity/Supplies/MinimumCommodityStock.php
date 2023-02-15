@@ -39,7 +39,7 @@ class MinimumCommodityStock
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'minimumStocks')]
+    #[ORM\ManyToOne(inversedBy: 'minimumCommodityStocks')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank]
     private ?Commodity $commodity = null;

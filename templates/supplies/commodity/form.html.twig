@@ -13,16 +13,16 @@
 
                 <h5 class="mt-4 mb-4">{{ 'app.supplies.commodity.minimumstocks.title'|trans|capitalize }}</h5>
 
-                {% set minimumStockHtml = include('supplies/commodity/_form_minimum_stock.html.twig', { 'item': form.minimumStocks.vars.prototype }) %}
-                <div class="js-minimum-stock-wrapper"
-                    data-index="{{ form.minimumStocks|length > 0 ? form.minimumStocks|last.vars.name + 1 : 0 }}"
-                    data-prototype="{{ minimumStockHtml|e('html_attr') }}">
+                {% set minimumCommodityStockHtml = include('supplies/commodity/_form_minimum_commodity_stock.html.twig', { 'item': form.minimumCommodityStocks.vars.prototype }) %}
+                <div class="js-minimum-commodity-stock-wrapper"
+                    data-index="{{ form.minimumCommodityStocks|length > 0 ? form.minimumCommodityStocks|last.vars.name + 1 : 0 }}"
+                    data-prototype="{{ minimumCommodityStockHtml|e('html_attr') }}">
 
-                    {% for minimumStockForm in form.minimumStocks %}
-                        {{ include('supplies/commodity/_form_minimum_stock.html.twig', { 'item': minimumStockForm }) }}
+                    {% for minimumCommodityStockForm in form.minimumCommodityStocks %}
+                        {{ include('supplies/commodity/_form_minimum_commodity_stock.html.twig', { 'item': minimumCommodityStockForm }) }}
                     {% endfor %}
 
-                    <a href="#" class="js-minimum-stock-add">
+                    <a href="#" class="js-minimum-commodity-stock-add">
                         <span class="icon text mr-1">
                             <i class="far fa-plus-circle"></i>
                         </span>
@@ -61,15 +61,15 @@
     <script type="text/javascript">
         // original source: https://symfonycasts.com/screencast/collections/add-new-collection-prototype
         jQuery(document).ready(function() {
-            let $wrapper = $('.js-minimum-stock-wrapper');
+            let $wrapper = $('.js-minimum-commodity-stock-wrapper');
 
-            $wrapper.on('click', '.js-remove-minimum-stock', function(e) {
+            $wrapper.on('click', '.js-remove-minimum-commodity-stock', function(e) {
                 e.preventDefault();
-                $(this).closest('.js-minimum-stock-item')
+                $(this).closest('.js-minimum-commodity-stock-item')
                     .fadeOut()
                     .remove();
             });
-            $wrapper.on('click', '.js-minimum-stock-add', function(e) {
+            $wrapper.on('click', '.js-minimum-commodity-stock-add', function(e) {
                 e.preventDefault();
                 // Get the data-prototype explained earlier
                 let prototype = $wrapper.data('prototype');

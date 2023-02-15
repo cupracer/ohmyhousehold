@@ -55,11 +55,12 @@ class CommodityType extends AbstractType
                     return $this->translator->trans($choice->getName());
                 },
             ])
-            ->add('minimumStocks', CollectionType::class, [
+            ->add('minimumCommodityStocks', CollectionType::class, [
                 'entry_type' => MinimumCommodityStockType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
+                'label' => false,
             ])
         ;
     }
