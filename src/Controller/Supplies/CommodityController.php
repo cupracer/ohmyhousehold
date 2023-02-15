@@ -164,6 +164,8 @@ class CommodityController extends AbstractController
                 $logger->info("Commodity '{name}' ({id}) was deleted.", ['name' => $commodity->getName(), 'id' => $id]);
                 $this->addFlash('success', new TranslatableMessage(
                     "app.supplies.commodity.form.success.deleted", ['%name%' => $commodity->getName(), '%id%' => $id]));
+
+                return $this->redirectToRoute('app_supplies_commodity_index');
             }else {
                 $logger->error("Invalid CSRF token used while deleting commodity '{name}' ({id}).", ['name' => $commodity->getName(), 'id' => $id]);
                 throw new Exception('invalid CSRF token');
@@ -172,11 +174,11 @@ class CommodityController extends AbstractController
             $this->addFlash('error', new TranslatableMessage(
                 "app.supplies.commodity.form.delete.error.inuse", ['%name%' => $commodity->getName(), '%id%' => $id]));
         }catch (Exception $e) {
-            $logger->error('Error occuring during commodity deletion: {error}', ['error' => $e->getMessage()]);
+            $logger->error('Error occurred during commodity deletion: {error}', ['error' => $e->getMessage()]);
             $this->addFlash('error', new TranslatableMessage(
                 "app.supplies.commodity.form.delete.error", ['%name%' => $commodity->getName(), '%id%' => $id]));
         }
 
-        return $this->redirectToRoute('app_supplies_commodity_index');
+        return $this->redirectToRoute('app_supplies_commodity_show', ['id' => $commodity->getId()]);
     }
 }
