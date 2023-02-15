@@ -92,7 +92,7 @@ class Product
 
     public function getName(): ?string
     {
-        return $this->name;
+        return $this->name ?: $this->getCommodity()->getName();
     }
 
     public function setName(?string $name): self
