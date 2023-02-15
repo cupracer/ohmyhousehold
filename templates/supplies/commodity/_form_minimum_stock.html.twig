@@ -1,15 +1,17 @@
-<div class="row js-minimum-stock-item">
-    <div class="col-8">
-        {{ form_row(item.storageLocation, {'label': false}) }}
-    </div>
-    <div class="col-2 text-center">
-        {{ form_row(item.count, {'label': false, attr:{'class': 'text-center'}}) }}
-    </div>
-    <div class="col-2">
-        <a href="#" class="js-remove-minimum-stock btn btn-outline-danger btn-icon-split btn-block form-control">
-            <span class="icon text mr-1">
-                <i class="far fa-trash"></i>
-            </span>
-        </a>
+<div class="js-minimum-stock-item">
+    <div class="row">
+        <div class="col-8">
+            {{ form_row(item.storageLocation, {'label': false}) }}
+        </div>
+        <div class="col-2 text-center">
+            {{ form_row(item.count, {'label': false, attr:{'class': 'text-center'}}) }}
+        </div>
+        <div class="col-2">
+            <a href="#" class="js-remove-minimum-stock btn btn-outline-danger btn-icon-split btn-block form-control">
+                <span class="icon text mr-1">
+                    <i class="far fa-trash"></i>
+                </span>
+            </a>
+        </div>
     </div>
 </div>
