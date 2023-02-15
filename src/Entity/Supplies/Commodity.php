@@ -63,6 +63,12 @@ class Commodity
     #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
     private DateTimeInterface $updatedAt;
 
+    #[ORM\Column(nullable: true)]
+    #[Assert\Type(type: 'integer')]
+    #[Assert\Length(max: 4)]
+    #[Assert\Positive]
+    private ?int $minimumGlobalStock = null;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -206,6 +212,18 @@ class Commodity
     public function setUpdatedAtValue(): self
     {
         $this->updatedAt = new DateTimeImmutable();
+        return $this;
+    }
+
+    public function getMinimumGlobalStock(): ?int
+    {
+        return $this->minimumGlobalStock;
+    }
+
+    public function setMinimumGlobalStock(?int $minimumGlobalStock): self
+    {
+        $this->minimumGlobalStock = $minimumGlobalStock;
+
         return $this;
     }
 }

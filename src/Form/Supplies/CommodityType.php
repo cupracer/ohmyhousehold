@@ -27,6 +27,7 @@ use App\Repository\Supplies\CategoryRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -54,6 +55,10 @@ class CommodityType extends AbstractType
                 'choice_label' => function($choice) {
                     return $this->translator->trans($choice->getName());
                 },
+            ])
+            ->add('minimumGlobalStock', IntegerType::class, [
+                'label_format' => 'form.commodity.minimumglobalstock',
+                'required' => false,
             ])
             ->add('minimumCommodityStocks', CollectionType::class, [
                 'entry_type' => MinimumCommodityStockType::class,
