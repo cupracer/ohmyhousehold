@@ -17,6 +17,7 @@
                 <div class="js-minimum-stock-wrapper"
                     data-index="{{ form.minimumStocks|length > 0 ? form.minimumStocks|last.vars.name + 1 : 0 }}"
                     data-prototype="{{ minimumStockHtml|e('html_attr') }}">
+
                     {% for minimumStockForm in form.minimumStocks %}
                         {{ include('supplies/commodity/_form_minimum_stock.html.twig', { 'item': minimumStockForm }) }}
                     {% endfor %}
