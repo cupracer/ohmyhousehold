@@ -26,11 +26,13 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: IdentifierCodeRepository::class)]
 #[ORM\Table(name: 'supplies_identifier_code')]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['type', 'code'], message: 'form.supplies.identifiercode.not-unique')]
+#[UniqueEntity(fields: ['product', 'type', 'code'], message: 'form.supplies.identifiercode.product.not-unique')]
 class IdentifierCode
 {
     public const TYPES = [
@@ -57,9 +59,14 @@ class IdentifierCode
     private ?int $id = null;
 
     #[ORM\Column(length: 10)]
+    #[Assert\NotBlank]
+    #[Assert\Choice(callback: [self::class, 'getTypes'])]
     private ?string $type = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 8, max: 13)] # TODO: check for length according to TYPES array
+    #[Assert\Regex(pattern: '/^[0-9]+$/', message: 'form.supplies.identifiercode.code.not-valid')]
     private ?string $code = null;
 
     #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
@@ -162,5 +169,15 @@ class IdentifierCode
         $this->product = $product;
 
         return $this;
+    }
+
+    // get all 'name' values of the TYPES array
+    public static function getTypes(): array
+    {
+        $types = [];
+        foreach (self::TYPES as $type) {
+            $types[] = $type['name'];
+        }
+        return $types;
     }
 }

@@ -29,6 +29,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ORM\Table(name: 'supplies_product')]
@@ -44,6 +45,8 @@ class Product
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(min: 2, max: 255)]
+    #[Assert\Regex(pattern: '/^[\w][\w\s-]*[\w]$/', message: 'form.regex.invalid')]
     private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
@@ -59,9 +62,13 @@ class Product
     private ?Measure $measure = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Assert\NotBlank]
+    #[Assert\Regex(pattern: '/^\d+(\.\d{1,2})?$/', message: 'form.regex.invalid')]
     private ?string $quantity = null;
 
     #[ORM\Column]
+    #[Assert\NotNull]
+    #[Assert\Type(type: 'bool')]
     private ?bool $organicCertification = null;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
@@ -76,7 +83,8 @@ class Product
     #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
     private DateTimeInterface $updatedAt;
 
-    #[ORM\OneToMany(mappedBy: 'product', targetEntity: IdentifierCode::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: IdentifierCode::class, cascade: ['persist'], orphanRemoval: true)]
+    #[Assert\Valid]
     private Collection $identifierCodes;
 
     public function __construct()
@@ -92,7 +100,8 @@ class Product
 
     public function getName(): ?string
     {
-        return $this->name ?: $this->getCommodity()->getName();
+        // return $this->name if set, otherwise return the name of the commodity if commodity not null
+        return $this->name ?: ($this->getCommodity()?->getName());
     }
 
     public function setName(?string $name): self

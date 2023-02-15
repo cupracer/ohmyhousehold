@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block page_content_body %}
+<div class="row">
+    <div class="col"></div>
+    <div class="col-md-7 col-lg-6">
+        {{ form_start(form) }}
+
+        <div class="row">
+            <div class="col-6">{{ form_row(form.commodity) }}</div>
+            <div class="col-6">{{ form_row(form.brand) }}</div>
+        </div>
+        <div class="row">
+            <div class="col-12">{{ form_row(form.name, {'attr': {'autofocus': 'autofocus'}}) }}</div>
+            <div class="col">{{ form_row(form.organicCertification) }}</div>
+        </div>
+        <div class="row">
+            <div class="col-3">{{ form_row(form.quantity) }}</div>
+            <div class="col-3">{{ form_row(form.measure) }}</div>
+            <div class="col-6">{{ form_row(form.packaging) }}</div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <h5 class="mt-4 mb-4">{{ 'app.supplies.product.identifiercodes.title'|trans|capitalize }}</h5>
+
+                {% set identifierCodeHtml = include('supplies/product/_form_identifier_code.html.twig', { 'item': form.identifierCodes.vars.prototype }) %}
+                <div class="js-identifier-code-wrapper"
+                    data-index="{{ form.identifierCodes|length > 0 ? form.identifierCodes|last.vars.name + 1 : 0 }}"
+                    data-prototype="{{ identifierCodeHtml|e('html_attr') }}">
+
+                    {% for identifierCodeForm in form.identifierCodes %}
+                        {{ include('supplies/product/_form_identifier_code.html.twig', { 'item': identifierCodeForm }) }}
+                    {% endfor %}
+
+                    <a href="#" class="js-identifier-code-add">
+                        <span class="icon text mr-1">
+                            <i class="far fa-plus-circle"></i>
+                        </span>
+                        <span class="text">{{ 'app.add'|trans|capitalize }}...</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-6">
+                {% if product is defined %}
+                    {% set targetUrl = path('app_supplies_product_show', {id: product.id}) %}
+                {% else %}
+                    {% set targetUrl = path('app_supplies_product_index') %}
+                {% endif %}
+
+                {% include '_button_cancel.html.twig' with {
+                    'targetUrl': targetUrl,
+                } %}
+            </div>
+            <div class="col-6 text-right">
+                {% include '_button_submit.html.twig' %}
+            </div>
+        </div>
+    {{ form_end(form) }}
+
+    </div>
+    <div class="col-md"></div>
+</div>
+{% endblock page_content_body %}
+
+{% block javascripts_inline %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        // original source: https://symfonycasts.com/screencast/collections/add-new-collection-prototype
+        jQuery(document).ready(function() {
+            let $wrapper = $('.js-identifier-code-wrapper');
+
+            $wrapper.on('click', '.js-remove-identifier-code', function(e) {
+                e.preventDefault();
+                $(this).closest('.js-identifier-code-item')
+                    .fadeOut()
+                    .remove();
+            });
+            $wrapper.on('click', '.js-identifier-code-add', function(e) {
+                e.preventDefault();
+                // Get the data-prototype explained earlier
+                let prototype = $wrapper.data('prototype');
+                // get the new index
+                let index = $wrapper.data('index');
+                // Replace '__name__' in the prototype's HTML to
+                // instead be a number based on how many items we have
+                let newForm = prototype.replace(/__name__/g, index);
+                // increase the index with one for the next item
+                $wrapper.data('index', index + 1);
+                // Display the form in the page before the "new" link
+                $(this).before(newForm);
+            });
+        });
+    </script>
+{% endblock javascripts_inline %}

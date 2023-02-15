@@ -1,0 +1,86 @@
+{% extends 'base-with-footer.html.twig' %}
+
+{% block page_content_body %}
+<div class="row">
+    <div class="col"></div>
+    <div class="col-md-5 col-lg-4">
+
+        <div class="row">
+            <div class="col-10">
+                <div class="form-group">
+                    <label>{{ 'form.product.brand'|trans|capitalize }}</label>
+                    <div>{{ product.brand.name }}</div>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group text-right">
+                    <label>{{ 'form.product.organicCertification'|trans|capitalize }}</label>
+                    <div>{% if product.organicCertification %}
+                            <i class="fas fa-check text-success text-lg"></i>
+                        {% else %}
+                            <i class="fas fa-times text-danger text-lg"></i>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <label>{{ 'form.product.name'|trans|capitalize }}</label>
+                    <div>{{ product.commodity.name }}{% if product.name %} - {{ product.name }}{% endif %}</div>
+                </div>
+                <div class="form-group">
+                    <label>{{ 'form.product.quantity'|trans|capitalize }}</label>
+                    <div>{{ product.quantity }} {{ product.measure.name|trans }}</div>
+                </div>
+                <div class="form-group">
+                    <label>{{ 'form.product.packaging'|trans|capitalize }}</label>
+                    <div>{{ product.packaging.name|trans }}</div>
+                </div>
+            </div>
+        </div>
+
+        {% if product.identifierCodes|length > 0 %}
+            <h5 class="mt-4 mb-4 text-center">{{ 'app.supplies.product.identifiercodes.title'|trans|capitalize }}</h5>
+
+            {% for identifierCode in product.identifierCodes %}
+                <div class="row mt-2 mb-2">
+                    <div class="col"></div>
+                    <div class="col-3">
+                        {{ identifierCode.type|default('-') }}
+                    </div>
+                    <div class="col-4 text-right">
+                        {{ identifierCode.code|default('-') }}
+                    </div>
+                    <div class="col"></div>
+                </div>
+                <hr>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row mt-5">
+            <div class="col-6">
+                {% include '_button_back.html.twig' with {
+                    'targetUrl': path('app_supplies_product_index'),
+                } %}
+            </div>
+            <div class="col-6 text-right">
+                {% include '_button_edit.html.twig' with {
+                    'targetUrl': path('app_supplies_product_edit', {id: product.id}),
+                } %}
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md"></div>
+</div>
+{% endblock page_content_body %}
+
+{% block page_content_footer_body %}
+    {% include '_button_delete_form.html.twig' with {
+        'targetUrl': path('app_supplies_product_delete', {'id': product.id}),
+        'confirmMessage': 'app.supplies.product.form.delete.confirm'|trans({'name': product.name}),
+        'csrfToken': csrf_token('delete_product_' ~ product.id),
+    } %}
+{% endblock page_content_footer_body %}
