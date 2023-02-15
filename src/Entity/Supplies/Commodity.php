@@ -54,6 +54,7 @@ class Commodity
     private Collection $products;
 
     #[ORM\OneToMany(mappedBy: 'commodity', targetEntity: MinimumCommodityStock::class, cascade: ['persist'], orphanRemoval: true)]
+    #[Assert\Valid]
     private Collection $minimumStocks;
 
     #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
