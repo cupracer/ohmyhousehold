@@ -13,13 +13,14 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-4">
-                {{ form_row(form.minimumGlobalStock, { 'attr': {'class': 'text-right'}}) }}
-            </div>
-        </div>
-        <div class="row">
             <div class="col-12">
                 <h5 class="mt-4 mb-4">{{ 'app.supplies.commodity.minimumstocks.title'|trans|capitalize }}</h5>
+
+                <div class="row">
+                    <div class="col-4">
+                        {{ form_row(form.minimumGlobalStock, { 'attr': {'class': 'text-right'}}) }}
+                    </div>
+                </div>
 
                 {% set minimumCommodityStockHtml = include('supplies/commodity/_form_minimum_commodity_stock.html.twig', { 'item': form.minimumCommodityStocks.vars.prototype }) %}
                 <div class="js-minimum-commodity-stock-wrapper"
