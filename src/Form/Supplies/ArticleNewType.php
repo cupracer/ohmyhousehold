@@ -24,17 +24,28 @@ namespace App\Form\Supplies;
 use App\Entity\Supplies\Article;
 use App\Entity\Supplies\Product;
 use App\Entity\Supplies\StorageLocation;
+use App\Repository\Supplies\ProductRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 
 class ArticleNewType extends AbstractType
 {
+    public function __construct(
+        private readonly RouterInterface $router,
+        private readonly ProductRepository $productRepository,
+    )
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -44,11 +55,6 @@ class ArticleNewType extends AbstractType
             ])
             ->add('storageLocation', EntityType::class, [
                 'class' => StorageLocation::class,
-                'choice_label' => 'name',
-                'label_format' => 'form.article.%name%',
-            ])
-            ->add('product', EntityType::class, [
-                'class' => Product::class,
                 'choice_label' => 'name',
                 'label_format' => 'form.article.%name%',
             ])
@@ -68,6 +74,49 @@ class ArticleNewType extends AbstractType
                     ]),
                 ],
             ])
+
+            // The Products field is used with Select2 to load options dynamically via Ajax.
+            // As Symfony would load all Products a seconds time, it is generated via EventListeners.
+            //
+            // PRE_SET_DATA uses an empty array,
+            // PRE_SUBMIT picks the selected ID and tries to load the Product from the database.
+            //
+            // Validation: If a result is returned, the object seems to be fine, if not, the selection is wrong.
+
+            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                $form = $event->getForm();
+
+                // add the product field with an empty array and a json url for select2
+                $form->add('product', EntityType::class, [
+                    'placeholder' => '',
+                    'class' => Product::class,
+                    'choices' => [],
+                    'label_format' => 'form.article.%name%',
+                    'attr' => [
+                        'class' => 'form-control select2field',
+                        'data-json-url' => $this->router->generate('app_supplies_product_select2'),
+                    ],
+                ]);
+            })
+            ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+                $data = $event->getData();
+                $form = $event->getForm();
+
+                // check if the product field is set in the submitted data and get the product id if it is an integer
+                $productId = array_key_exists('product', $data) && is_numeric($data['product']) ? $data['product'] : null;
+
+                // add the product field with the selected product and a json url for select2
+                $form->add('product', EntityType::class, [
+                    'placeholder' => '',
+                    'class' => Product::class,
+                    'choices' => $this->productRepository->findBy(['id' => intval($productId)]),
+                    'label_format' => 'form.article.%name%',
+                    'attr' => [
+                        'class' => 'form-control select2field',
+                        'data-json-url' => $this->router->generate('app_supplies_product_select2'),
+                    ],
+                ]);
+            })
         ;
     }
 
