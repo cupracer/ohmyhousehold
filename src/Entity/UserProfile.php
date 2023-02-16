@@ -43,13 +43,13 @@ class UserProfile
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 255)]
-    #[Assert\Regex(pattern: '/^[\w][\w\s-]*[\w]$/', message: 'form.regex.invalid')]
+    #[Assert\Regex(pattern: '/^[a-zöäüÖÄÜß\ \,\.\'\-]+$/i', message: 'form.regex.invalid')]
     private ?string $forename = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 255)]
-    #[Assert\Regex(pattern: '/^[\w][\w\s-]*[\w]$/', message: 'form.regex.invalid')]
+    #[Assert\Regex(pattern: '/^[a-zöäüÖÄÜß\ \,\.\'\-]+$/i', message: 'form.regex.invalid')]
     private ?string $surname = null;
 
     #[ORM\Column(length: 10)]
