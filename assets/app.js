@@ -21,6 +21,10 @@ import 'source-sans/source-sans-3.css';
 import 'admin-lte/plugins/fontawesome-free/css/all.css';
 import 'admin-lte/dist/css/adminlte.css';
 
+// select2
+import 'admin-lte/plugins/select2/css/select2.css';
+import 'admin-lte/plugins/select2-bootstrap4-theme/select2-bootstrap4.css';
+
 global.$ = global.jQuery = $;
 
 import 'admin-lte/plugins/bootstrap/js/bootstrap.bundle';
