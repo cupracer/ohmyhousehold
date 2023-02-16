@@ -21,9 +21,9 @@
 
 namespace App\Controller\Supplies;
 
-use App\Entity\Supplies\Commodity;
 use App\Entity\Supplies\Product;
 use App\Form\Supplies\ProductType;
+use App\Service\Supplies\ProductService;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -143,7 +143,7 @@ class ProductController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_supplies_product_show', methods: ['GET'])]
+    #[Route('/{id}/show', name: 'app_supplies_product_show', methods: ['GET'])]
     public function show(Product $product): Response
     {
         return $this->render('supplies/product/show.html.twig', [
@@ -209,5 +209,14 @@ class ProductController extends AbstractController
         }
 
         return $this->redirectToRoute('app_supplies_product_show', ['id' => $product->getId()]);
+    }
+
+    // AJAX endpoint for select2
+    #[Route('/select2', name: 'app_supplies_product_select2', methods: ['GET'])]
+    public function getAsSelect2(Request $request, ProductService $productService): Response
+    {
+        return $this->json(
+            $productService->getProductsAsSelect2Array($request)
+        );
     }
 }
