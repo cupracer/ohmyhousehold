@@ -48,11 +48,6 @@ class MinimumCommodityStock
     #[Assert\NotBlank]
     private ?StorageLocation $storageLocation = null;
 
-    // how to Configure an assert message to appear on a different field
-
-
-
-
     #[ORM\Column]
     #[Assert\NotBlank]
     #[Assert\Type(type: 'integer')]
