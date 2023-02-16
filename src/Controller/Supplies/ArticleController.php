@@ -98,7 +98,7 @@ class ArticleController extends AbstractController
     }
 
     #[Route('/new', name: 'app_supplies_article_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, StorageLocationRepository $storageLocationRepository, LoggerInterface $logger): Response
     {
         $article = new Article();
 
@@ -116,6 +116,10 @@ class ArticleController extends AbstractController
         }
 
         $form = $this->createForm(ArticleNewType::class, $article);
+
+        // set initial value for quantity to 1
+        $form->get('quantity')->setData(1);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
