@@ -99,10 +99,14 @@ class Product
     #[Assert\Positive]
     private ?int $minimumGlobalStock = null;
 
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: Article::class)]
+    private Collection $articles;
+
     public function __construct()
     {
         $this->minimumProductStocks = new ArrayCollection();
         $this->identifierCodes = new ArrayCollection();
+        $this->articles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -314,6 +318,36 @@ class Product
     public function setMinimumGlobalStock(?int $minimumGlobalStock): self
     {
         $this->minimumGlobalStock = $minimumGlobalStock;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Article>
+     */
+    public function getArticles(): Collection
+    {
+        return $this->articles;
+    }
+
+    public function addArticle(Article $article): self
+    {
+        if (!$this->articles->contains($article)) {
+            $this->articles->add($article);
+            $article->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArticle(Article $article): self
+    {
+        if ($this->articles->removeElement($article)) {
+            // set the owning side to null (unless already changed)
+            if ($article->getProduct() === $this) {
+                $article->setProduct(null);
+            }
+        }
 
         return $this;
     }

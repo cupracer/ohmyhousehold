@@ -59,10 +59,14 @@ class StorageLocation
     #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
     private DateTimeInterface $updatedAt;
 
+    #[ORM\OneToMany(mappedBy: 'storageLocation', targetEntity: Article::class)]
+    private Collection $articles;
+
     public function __construct()
     {
         $this->minimumCommodityStocks = new ArrayCollection();
         $this->minimumProductStocks = new ArrayCollection();
+        $this->articles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -190,6 +194,36 @@ class StorageLocation
     public function setUpdatedAtValue(): self
     {
         $this->updatedAt = new DateTimeImmutable();
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Article>
+     */
+    public function getArticles(): Collection
+    {
+        return $this->articles;
+    }
+
+    public function addArticle(Article $article): self
+    {
+        if (!$this->articles->contains($article)) {
+            $this->articles->add($article);
+            $article->setStorageLocation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArticle(Article $article): self
+    {
+        if ($this->articles->removeElement($article)) {
+            // set the owning side to null (unless already changed)
+            if ($article->getStorageLocation() === $this) {
+                $article->setStorageLocation(null);
+            }
+        }
+
         return $this;
     }
 }
