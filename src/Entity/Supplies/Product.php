@@ -89,6 +89,12 @@ class Product
     #[Assert\Valid]
     private Collection $identifierCodes;
 
+    #[ORM\Column(nullable: true)]
+    #[Assert\Type(type: 'integer')]
+    #[Assert\Length(max: 4)]
+    #[Assert\Positive]
+    private ?int $minimumGlobalStock = null;
+
     public function __construct()
     {
         $this->minimumProductStocks = new ArrayCollection();
@@ -292,6 +298,18 @@ class Product
                 $identifierCode->setProduct(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMinimumGlobalStock(): ?int
+    {
+        return $this->minimumGlobalStock;
+    }
+
+    public function setMinimumGlobalStock(?int $minimumGlobalStock): self
+    {
+        $this->minimumGlobalStock = $minimumGlobalStock;
 
         return $this;
     }

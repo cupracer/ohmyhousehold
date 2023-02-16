@@ -20,6 +20,11 @@
             <div class="col-6">{{ form_row(form.packaging) }}</div>
         </div>
         <div class="row">
+            <div class="col-2">
+                {{ form_row(form.minimumGlobalStock, { 'attr': {'class': 'text-right'}}) }}
+            </div>
+        </div>
+        <div class="row">
             <div class="col-12">
                 <h5 class="mt-4 mb-4">{{ 'app.supplies.product.identifiercodes.title'|trans|capitalize }}</h5>
 
