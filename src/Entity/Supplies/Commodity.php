@@ -48,6 +48,7 @@ class Commodity
     private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: 'commodities')]
+    #[Assert\NotNull]
     private ?Category $category = null;
 
     #[ORM\OneToMany(mappedBy: 'commodity', targetEntity: Product::class)]

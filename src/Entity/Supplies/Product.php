@@ -53,14 +53,17 @@ class Product
 
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?Commodity $commodity = null;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?Brand $brand = null;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?Measure $measure = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
