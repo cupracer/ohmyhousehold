@@ -8,19 +8,19 @@
         <div class="row">
             <div class="col-12">
                 <div class="form-group">
-                    <label>{{ 'form.article.product'|capitalize }}</label>
+                    <label>{{ 'form.article.product'|trans|capitalize }}</label>
                     <div>{{ article.product.name }}</div>
                 </div>
                 <div class="form-group">
-                    <label>{{ 'form.article.storageLocation'|capitalize }}</label>
+                    <label>{{ 'form.article.storageLocation'|trans|capitalize }}</label>
                     <div>{{ article.storageLocation.name }}</div>
                 </div>
                 <div class="form-group">
-                    <label>{{ 'form.article.purchaseDate' }}</label>
+                    <label>{{ 'form.article.purchaseDate'|trans|capitalize }}</label>
                     <div>{{ article.purchaseDate|date('Y-m-d') }}</div>
                 </div>
                 <div class="form-group">
-                    <label>{{ 'form.article.bestBeforeDate' }}</label>
+                    <label>{{ 'form.article.bestBeforeDate'|trans|upper }}</label>
                     <div>{{ article.bestBeforeDate|date('Y-m-d') }}</div>
                 </div>
             </div>

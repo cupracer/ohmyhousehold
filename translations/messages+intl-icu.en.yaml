@@ -86,7 +86,7 @@ app.supplies.commodity.form.delete.confirm: 'Are you sure you want to delete the
 app.supplies.commodity.form.delete.error: 'An error occurred while deleting the commodity "{name}".'
 app.supplies.commodity.form.delete.error.inuse: 'The commodity "{name}" is still in use and cannot be deleted.'
 app.supplies.commodity.title: 'commodity "{name}"'
-app.supplies.commoditys.title: 'commodities'
+app.supplies.commodities.title: 'commodities'
 app.supplies.commodity.minimumstocks.title: 'minimum stocks'
 form.product.name: 'name'
 form.product.brand: 'brand'
