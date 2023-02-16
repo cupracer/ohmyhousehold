@@ -44,7 +44,7 @@ class Commodity
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 255)]
-    #[Assert\Regex(pattern: '/^[\w][\w\s-]*[\w]$/', message: 'form.regex.invalid')]
+    #[Assert\Regex(pattern: '/^[[:alpha:][:digit:]äöüÄÖÜ][[:alpha:][:digit:]äöüÄÖÜ\-\s_:;!]*[[:alpha:][:digit:]äöüÄÖÜ!]$/', message: 'form.regex.invalid')]
     private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: 'commodities')]
