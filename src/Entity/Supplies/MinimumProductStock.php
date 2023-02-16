@@ -26,6 +26,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MinimumProductStockRepository::class)]
 #[ORM\Table(name: 'supplies_minimum_product_stock')]
@@ -40,12 +41,18 @@ class MinimumProductStock
 
     #[ORM\ManyToOne(inversedBy: 'minimumProductStocks')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank]
     private ?Product $product = null;
 
     #[ORM\ManyToOne(inversedBy: 'minimumProductStocks')]
+    #[Assert\NotBlank]
     private ?StorageLocation $storageLocation = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'integer')]
+    #[Assert\Length(max: 4)]
+    #[Assert\Positive]
     private ?int $count = null;
 
     #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
