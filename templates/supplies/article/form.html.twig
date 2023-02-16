@@ -7,12 +7,22 @@
         {{ form_start(form) }}
 
         <div class="row">
+            <div class="col-3">{{ form_row(form.purchaseDate, {
+                    'attr': {
+                        'autofocus': 'autofocus',
+                        'class': 'text-center',
+                    }}) }}</div>
+            <div class="col"></div>
+            <div class="col-6">{{ form_row(form.storageLocation, {'attr': {'class': 'select2field'}}) }}</div>
+        </div>
+        <div class="row">
             <div class="col-12">
-                {{ form_row(form.purchaseDate, {'attr': {'autofocus': 'autofocus'}}) }}
-                {{ form_row(form.storageLocation) }}
                 {{ form_row(form.product) }}
-                {{ form_row(form.bestBeforeDate) }}
             </div>
+        </div>
+        <div class="row">
+            <div class="col-3">{{ form_row(form.bestBeforeDate, {'attr': {'class': 'text-center'}}) }}</div>
+            <div class="col-3">{{ form_row(form.quantity, {'attr': {'class': 'text-center'}}) }}</div>
         </div>
 
         <div class="row mt-5">
@@ -37,3 +47,38 @@
     <div class="col-md"></div>
 </div>
 {% endblock page_content_body %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {{ encore_entry_script_tags('forms') }}
+{% endblock javascripts %}
+
+{% block javascripts_inline %}
+    {{ parent() }}
+
+    <script>
+        $(document).ready(function() {
+            $('.select2field').select2({
+                theme: 'bootstrap4',
+                width: '100%',
+            });
+
+            let productSelect = $('#article_new_product');
+
+            productSelect.select2({
+                theme: 'bootstrap4',
+                placeholder: '',
+                ajax: {
+                    dataType: 'json',
+                    url: productSelect.data('json-url'),
+                    delay: 250,
+                }
+            });
+
+            {% if autoFocusProductSelect %}
+                productSelect.select2('open');
+            {% endif %}
+        });
+    </script>
+{% endblock javascripts_inline %}
