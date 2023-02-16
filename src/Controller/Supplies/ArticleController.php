@@ -24,6 +24,8 @@ namespace App\Controller\Supplies;
 use App\Entity\Supplies\Article;
 use App\Form\Supplies\ArticleNewType;
 use App\Form\Supplies\ArticleType;
+use App\Repository\Supplies\StorageLocationRepository;
+use DateTime;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
