@@ -101,6 +101,20 @@ class ArticleController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
         $article = new Article();
+
+        // if session contains last purchase date, set it as default, if not, set now
+        if($request->getSession()->has('lastPurchaseDate')) {
+            $article->setPurchaseDate($request->getSession()->get('lastPurchaseDate'));
+        }else {
+            $article->setPurchaseDate(new DateTime());
+        }
+
+        // if session contains last storage location, set it as default
+        if($request->getSession()->has('lastStorageLocationId')) {
+            $article->setStorageLocation($storageLocationRepository
+                    ->findOneBy(['id' => $request->getSession()->get('lastStorageLocationId')]));
+        }
+
         $form = $this->createForm(ArticleNewType::class, $article);
         $form->handleRequest($request);
 
@@ -138,6 +152,9 @@ class ArticleController extends AbstractController
 
             $this->addFlash('success', $flashMsg);
 
+            // set last purchase date and storage location in session
+            $request->getSession()->set('lastPurchaseDate', $article->getPurchaseDate());
+            $request->getSession()->set('lastStorageLocationId', $article->getStorageLocation()->getId());
 
             return $this->redirectToRoute('app_supplies_article_new');
         }
