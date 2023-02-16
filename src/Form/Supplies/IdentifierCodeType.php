@@ -39,6 +39,7 @@ class IdentifierCodeType extends AbstractType
                     array_column(IdentifierCode::TYPES, 'name'),
                     array_column(IdentifierCode::TYPES, 'name')
                 ),
+                'choice_translation_domain' => false,
             ])
             ->add('code', IntegerType::class, [
                 'label_format' => 'form.supplies.identifiercode.%name%',
