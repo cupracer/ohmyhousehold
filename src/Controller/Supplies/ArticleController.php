@@ -145,6 +145,8 @@ class ArticleController extends AbstractController
         return $this->render('supplies/article/form.html.twig', [
             'form' => $form,
             'pageTitle' => 'app.supplies.article.form.create.title',
+            // get the referrer url and  if it is this method's url, enable autofocus on product select
+            'autoFocusProductSelect' => ($request->headers->get('referer') == $request->getUri()),
         ]);
     }
 
