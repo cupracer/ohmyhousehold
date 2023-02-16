@@ -22,6 +22,7 @@
 namespace App\Controller\Supplies;
 
 use App\Entity\Supplies\Article;
+use App\Form\Supplies\ArticleNewType;
 use App\Form\Supplies\ArticleType;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -98,16 +99,43 @@ class ArticleController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
         $article = new Article();
-        $form = $this->createForm(ArticleType::class, $article);
+        $form = $this->createForm(ArticleNewType::class, $article);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($article);
-            $entityManager->flush();
+            $quantity = $form->get('quantity')->getData();
+            if (!is_int($quantity) || $quantity < 1) {
+                $quantity = 1;
+            }
 
-            $logger->info("New article '{name}' was created.", ['name' => $article->getProduct()->getName()]);
-            $this->addFlash('success', new TranslatableMessage(
-                "app.supplies.article.form.success.created", ['%name%' => $article->getProduct()->getName()]));
+            for($i = 0; $i < $quantity; $i++) {
+                $newArticle = new Article();
+                $newArticle->setProduct($article->getProduct());
+                $newArticle->setStorageLocation($article->getStorageLocation());
+                $newArticle->setPurchaseDate($article->getPurchaseDate());
+                $newArticle->setBestBeforeDate($article->getBestBeforeDate());
+
+                $entityManager->persist($newArticle);
+                $entityManager->flush();
+
+                $logger->info("New article '{name}' was created.", ['name' => $article->getProduct()->getName()]);
+            }
+
+            if($quantity > 1) {
+                $flashMsg = new TranslatableMessage(
+                    "app.supplies.article.form.success.created.multiple", [
+                        '%name%' => $article->getProduct()->getName(),
+                        '%quantity%' => $quantity
+                    ]);
+            }else {
+                $flashMsg = new TranslatableMessage(
+                    "app.supplies.article.form.success.created", [
+                        '%name%' => $article->getProduct()->getName()
+                    ]);
+            }
+
+            $this->addFlash('success', $flashMsg);
+
 
             return $this->redirectToRoute('app_supplies_article_new');
         }
