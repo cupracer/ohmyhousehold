@@ -23,16 +23,11 @@ namespace App\Repository\Supplies;
 
 use App\Entity\Supplies\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Product>
- *
- * @method Product|null find($id, $lockMode = null, $lockVersion = null)
- * @method Product|null findOneBy(array $criteria, array $orderBy = null)
- * @method Product[]    findAll()
- * @method Product[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
+
 class ProductRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -58,28 +53,111 @@ class ProductRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Product[] Returns an array of Product objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    // This method is used to count the number of available products for a Select2 output.
+    protected function getCountAvailableProducts(bool $inUseOnly, string $search = '')
+    {
+        $query = $this->createQueryBuilder('p');
 
-//    public function findOneBySomeField($value): ?Product
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        $query = $query->select($query->expr()->count('p'))
+            ->innerJoin('p.commodity', 'cm')
+            ->innerJoin('p.brand', 'br')
+            ->innerJoin('cm.category', 'cat')
+            ->innerJoin('p.packaging', 'pkg')
+            ->leftJoin('p.identifierCodes', 'ic')
+        ;
+
+        $this->addSearchExpressions($search, $query);
+
+        if($inUseOnly) {
+            $query
+                ->leftJoin('p.articles',
+                    'a',
+                    Join::WITH,
+                    $query->expr()->isNull('a.withdrawalDate')
+                )
+                ->andWhere($query->expr()->isNotNull('a'))
+            ;
+        }
+
+        return $query
+            ->getQuery()
+            ->getSingleScalarResult()
+            ;
+    }
+
+    // This method is used to get the data for a Select2 output.
+    public function getFilteredData($start, $length, bool $inUseOnly, string $search = ''): array
+    {
+        // This method generates an array which is to be used for a Select2 output.
+
+        $result = [
+            'recordsTotal' => $this->getCountAvailableProducts($inUseOnly),
+        ];
+
+        // no need to run the same query again if no search term is used.
+        $result['recordsFiltered'] = $search ?
+            $this->getCountAvailableProducts($inUseOnly, $search) :
+            $result['recordsTotal'];
+
+        $query = $this->createQueryBuilder('p')
+            ->innerJoin('p.commodity', 'cm')
+            ->innerJoin('p.brand', 'br')
+            ->innerJoin('cm.category', 'cat')
+            ->innerJoin('p.packaging', 'pkg')
+            ->leftJoin('p.identifierCodes', 'ic')
+        ;
+
+        if($length > 0) {
+            $query
+                ->setFirstResult($start)
+                ->setMaxResults($length);
+        }
+
+        $this->addSearchExpressions($search, $query);
+
+        // count articles which are not withdrawn
+
+            $query
+                ->leftJoin('p.articles',
+                    'a',
+                    Join::WITH,
+                    $query->expr()->isNull('a.withdrawalDate')
+                )
+                ->addSelect('COUNT(a) AS numUsage')
+                ->groupBy('p.id');
+
+        if($inUseOnly) {
+            $query->andWhere($query->expr()->isNotNull('a'));
+        }
+
+        $result['data'] = $query
+            ->getQuery()
+            ->execute()
+        ;
+
+        return $result;
+    }
+
+    /**
+     * Adds search expressions to the query.
+     *
+     * @param string $search
+     * @param QueryBuilder $query
+     * @return void
+     */
+    private function addSearchExpressions(string $search, QueryBuilder $query): void
+    {
+        if ($search) {
+            $query->andWhere($query->expr()->orX(
+                $query->expr()->like('p.name', ':search'),
+                $query->expr()->like('cm.name', ':search'),
+                $query->expr()->like('br.name', ':search'),
+                $query->expr()->like('cat.name', ':search'),
+                $query->expr()->like('pkg.name', ':search'),
+                $query->expr()->like('ic.code', ':search'),
+            ));
+
+            $query->setParameter('search', '%' . $search . '%');
+        }
+    }
 }
