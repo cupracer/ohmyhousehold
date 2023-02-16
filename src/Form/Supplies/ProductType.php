@@ -99,6 +99,13 @@ class ProductType extends AbstractType
                 'label_format' => 'form.product.minimumglobalstock',
                 'required' => false,
             ])
+            ->add('minimumProductStocks', CollectionType::class, [
+                'entry_type' => MinimumProductStockType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'label' => false,
+            ])
         ;
     }
 

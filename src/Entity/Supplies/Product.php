@@ -76,7 +76,7 @@ class Product
     #[ORM\ManyToOne(inversedBy: 'products')]
     private ?Packaging $packaging = null;
 
-    #[ORM\OneToMany(mappedBy: 'product', targetEntity: MinimumProductStock::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: MinimumProductStock::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $minimumProductStocks;
 
     #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]

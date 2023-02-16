@@ -26,6 +26,28 @@
         </div>
         <div class="row">
             <div class="col-12">
+                <h5 class="mt-4 mb-4">{{ 'app.supplies.product.minimumstocks.title'|trans|capitalize }}</h5>
+
+                {% set minimumProductStockHtml = include('supplies/product/_form_minimum_product_stock.html.twig', { 'item': form.minimumProductStocks.vars.prototype }) %}
+                <div class="js-minimum-product-stock-wrapper"
+                     data-index="{{ form.minimumProductStocks|length > 0 ? form.minimumProductStocks|last.vars.name + 1 : 0 }}"
+                     data-prototype="{{ minimumProductStockHtml|e('html_attr') }}">
+
+                    {% for minimumProductStockForm in form.minimumProductStocks %}
+                        {{ include('supplies/product/_form_minimum_product_stock.html.twig', { 'item': minimumProductStockForm }) }}
+                    {% endfor %}
+
+                    <a href="#" class="js-minimum-product-stock-add">
+                        <span class="icon text mr-1">
+                            <i class="far fa-plus-circle"></i>
+                        </span>
+                        <span class="text">{{ 'app.add'|trans|capitalize }}...</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
                 <h5 class="mt-4 mb-4">{{ 'app.supplies.product.identifiercodes.title'|trans|capitalize }}</h5>
 
                 {% set identifierCodeHtml = include('supplies/product/_form_identifier_code.html.twig', { 'item': form.identifierCodes.vars.prototype }) %}
@@ -85,6 +107,31 @@
                     .remove();
             });
             $wrapper.on('click', '.js-identifier-code-add', function(e) {
+                e.preventDefault();
+                // Get the data-prototype explained earlier
+                let prototype = $wrapper.data('prototype');
+                // get the new index
+                let index = $wrapper.data('index');
+                // Replace '__name__' in the prototype's HTML to
+                // instead be a number based on how many items we have
+                let newForm = prototype.replace(/__name__/g, index);
+                // increase the index with one for the next item
+                $wrapper.data('index', index + 1);
+                // Display the form in the page before the "new" link
+                $(this).before(newForm);
+            });
+        });
+
+        jQuery(document).ready(function() {
+            let $wrapper = $('.js-minimum-product-stock-wrapper');
+
+            $wrapper.on('click', '.js-remove-minimum-product-stock', function(e) {
+                e.preventDefault();
+                $(this).closest('.js-minimum-product-stock-item')
+                    .fadeOut()
+                    .remove();
+            });
+            $wrapper.on('click', '.js-minimum-product-stock-add', function(e) {
                 e.preventDefault();
                 // Get the data-prototype explained earlier
                 let prototype = $wrapper.data('prototype');

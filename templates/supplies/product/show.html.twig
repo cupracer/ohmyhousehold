@@ -73,6 +73,20 @@
         </div>
         <hr>
 
+        {% for minimumProductStock in product.minimumProductStocks %}
+            <div class="row mt-2 mb-2">
+                <div class="col"></div>
+                <div class="col-6">
+                    {{ minimumProductStock.storageLocation.name|default('-') }}
+                </div>
+                <div class="col-2 text-right">
+                    {{ minimumProductStock.count|default('-') }}
+                </div>
+                <div class="col"></div>
+            </div>
+            <hr>
+        {% endfor %}
+
         <div class="row mt-5">
             <div class="col-6">
                 {% include '_button_back.html.twig' with {
