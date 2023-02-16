@@ -1,0 +1,53 @@
+{% extends 'base-with-footer.html.twig' %}
+
+{% block page_content_body %}
+<div class="row">
+    <div class="col"></div>
+    <div class="col-md-5 col-lg-4">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <label>{{ 'form.article.product'|capitalize }}</label>
+                    <div>{{ article.product.name }}</div>
+                </div>
+                <div class="form-group">
+                    <label>{{ 'form.article.storageLocation'|capitalize }}</label>
+                    <div>{{ article.storageLocation.name }}</div>
+                </div>
+                <div class="form-group">
+                    <label>{{ 'form.article.purchaseDate' }}</label>
+                    <div>{{ article.purchaseDate|date('Y-m-d') }}</div>
+                </div>
+                <div class="form-group">
+                    <label>{{ 'form.article.bestBeforeDate' }}</label>
+                    <div>{{ article.bestBeforeDate|date('Y-m-d') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-6">
+                {% include '_button_back.html.twig' with {
+                    'targetUrl': path('app_supplies_article_index'),
+                } %}
+            </div>
+            <div class="col-6 text-right">
+                {% include '_button_edit.html.twig' with {
+                    'targetUrl': path('app_supplies_article_edit', {id: article.id}),
+                } %}
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md"></div>
+</div>
+{% endblock page_content_body %}
+
+{% block page_content_footer_body %}
+    {% include '_button_delete_form.html.twig' with {
+        'targetUrl': path('app_supplies_article_delete', {'id': article.id}),
+        'confirmMessage': 'app.supplies.article.form.delete.confirm'|trans({'name': article.product.name}),
+        'csrfToken': csrf_token('delete_article_' ~ article.id),
+    } %}
+{% endblock page_content_footer_body %}

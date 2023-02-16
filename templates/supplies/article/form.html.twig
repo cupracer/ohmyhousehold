@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block page_content_body %}
+<div class="row">
+    <div class="col"></div>
+    <div class="col-md-6 col-lg-5">
+        {{ form_start(form) }}
+
+        <div class="row">
+            <div class="col-12">
+                {{ form_row(form.purchaseDate, {'attr': {'autofocus': 'autofocus'}}) }}
+                {{ form_row(form.storageLocation) }}
+                {{ form_row(form.product) }}
+                {{ form_row(form.bestBeforeDate) }}
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-6">
+                {% if article is defined %}
+                    {% set targetUrl = path('app_supplies_article_show', {id: article.id}) %}
+                {% else %}
+                    {% set targetUrl = path('app_supplies_article_index') %}
+                {% endif %}
+
+                {% include '_button_cancel.html.twig' with {
+                    'targetUrl': targetUrl,
+                } %}
+            </div>
+            <div class="col-6 text-right">
+                {% include '_button_submit.html.twig' %}
+            </div>
+        </div>
+    {{ form_end(form) }}
+
+    </div>
+    <div class="col-md"></div>
+</div>
+{% endblock page_content_body %}

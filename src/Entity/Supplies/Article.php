@@ -44,19 +44,21 @@ class Article
     private ?Product $product = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    #[Assert\Date]
+    #[Assert\Type("DateTimeInterface")]
+    #[Assert\LessThanOrEqual('today')]
     private ?\DateTimeInterface $purchaseDate = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    #[Assert\Date]
+    #[Assert\Type("DateTimeInterface")]
     private ?\DateTimeInterface $bestBeforeDate = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    #[Assert\Date]
+    #[Assert\Type("DateTimeInterface")]
     private ?\DateTimeInterface $withdrawalDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?StorageLocation $storageLocation = null;
 
     #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]

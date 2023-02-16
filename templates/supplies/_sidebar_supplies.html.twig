@@ -31,3 +31,9 @@
         <p>{{ 'app.supplies.products.title'|trans|capitalize }}</p>
     </a>
 </li>
+<li class="nav-item">
+    <a href="{{ path('app_supplies_article_index') }}" class="nav-link {% if app.request.pathInfo starts with path('app_supplies_article_index') %}active{% endif %}">
+        <i class="nav-icon fas fa-barcode"></i>
+        <p>{{ 'app.supplies.articles.title'|trans|capitalize }}</p>
+    </a>
+</li>
