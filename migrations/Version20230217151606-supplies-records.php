@@ -26,9 +26,43 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-final class Version20230211181322 extends AbstractMigration
+final class Version20230217151606 extends AbstractMigration
 {
-    public const PACKAGINGS = [
+    public const CATEGORIES = [
+        ['name' => 'supplies.category.name.clothing'],
+        ['name' => 'supplies.category.name.food'],
+        ['name' => 'supplies.category.name.hygiene'],
+    ];
+
+    public const MEASURES = [
+        [
+            'name' => 'supplies.measure.name.milliliter',
+            'unit' => 'supplies.measure.unit.milliliter',
+            'physicalQuantity' => 'volume',
+        ],
+        [
+            'name' => 'supplies.measure.name.liter',
+            'unit' => 'supplies.measure.unit.liter',
+            'physicalQuantity' => 'volume',
+        ],
+        [
+            'name' => 'supplies.measure.name.gram',
+            'unit' => 'supplies.measure.unit.gram',
+            'physicalQuantity' => 'mass',
+        ],
+        [
+            'name' => 'supplies.measure.name.kilogram',
+            'unit' => 'supplies.measure.unit.kilogram',
+            'physicalQuantity' => 'mass',
+        ],
+        [
+            'name' => 'supplies.measure.name.piece',
+            'unit' => 'supplies.measure.unit.piece',
+            'physicalQuantity' => 'piece'
+        ],
+    ];
+
+    public const PACKAGING = [
         ['name' => 'supplies.packaging.name.tin-can'],
         ['name' => 'supplies.packaging.name.canning-jar'],
         ['name' => 'supplies.packaging.name.glass'],
@@ -47,12 +81,28 @@ final class Version20230211181322 extends AbstractMigration
 
     public function getDescription(): string
     {
-        return 'add records to supplies_packaging';
+        return 'add records to supplies tables';
     }
 
     public function up(Schema $schema): void
     {
-        foreach(self::PACKAGINGS as $packaging) {
+        // add records to the category table
+        foreach(self::CATEGORIES as $category) {
+            $this->addSql(
+                "INSERT INTO supplies_category (name) VALUES (:name)", $category
+            );
+        }
+
+        // add records to the measure table
+        foreach(self::MEASURES as $measure) {
+            $this->addSql(
+                "INSERT INTO supplies_measure (name, unit, physical_quantity) 
+                        VALUES (:name, :unit, :physicalQuantity)", $measure
+            );
+        }
+
+        // add records to the packaging table
+        foreach(self::PACKAGING as $packaging) {
             $this->addSql(
                 "INSERT INTO supplies_packaging (name) VALUES (:name)", $packaging
             );
@@ -61,9 +111,24 @@ final class Version20230211181322 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        foreach(self::PACKAGINGS as $packaging) {
+        // delete records from the category table
+        foreach(self::PACKAGING as $packaging) {
             $this->addSql(
                 "DELETE FROM supplies_category WHERE name = :name", $packaging
+            );
+        }
+
+        // delete records from the measure table
+        foreach(self::MEASURES as $measure) {
+            $this->addSql(
+                "DELETE FROM supplies_measure WHERE name = :name AND unit = :unit", $measure
+            );
+        }
+
+        // delete records from the packaging table
+        foreach(self::CATEGORIES as $category) {
+            $this->addSql(
+                "DELETE FROM supplies_category WHERE name = :name", $category
             );
         }
     }
