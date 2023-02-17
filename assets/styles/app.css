@@ -54,3 +54,8 @@ td.min {
 .card-title {
     font-size: 1.7rem !important;
 }
+
+/* Adjust the position of the dropdown menu to avoid a hover gap betwen the menu and the navbar link */
+.navbar-nav .dropdown-menu {
+    margin-top: -3px;
+}
