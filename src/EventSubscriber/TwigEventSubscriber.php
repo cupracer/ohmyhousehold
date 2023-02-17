@@ -23,7 +23,6 @@ namespace App\EventSubscriber;
 
 use App\Service\LocaleService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Twig\Environment;
 
@@ -37,7 +36,7 @@ class TwigEventSubscriber implements EventSubscriberInterface
     {
     }
 
-    public function onKernelController(ControllerEvent $event): void
+    public function onKernelController(): void
     {
         $this->twig->addGlobal("siteName", $this->siteName);
         $this->twig->addGlobal('supportedLocales', $this->localeService->getSupportedLocales());
