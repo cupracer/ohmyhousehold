@@ -71,6 +71,11 @@ class ArticleController extends AbstractController
                 'format' => 'Y-m-d',
                 'className' => 'min text-center',
             ])
+            ->add('withdrawalDate', DateTimeColumn::class, [
+                'label' => 'form.article.withdrawalDate',
+                'format' => 'Y-m-d',
+                'className' => 'min text-center',
+            ])
             ->add('createdAt', DateTimeColumn::class, [
                 'label' => 'label.createdAt',
                 'format' => 'Y-m-d H:i:s',
