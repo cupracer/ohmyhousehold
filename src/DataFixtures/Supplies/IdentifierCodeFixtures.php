@@ -68,6 +68,6 @@ class IdentifierCodeFixtures extends Fixture implements FixtureGroupInterface, D
 
     public static function getGroups(): array
     {
-        return ['demo'];
+        return ['demo_supplies'];
     }
 }

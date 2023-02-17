@@ -81,6 +81,6 @@ class ProductFixtures extends Fixture implements FixtureGroupInterface, Dependen
 
     public static function getGroups(): array
     {
-        return ['demo'];
+        return ['demo_supplies'];
     }
 }

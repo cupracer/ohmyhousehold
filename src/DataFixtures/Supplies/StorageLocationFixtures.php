@@ -45,6 +45,6 @@ class StorageLocationFixtures extends Fixture implements FixtureGroupInterface
 
     public static function getGroups(): array
     {
-        return ['demo'];
+        return ['demo_supplies'];
     }
 }
