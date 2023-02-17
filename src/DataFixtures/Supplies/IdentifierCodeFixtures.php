@@ -42,8 +42,8 @@ class IdentifierCodeFixtures extends Fixture implements FixtureGroupInterface, D
             $identifierCode->setType($type['name']);
 
             $identifierCode->setCode(mt_rand(
-                (int) str_pad("1", $type['length'], "0", STR_PAD_RIGHT),
-                (int) str_pad("9", $type['length'], "9", STR_PAD_RIGHT)
+                (int) str_pad("1", $type['length'], "0"),
+                (int) str_pad("9", $type['length'], "9")
             ));
 
             $identifierCode->setProduct(

@@ -46,15 +46,15 @@ class Article
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     #[Assert\Type("DateTimeInterface")]
     #[Assert\LessThanOrEqual('today')]
-    private ?\DateTimeInterface $purchaseDate = null;
+    private ?DateTimeInterface $purchaseDate = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     #[Assert\Type("DateTimeInterface")]
-    private ?\DateTimeInterface $bestBeforeDate = null;
+    private ?DateTimeInterface $bestBeforeDate = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     #[Assert\Type("DateTimeInterface")]
-    private ?\DateTimeInterface $withdrawalDate = null;
+    private ?DateTimeInterface $withdrawalDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
@@ -84,36 +84,36 @@ class Article
         return $this;
     }
 
-    public function getPurchaseDate(): ?\DateTimeInterface
+    public function getPurchaseDate(): ?DateTimeInterface
     {
         return $this->purchaseDate;
     }
 
-    public function setPurchaseDate(?\DateTimeInterface $purchaseDate): self
+    public function setPurchaseDate(?DateTimeInterface $purchaseDate): self
     {
         $this->purchaseDate = $purchaseDate;
 
         return $this;
     }
 
-    public function getBestBeforeDate(): ?\DateTimeInterface
+    public function getBestBeforeDate(): ?DateTimeInterface
     {
         return $this->bestBeforeDate;
     }
 
-    public function setBestBeforeDate(?\DateTimeInterface $bestBeforeDate): self
+    public function setBestBeforeDate(?DateTimeInterface $bestBeforeDate): self
     {
         $this->bestBeforeDate = $bestBeforeDate;
 
         return $this;
     }
 
-    public function getWithdrawalDate(): ?\DateTimeInterface
+    public function getWithdrawalDate(): ?DateTimeInterface
     {
         return $this->withdrawalDate;
     }
 
-    public function setWithdrawalDate(?\DateTimeInterface $withdrawalDate): self
+    public function setWithdrawalDate(?DateTimeInterface $withdrawalDate): self
     {
         $this->withdrawalDate = $withdrawalDate;
 
