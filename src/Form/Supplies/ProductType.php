@@ -41,9 +41,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ProductType extends AbstractType
 {
     public function __construct(
-        private TranslatorInterface $translator,
-        private MeasureRepository $measureRepository,
-        private PackagingRepository $packagingRepository,
+        private readonly TranslatorInterface $translator,
+        private readonly MeasureRepository $measureRepository,
+        private readonly PackagingRepository $packagingRepository,
     )
     {
     }
