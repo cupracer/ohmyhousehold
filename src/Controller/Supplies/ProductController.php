@@ -215,8 +215,11 @@ class ProductController extends AbstractController
     #[Route('/select2', name: 'app_supplies_product_select2', methods: ['GET'])]
     public function getAsSelect2(Request $request, ProductService $productService): Response
     {
+        // create a variable with the boolean value of the query parameter inUseOnly and set false as default
+        $inUseOnly = filter_var($request->query->get('inUseOnly', false), FILTER_VALIDATE_BOOLEAN);
+
         return $this->json(
-            $productService->getProductsAsSelect2Array($request)
+            $productService->getProductsAsSelect2Array($request, $inUseOnly)
         );
     }
 }
