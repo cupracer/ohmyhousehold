@@ -22,8 +22,10 @@
 namespace App\Controller\Supplies;
 
 use App\Entity\Supplies\Article;
+use App\Form\Supplies\ArticleCheckoutType;
 use App\Form\Supplies\ArticleNewType;
 use App\Form\Supplies\ArticleType;
+use App\Repository\Supplies\ArticleRepository;
 use App\Repository\Supplies\StorageLocationRepository;
 use DateTime;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
@@ -242,5 +244,112 @@ class ArticleController extends AbstractController
         }
 
         return $this->redirectToRoute('app_supplies_article_show', ['id' => $article->getId()]);
+    }
+
+    #[Route('/checkout/{checkoutArticle}', name: 'app_supplies_article_checkout', requirements: ['checkoutArticle' => '\d+'], methods: ['GET', 'POST'])]
+    public function checkout(Request $request, EntityManagerInterface $entityManager, ArticleRepository $articleRepository, LoggerInterface $logger, Article $checkoutArticle = null): Response
+    {
+        // if article is given, set withdrawal date to today and redirect to article checkout page
+        if($checkoutArticle) {
+            if(!$checkoutArticle->getWithdrawalDate()) {
+                $checkoutArticle->setWithdrawalDate(new DateTime());
+                $entityManager->flush();
+
+                $logger->info("Article '{name}' ({id}) was checked out.", ['name' => $checkoutArticle->getProduct()->getName(), 'id' => $checkoutArticle->getId()]);
+                $this->addFlash('success', new TranslatableMessage(
+                    "app.supplies.article.form.success.checkedout", [
+                    '%name%' => $checkoutArticle->getProduct()->getName(),
+                    '%bbd%' => $checkoutArticle->getBestBeforeDate() ? $checkoutArticle->getBestBeforeDate()->format('Y-m-d') : '-',
+                ]));
+            }else {
+                $logger->error("Article '{name}' ({id}) was already checked out.", ['name' => $checkoutArticle->getProduct()->getName(), 'id' => $checkoutArticle->getId()]);
+                $this->addFlash('error', new TranslatableMessage(
+                    "app.supplies.article.form.checkout.error.alreadycheckedout", [
+                    '%name%' => $checkoutArticle->getProduct()->getName(),
+                    '%id%' => $checkoutArticle->getId()
+                ]));
+            }
+
+            // redirect to article checkout page
+            return $this->redirectToRoute('app_supplies_article_checkout');
+        }
+
+        // if no article is given, prepare checkout form
+
+        $form = $this->createForm(ArticleCheckoutType::class, $checkoutArticle);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $checkoutFormData = $form->getData();
+
+            $availableArticles = $articleRepository->findAllInStockByProduct($checkoutFormData['product']);
+
+            // build and array of bestBeforeDates for the selected article.
+            // This array also includes the count for each bestBeforeDate or '-1' if no bestBeforeDate is set.
+            // It also contains the first article id for each key.
+            $bestBeforeDates = [];
+            foreach($availableArticles as $availableArticle) {
+                if($availableArticle->getBestBeforeDate()) {
+                    $key = $availableArticle->getBestBeforeDate()->format('Y-m-d');
+                }else {
+                    $key = 'none';
+                }
+                // if key does not exist, create it
+                if(!isset($bestBeforeDates[$key])) {
+                    $bestBeforeDates[$key] = ['count' => 0];
+                }
+                // increase count for this key
+                $bestBeforeDates[$key]['count']++;
+
+                if(!isset($bestBeforeDates[$key]['id'])) {
+                    $bestBeforeDates[$key]['id'] = $availableArticle->getId();
+                }
+            }
+
+            // order ascending by bestBeforeDate
+            ksort($bestBeforeDates);
+
+            // if smart checkout is clicked and all articles have the same best before date, check out the first article
+            if(($form->has('smartCheckout') && $form->get('smartCheckout')->isClicked()) &&
+                (count($bestBeforeDates) == 1)) {
+
+                $selectedArticle = $availableArticles[0];
+                $selectedArticle->setWithdrawalDate(new DateTime());
+                $entityManager->flush();
+
+                $logger->info("Article '{name}' ({id}) was checked out.", ['name' => $selectedArticle->getProduct()->getName(), 'id' => $selectedArticle->getId()]);
+                $this->addFlash('success', new TranslatableMessage(
+                    "app.supplies.article.form.success.checkedout", [
+                    '%name%' => $selectedArticle->getProduct()->getName(),
+                    '%bbd%' => $selectedArticle->getBestBeforeDate() ? $selectedArticle->getBestBeforeDate()->format('Y-m-d') : '-',
+                ]));
+
+                // redirect to article checkout page
+                return $this->redirectToRoute('app_supplies_article_checkout');
+            }else {
+                // if smart checkout is not clicked or there are multiple best before dates, render article selection page
+
+                // get name and brand of the article's product as array
+                $productData = [
+                    'name' => $checkoutFormData['product']->getName(),
+                    'brand' => $checkoutFormData['product']->getBrand()->getName(),
+                ];
+
+                // render article selection page
+                return $this->render('supplies/article/form_checkout.html.twig', [
+                    'pageTitle' => new TranslatableMessage(
+                        "app.supplies.article.form.checkout.item.title", ['%name%' => $checkoutFormData['product']->getName()]),
+                    'product' => $productData,
+                    'bestBeforeDates' => $bestBeforeDates,
+                ]);
+            }
+        }
+
+        return $this->render('supplies/article/form_checkout.html.twig', [
+            'pageTitle' => new TranslatableMessage(
+                "app.supplies.article.form.checkout.title"),
+            'form' => $form->createView(),
+            'article' => $checkoutArticle,
+        ]);
     }
 }

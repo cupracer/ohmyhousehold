@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block page_content_body %}
+<div class="row">
+    <div class="col"></div>
+    <div class="col-md-6 col-lg-5">
+
+        <div class="row">
+            <div class="col-12">
+
+                {% if bestBeforeDates is not defined %}
+                    {# present form to select product and quantity #}
+
+                    {{ form_start(form) }}
+                    {{ form_row(form.product) }}
+
+                    {{ form_row(form.showItems) }}
+                    {{ form_row(form.smartCheckout) }}
+                    {{ form_end(form) }}
+
+                {% else %}
+                    {# present list of best before dates to choose for checkout #}
+
+                    {# show info text if bestBeforeDates is an empty array #}
+                    {% if bestBeforeDates is empty %}
+                        <div class="alert alert-default-secondary text-center">
+                            {{ 'app.supplies.article.noarticlestocheckout'|trans }}
+                        </div>
+                    {% endif %}
+
+                    {% for bestBeforeDate, item in bestBeforeDates %}
+                        <div class="col-12">
+                            <form action="{{ path('app_supplies_article_checkout', {'checkoutArticle': item.id}) }}" method="post">
+                                <button type="submit" class="btn btn-block btn-outline-primary btn-lg mb-3">
+                                    {% if bestBeforeDate != 'none' %}
+                                        {% set buttonTitle = bestBeforeDate %}
+                                    {% else %}
+                                        {% set buttonTitle = 'app.supplies.article.nobestbeforedate'|trans %}
+                                    {% endif %}
+                                    <span class="text-lg"><span class="text-bold">{{ buttonTitle }}</span> ({{ item.count }} {{ 'supplies.measure.unit.piece'|trans }})</span>
+                                </button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-6">
+                {% if bestBeforeDates is not defined %}
+                    {% include '_button_back.html.twig' with {
+                        'targetUrl': path('app_supplies_article_index'),
+                    } %}
+                {% endif %}
+            </div>
+            <div class="col-6 text-right">
+                {% if bestBeforeDates is defined %}
+                    {% include '_button_cancel.html.twig' with {
+                        'targetUrl': path('app_supplies_article_checkout'),
+                    } %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md"></div>
+</div>
+{% endblock page_content_body %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {{ encore_entry_script_tags('forms') }}
+{% endblock javascripts %}
+
+{% block javascripts_inline %}
+    {{ parent() }}
+
+    <script>
+        $(document).ready(function() {
+            $('.select2field').select2({
+                theme: 'bootstrap4',
+                width: '100%',
+            });
+
+            let productSelect = $('#article_checkout_product');
+
+            productSelect.select2({
+                theme: 'bootstrap4',
+                placeholder: '',
+                ajax: {
+                    dataType: 'json',
+                    url: productSelect.data('json-url'),
+                    delay: 250,
+                }
+            });
+
+            productSelect.select2('open');
+        });
+    </script>
+{% endblock javascripts_inline %}
