@@ -4,7 +4,20 @@
         {{ 'app.supplies.title'|trans|title }}
     </a>
     <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 0; right: inherit;">
-        <li><a href="{{ path('app_supplies_article_checkout') }}" class="dropdown-item">{{ 'app.supplies.article.form.checkout.title'|trans }}</a></li>
-        <li><a href="{{ path('app_supplies_article_new') }}" class="dropdown-item">{{ 'app.supplies.article.form.create.title'|trans }}</a></li>
+        <li>
+            <a href="{{ path('app_supplies_article_checkout') }}" class="dropdown-item">
+                <span class="icon text mr-1">
+                    <i class="far fa-minus-circle"></i>
+                </span>
+                {{ 'app.supplies.article.form.checkout.title'|trans }}
+            </a>
+        </li>
+        <li><a href="{{ path('app_supplies_article_new') }}" class="dropdown-item">
+                <span class="icon text mr-1">
+                    <i class="far fa-plus-circle"></i>
+                </span>
+                {{ 'app.supplies.article.form.create.title'|trans }}
+            </a>
+        </li>
     </ul>
 </li>
