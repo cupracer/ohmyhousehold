@@ -33,7 +33,7 @@ class UserFixtures extends Fixture implements FixtureGroupInterface
     public const ADMIN_USER_REFERENCE = 'admin-user';
 
     public function __construct(
-        private UserPasswordHasherInterface $userPasswordHasher
+        private readonly UserPasswordHasherInterface $userPasswordHasher
     )
     {
     }

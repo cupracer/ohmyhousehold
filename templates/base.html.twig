@@ -75,17 +75,6 @@ As a workaround, text-sm is instead set on navbar_tag, sidebar_tag and main_cont
 {% endblock navbar_search %}
 
 
-{% block masquerade %}
-    {% if is_granted('IS_IMPERSONATOR') %}
-        <div class="red text-red">
-            <i class="fas fa-exclamation-triangle"></i>
-            {% trans with {'name': app.user.username} %}app.currently-masqueraded-as{% endtrans %}
-            <a class="btn btn-outline-danger btn-sm" style="color: red;" href="{{ impersonation_exit_url() }}">{{ 'app.end'|trans }}</a>
-        </div>
-    {% endif %}
-{% endblock masquerade %}
-
-
 {% block navbar_notifications_dropdown %}
 {% endblock navbar_notifications_dropdown %}
 

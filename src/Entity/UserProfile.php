@@ -167,6 +167,6 @@ class UserProfile
 
     public function getNaturalName(): string
     {
-        return "{$this->forename} {$this->surname}";
+        return "$this->forename $this->surname";
     }
 }

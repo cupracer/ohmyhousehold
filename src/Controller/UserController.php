@@ -25,18 +25,16 @@ use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
-use App\Security\LoginFormControllerAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
@@ -51,7 +49,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/register', name: 'user_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, LoginFormControllerAuthenticator $authenticator, EntityManagerInterface $entityManager, LoggerInterface $logger, SessionInterface $session): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -74,12 +72,23 @@ class UserController extends AbstractController
             $entityManager->flush();
 
             // generate a signed url and email it to the user
-            $this->emailVerifier->sendEmailConfirmation('user_verify_email', $user,
-                (new TemplatedEmail())
-                    ->to($user->getEmail())
-                    ->subject('Please Confirm your Email')
-                    ->htmlTemplate('user/register_confirmation_email.html.twig')
-            );
+            try {
+                $this->emailVerifier->sendEmailConfirmation('user_verify_email', $user,
+                    (new TemplatedEmail())
+                        ->to($user->getEmail())
+                        ->subject('Please Confirm your Email')
+                        ->htmlTemplate('user/register_confirmation_email.html.twig')
+                );
+            } catch (TransportExceptionInterface $e) {
+                // Log the error, inform the user and redirect to the registration form
+
+                $logger->error("Failed to send confirmation e-mail to User '{username}'.", ['username' => $user->getUserIdentifier()]);
+                $logger->error($e->getMessage());
+
+                $this->addFlash('error', 'Failed to send confirmation e-mail. Please try again later.');
+
+                return $this->redirectToRoute('user_register');
+            }
 
             // do anything else you need here, like send an email
             $logger->info("New registration for User '{username}'", ['username' => $user->getUserIdentifier()]);
@@ -136,7 +145,7 @@ class UserController extends AbstractController
     }
 
     #[Route(path: '/login', name: 'user_login')]
-    public function login(AuthenticationUtils $authenticationUtils, LoggerInterface $logger, SessionInterface $session): Response
+    public function login(AuthenticationUtils $authenticationUtils, LoggerInterface $logger): Response
     {
         /** @var User $user */
         $user = $this->getUser();
