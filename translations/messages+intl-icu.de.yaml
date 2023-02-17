@@ -117,7 +117,7 @@ app.supplies.article.form.success.deleted: 'Der Artikel "{name}" ({id}) wurde ge
 app.supplies.article.form.delete.confirm: 'Soll der Artikel "{name}" wirklich gelöscht werden?'
 app.supplies.article.title: 'Artikel "{name}"'
 app.supplies.articles.title: 'Artikel'
-app.supplies.article.form.create.title: 'Artikel erstellen'
+app.supplies.article.form.create.title: 'Artikel hinzufügen'
 app.supplies.article.form.edit.title: 'Artikel "{name}" bearbeiten'
 app.supplies.article.form.checkout.title: 'Artikel entnehmen'
 app.supplies.article.form.checkout.item.title: 'Artikel "{name}" entnehmen'

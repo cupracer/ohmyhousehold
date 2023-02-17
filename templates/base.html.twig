@@ -64,6 +64,10 @@ As a workaround, text-sm is instead set on navbar_tag, sidebar_tag and main_cont
 
 {% block navbar_left_items %}
     {% include '_navbar_left.html.twig' %}
+
+    {% if is_granted('ROLE_USER') %}
+        {% include 'supplies/_navbar_left.html.twig' %}
+    {% endif %}
 {% endblock navbar_left_items %}
 
 
