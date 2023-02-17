@@ -46,7 +46,7 @@ class ProductFixtures extends Fixture implements FixtureGroupInterface, Dependen
     public function load(ObjectManager $manager): void
     {
         $measures = $this->measureRepository->findAll();
-        $packagings = $this->packagingRepository->findAll();
+        $packaging = $this->packagingRepository->findAll();
 
         for ($i = 1; $i <= self::NUM_OBJECTS; $i++) {
             $product = new Product();
@@ -62,7 +62,7 @@ class ProductFixtures extends Fixture implements FixtureGroupInterface, Dependen
             $product->setMeasure($measures[array_rand($measures)]);
             $product->setQuantity(mt_rand(1, 1000));
             $product->setOrganicCertification((bool) mt_rand(0, 1));
-            $product->setPackaging($packagings[array_rand($packagings)]);
+            $product->setPackaging($packaging[array_rand($packaging)]);
 
             $manager->persist($product);
             $this->addReference(self::REFERENCE_ID . $i, $product);
