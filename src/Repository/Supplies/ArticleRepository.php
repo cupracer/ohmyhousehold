@@ -22,6 +22,7 @@
 namespace App\Repository\Supplies;
 
 use App\Entity\Supplies\Article;
+use App\Entity\Supplies\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -58,28 +59,18 @@ class ArticleRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Article[] Returns an array of Article objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('a.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findAllInStockByProduct(Product $product): array
+    {
+        $qb = $this->createQueryBuilder('a');
 
-//    public function findOneBySomeField($value): ?Article
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        return $qb
+            ->andWhere('a.product = :product')
+            ->andWhere($qb->expr()->isNull('a.withdrawalDate'))
+            ->setParameter('product', $product)
+            ->orderBy('a.bestBeforeDate', 'ASC')
+            ->addOrderBy('a.purchaseDate', 'ASC')
+            ->getQuery()
+            ->execute()
+        ;
+    }
 }
