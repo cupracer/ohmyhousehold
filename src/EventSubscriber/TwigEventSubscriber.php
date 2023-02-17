@@ -30,9 +30,9 @@ use Twig\Environment;
 class TwigEventSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private string $siteName,
-        private Environment $twig,
-        private LocaleService $localeService
+        private readonly string $siteName,
+        private readonly Environment $twig,
+        private readonly LocaleService $localeService
     )
     {
     }
