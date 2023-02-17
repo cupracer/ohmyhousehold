@@ -23,6 +23,8 @@ namespace App\Repository\Supplies;
 
 use App\Entity\Supplies\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -54,6 +56,11 @@ class ProductRepository extends ServiceEntityRepository
     }
 
     // This method is used to count the number of available products for a Select2 output.
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     protected function getCountAvailableProducts(bool $inUseOnly, string $search = '')
     {
         $query = $this->createQueryBuilder('p');
