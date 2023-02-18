@@ -60,8 +60,7 @@ jobs:
           context: .
           file: ./docker/tools/Dockerfile
           target: production_ready
-          platforms:
-            ${{ github.event_name == 'release' || env.BUILD_AND_PUSH == 'true' ? 'linux/amd64,linux/arm64': 'linux/amd64' } }
+          platforms: ${{ github.event_name == 'release' || env.BUILD_AND_PUSH == 'true' ? 'linux/amd64,linux/arm64': 'linux/amd64' }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
