@@ -63,7 +63,14 @@ COPY docker/tools/setup.sh /setup.sh
 
 RUN chmod 755 /setup.sh
 
-RUN docker-php-ext-enable opcache
+# Disabled due to preloading failure with opcache and omines/datatables-bundle.
+# Also disabled in start.sh script. Failure is:
+#
+# PHP Warning:  Can't preload unlinked class
+# Omines\\DataTablesBundle\\Adapter\\Doctrine\\ORM\\QueryBuilderProcessorInterface@anonymous:
+# Unknown interface Omines\\DataTablesBundle\\Adapter\\Doctrine\\ORM\\QueryBuilderProcessorInterface in
+# /var/www/html/vendor/omines/datatables-bundle/src/Adapter/Doctrine/ORMAdapter.php on line 338
+# RUN docker-php-ext-enable opcache
 
 RUN curl https://pecl.php.net/get/APCu -o /tmp/apcu.tar.gz \
         && mkdir -p /usr/src/php/ext/apcu \

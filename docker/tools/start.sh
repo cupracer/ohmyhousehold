@@ -48,6 +48,11 @@ fi
 
 if [ "${APP_ENV}" == "prod" ]; then
   su www-data --shell=/bin/bash -c "XDEBUG_MODE=off php bin/console --no-interaction --env=${APP_ENV} doctrine:migrations:migrate"
+
+# Disable opcache.preload for now, as it causes issues with PHP preloading; see Dockerfile for details
+#  echo 'opcache.preload=/var/www/html/config/preload.php' > /usr/local/etc/php/conf.d/99-opcache-preload.ini
+#  echo 'opcache.preload_user=www-data' >> /usr/local/etc/php/conf.d/99-opcache-preload.ini
+
 else
   echo '***'
   echo '*** Remember to run "php bin/console doctrine:migrations:migrate" after DB structure changes ***'
