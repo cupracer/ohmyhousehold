@@ -91,14 +91,12 @@ ENV APP_ENV=${APP_ENV:-prod}
 
 COPY --chown=www-data:www-data . /var/www/html
 
-# clean up node_modules source packages
-RUN rm -rf /var/run/html/node_modules
-
 RUN echo APP_ENV=$APP_ENV > /var/www/html/.env.local
 
 RUN XDEBUG_MODE=off /setup.sh
 
-# HEALTHCHECK CMD curl -Lfk http://localhost/ping || exit 1
+# clean up node_modules source packages
+RUN rm -rf /var/run/html/node_modules
 
 ###
 
