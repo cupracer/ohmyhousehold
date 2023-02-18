@@ -29,9 +29,18 @@ use Doctrine\Migrations\AbstractMigration;
 final class Version20230217151606 extends AbstractMigration
 {
     public const CATEGORIES = [
-        ['name' => 'supplies.category.name.clothing'],
         ['name' => 'supplies.category.name.food'],
+        ['name' => 'supplies.category.name.drinks'],
+        ['name' => 'supplies.category.name.medical'],
         ['name' => 'supplies.category.name.hygiene'],
+        ['name' => 'supplies.category.name.camping'],
+        ['name' => 'supplies.category.name.cleaning'],
+        ['name' => 'supplies.category.name.electronics'],
+        ['name' => 'supplies.category.name.pet'],
+        ['name' => 'supplies.category.name.coffee'],
+        ['name' => 'supplies.category.name.tea'],
+        ['name' => 'supplies.category.name.clothing'],
+        ['name' => 'supplies.category.name.other'],
     ];
 
     public const MEASURES = [
