@@ -98,13 +98,12 @@ RUN echo APP_ENV=$APP_ENV > /var/www/html/.env.local
 
 RUN XDEBUG_MODE=off /setup.sh
 
-HEALTHCHECK CMD curl -Lfk http://localhost/ping || exit 1
+# HEALTHCHECK CMD curl -Lfk http://localhost/ping || exit 1
 
 ###
 
 FROM common_base as production_ready
 
-#ARG APP_ENV
 ENV APP_ENV=${APP_ENV:-prod}
 
 COPY --from=thick_app /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions
@@ -113,6 +112,6 @@ COPY --from=thick_app --chown=www-data:www-data /var/www/html/ /var/www/html
 
 RUN echo APP_ENV=$APP_ENV > /var/www/html/.env.local
 
-HEALTHCHECK CMD curl -Lfk http://localhost/ping || exit 1
+# HEALTHCHECK CMD curl -Lfk http://localhost/ping || exit 1
 
 CMD [ "/start.sh" ]
