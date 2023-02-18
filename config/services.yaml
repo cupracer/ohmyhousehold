@@ -6,6 +6,9 @@
 parameters:
     app.supported_locales: 'en|de'
     app.site_name: 'Oh my Household!'
+    app.secret: "%env(APP_SECRET)%"
+    app.session_ttl: "%env(APP_SESSION_TTL)%"
+    session.save_path: "%env(REDIS_URL)%"
 
 services:
     # default configuration for services in *this* file
@@ -28,7 +31,7 @@ services:
     Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler:
         arguments:
             - '@Redis'
-            - { 'ttl': '%env(APP_SESSION_TTL)%' }
+            - { 'ttl': '%app.session_ttl%' }
 
     # at least required by omines/datatables-bundle (see TwigStringColumn)
     Twig\Extension\StringLoaderExtension:
