@@ -27,6 +27,8 @@ services:
       SSL_SUBJECT:
       MAILER_SENDER_ADDRESS: changeme@example.com
       MAILER_SENDER_NAME: ChangeMe
+      REDIS_SERVICE_HOST: redis
+      REDIS_SERVICE_PORT: 6379
     ports:
       - "${WEB_HTTP_PORT:-8000}:80"
       - "${WEB_HTTPS_PORT:-8443}:443"
