@@ -6,6 +6,10 @@ CMD="COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction --optimize-autol
 echo " * ${CMD}"
 su www-data --shell=/bin/bash -c "${CMD}"
 
+CMD="php bin/console assets:install --no-interaction"
+echo " * ${CMD}"
+su www-data --shell=/bin/bash -c "${CMD}"
+
 CMD="yarn install"
 echo " * ${CMD}"
 su www-data --shell=/bin/bash -c "${CMD}"
