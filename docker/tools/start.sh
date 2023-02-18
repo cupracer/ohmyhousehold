@@ -6,6 +6,7 @@ if [[ ! -z "$SSL_SUBJECT" ]]; then
 	fi
 
 	sed -i 's/##REWRITE_HTTPS##//g' /etc/apache2/sites-available/000-default.conf
+	a2enmod ssl
 	a2ensite default-ssl
 fi
 

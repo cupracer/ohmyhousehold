@@ -9,7 +9,7 @@ COPY docker/tools/apache/000-default.conf /etc/apache2/sites-available/000-defau
 COPY docker/tools/apache/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
 
 RUN /usr/sbin/a2enmod rewrite \
-	&& /usr/sbin/a2enmod ssl
+    && /usr/sbin/a2ensite 000-default
 
 COPY ./docker/tools/start.sh /start.sh
 COPY ./docker/tools/www.sh /usr/local/sbin/www.sh
