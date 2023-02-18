@@ -1,0 +1,24 @@
+services:
+
+  db:
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+
+  web:
+    image: ghcr.io/cupracer/ohmyhousehold2:main
+    environment:
+      APP_ENV: prod
+    restart: unless-stopped
+
+  messenger:
+    image: ghcr.io/cupracer/ohmyhousehold2:main
+    environment:
+      APP_ENV: prod
+    restart: unless-stopped
+
+  redis:
+    restart: unless-stopped
+
+volumes:
+  db_data:

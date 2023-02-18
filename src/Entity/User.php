@@ -44,7 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 3, max: 180)]
-    #[Assert\Regex(pattern: '/^[:alpha:][[:alpha:][:digit:]]+$/', message: 'form.regex.invalid')]
+    #[Assert\Regex(pattern: '/^[[:alpha:]][[:alpha:][:digit:]]+$/', message: 'form.regex.invalid')]
     private ?string $username = null;
 
     #[ORM\Column]

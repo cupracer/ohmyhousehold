@@ -9,7 +9,7 @@ COPY docker/tools/apache/000-default.conf /etc/apache2/sites-available/000-defau
 COPY docker/tools/apache/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
 
 RUN /usr/sbin/a2enmod rewrite \
-	&& /usr/sbin/a2enmod ssl
+    && /usr/sbin/a2ensite 000-default
 
 COPY ./docker/tools/start.sh /start.sh
 COPY ./docker/tools/www.sh /usr/local/sbin/www.sh
@@ -63,7 +63,14 @@ COPY docker/tools/setup.sh /setup.sh
 
 RUN chmod 755 /setup.sh
 
-RUN docker-php-ext-enable opcache
+# Disabled due to preloading failure with opcache and omines/datatables-bundle.
+# Also disabled in start.sh script. Failure is:
+#
+# PHP Warning:  Can't preload unlinked class
+# Omines\\DataTablesBundle\\Adapter\\Doctrine\\ORM\\QueryBuilderProcessorInterface@anonymous:
+# Unknown interface Omines\\DataTablesBundle\\Adapter\\Doctrine\\ORM\\QueryBuilderProcessorInterface in
+# /var/www/html/vendor/omines/datatables-bundle/src/Adapter/Doctrine/ORMAdapter.php on line 338
+# RUN docker-php-ext-enable opcache
 
 RUN curl https://pecl.php.net/get/APCu -o /tmp/apcu.tar.gz \
         && mkdir -p /usr/src/php/ext/apcu \
@@ -95,13 +102,13 @@ RUN echo APP_ENV=$APP_ENV > /var/www/html/.env.local
 
 RUN XDEBUG_MODE=off /setup.sh
 
-HEALTHCHECK CMD curl -Lfk http://localhost/ping || exit 1
+# clean up node_modules source packages
+RUN rm -rf /var/www/html/node_modules
 
 ###
 
 FROM common_base as production_ready
 
-#ARG APP_ENV
 ENV APP_ENV=${APP_ENV:-prod}
 
 COPY --from=thick_app /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions
@@ -109,7 +116,5 @@ COPY --from=thick_app /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d
 COPY --from=thick_app --chown=www-data:www-data /var/www/html/ /var/www/html
 
 RUN echo APP_ENV=$APP_ENV > /var/www/html/.env.local
-
-HEALTHCHECK CMD curl -Lfk http://localhost/ping || exit 1
 
 CMD [ "/start.sh" ]

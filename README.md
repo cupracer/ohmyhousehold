@@ -7,10 +7,10 @@ docker compose build --pull --no-cache
 docker compose up -d
 ```
 
-for production:
+for production-mode during development:
 ```shell
-docker compose -f compose.yaml -f compose.prod.yaml build --pull --no-cache
-docker compose -f compose.yaml -f compose.prod.yaml up -d
+docker compose -f compose.yaml -f compose.prod_ready.yaml build --pull --no-cache
+docker compose -f compose.yaml -f compose.prod_ready.yaml up -d
 ```
 
 ## To run Composer and Yarn during development:

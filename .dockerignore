@@ -1,0 +1,14 @@
+# GitHub actions
+.github/workflows/
+
+# IDE
+/.idea
+
+# composer dependencies
+vendor/
+
+# node modules
+node_modules/
+
+# logs, cache, session
+/var/
