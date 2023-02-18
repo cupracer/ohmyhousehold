@@ -117,6 +117,4 @@ COPY --from=thick_app --chown=www-data:www-data /var/www/html/ /var/www/html
 
 RUN echo APP_ENV=$APP_ENV > /var/www/html/.env.local
 
-# HEALTHCHECK CMD curl -Lfk http://localhost/ping || exit 1
-
 CMD [ "/start.sh" ]
