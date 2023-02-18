@@ -96,7 +96,7 @@ RUN echo APP_ENV=$APP_ENV > /var/www/html/.env.local
 RUN XDEBUG_MODE=off /setup.sh
 
 # clean up node_modules source packages
-RUN rm -rf /var/run/html/node_modules
+RUN rm -rf /var/www/html/node_modules
 
 ###
 
