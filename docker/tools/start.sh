@@ -27,9 +27,6 @@ esac
 
 sed -i 's/^max_execution_time.*/max_execution_time = 120/' /usr/local/etc/php/php.ini
 
-echo 'opcache.preload=/var/www/html/config/preload.php' > /usr/local/etc/php/conf.d/99-opcache-preload.ini
-echo 'opcache.preload_user=www-data' >> /usr/local/etc/php/conf.d/99-opcache-preload.ini
-
 if [ -f /var/www/html/public/.htaccess ]; then
   sed -i '/##SYMFONY-APACHE-PACK##/ r /var/www/html/public/.htaccess' /etc/apache2/sites-available/000-default.conf
   sed -i '/##SYMFONY-APACHE-PACK##/ r /var/www/html/public/.htaccess' /etc/apache2/sites-available/default-ssl.conf
