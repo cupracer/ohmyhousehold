@@ -26,6 +26,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up QEMU
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx
@@ -59,7 +60,8 @@ jobs:
           context: .
           file: ./docker/tools/Dockerfile
           target: production_ready
-          platforms: linux/amd64,linux/arm64
+          platforms:
+            ${{ github.event_name == 'release' || env.BUILD_AND_PUSH == 'true' ? 'linux/amd64,linux/arm64': 'linux/amd64' } }
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
