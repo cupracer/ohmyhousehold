@@ -69,6 +69,11 @@ final class Version20230217151606 extends AbstractMigration
             'unit' => 'supplies.measure.unit.piece',
             'physicalQuantity' => 'piece'
         ],
+        [
+            'name' => 'supplies.measure.name.meter',
+            'unit' => 'supplies.measure.unit.meter',
+            'physicalQuantity' => 'length'
+        ],
     ];
 
     public const PACKAGING = [
