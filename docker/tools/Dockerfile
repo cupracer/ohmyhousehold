@@ -1,6 +1,14 @@
 # TODO: check version regularly
 FROM php:8.2-apache as common_base
 
+# Locale settings to avoid issues with Symfony and keyboard input
+RUN apt-get update && \
+    apt-get install -y locales && \
+    localedef -i C -f UTF-8 C.UTF-8
+ENV LANG C.UTF-8
+ENV LANGUAGE C.UTF-8
+ENV LC_ALL C.UTF-8
+
 ARG APP_ENV
 
 RUN mkdir /certs
