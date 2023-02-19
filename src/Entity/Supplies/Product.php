@@ -47,7 +47,7 @@ class Product
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(min: 2, max: 255)]
     #[Assert\Regex(
-        pattern: '/^[[:alpha:][:digit:]äöüÄÖÜ\(][[:alpha:][:digit:]äöüÄÖÜ\-\s_:;!\(\)]*[[:alpha:][:digit:]äöüÄÖÜ!\)]$/',
+        pattern: '/^[[:alpha:][:digit:]äöüÄÖÜ\(\[][[:alpha:][:digit:]äöüÄÖÜ\-\s_\.:;!\(\)\[\]]*[[:alpha:][:digit:]äöüÄÖÜ!\)\]]$/',
         message: 'form.regex.invalid')]
     private ?string $name = null;
 
