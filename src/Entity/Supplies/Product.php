@@ -116,8 +116,12 @@ class Product
 
     public function getName(): ?string
     {
-        // return $this->name if set, otherwise return the name of the commodity if commodity not null
-        return $this->name ?: ($this->getCommodity()?->getName());
+        // return concatenated name and commodity name if name is set, otherwise return commodity name
+        if ($this->name) {
+            return '[' . $this->getCommodity()?->getName() . '] ' . $this->name;
+        }else {
+            return $this->getCommodity()?->getName();
+        }
     }
 
     public function setName(?string $name): self
