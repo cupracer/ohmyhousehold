@@ -47,7 +47,7 @@ class Product
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(min: 2, max: 255)]
     #[Assert\Regex(
-        pattern: '/^[[:alpha:][:digit:]äöüÄÖÜ\(][[:alpha:][:digit:]äöüÄÖÜ\-\s_:;!\(\)]*[[:alpha:][:digit:]äöüÄÖÜ!\)]$/',
+        pattern: '/^[[:alpha:][:digit:]äöüÄÖÜ\(\[][[:alpha:][:digit:]äöüÄÖÜ\-\s_\.:;!\(\)\[\]]*[[:alpha:][:digit:]äöüÄÖÜ!\)\]]$/',
         message: 'form.regex.invalid')]
     private ?string $name = null;
 
@@ -116,8 +116,12 @@ class Product
 
     public function getName(): ?string
     {
-        // return $this->name if set, otherwise return the name of the commodity if commodity not null
-        return $this->name ?: ($this->getCommodity()?->getName());
+        // return concatenated name and commodity name if name is set, otherwise return commodity name
+        if ($this->name) {
+            return '[' . $this->getCommodity()?->getName() . '] ' . $this->name;
+        }else {
+            return $this->getCommodity()?->getName();
+        }
     }
 
     public function setName(?string $name): self
