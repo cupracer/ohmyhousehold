@@ -26,6 +26,8 @@ use App\Entity\Supplies\Commodity;
 use App\Entity\Supplies\Measure;
 use App\Entity\Supplies\Packaging;
 use App\Entity\Supplies\Product;
+use App\Repository\Supplies\BrandRepository;
+use App\Repository\Supplies\CommodityRepository;
 use App\Repository\Supplies\MeasureRepository;
 use App\Repository\Supplies\PackagingRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -44,6 +46,8 @@ class ProductType extends AbstractType
         private readonly TranslatorInterface $translator,
         private readonly MeasureRepository $measureRepository,
         private readonly PackagingRepository $packagingRepository,
+        private readonly CommodityRepository $commodityRepository,
+        private readonly BrandRepository $brandRepository,
     )
     {
     }
@@ -55,6 +59,7 @@ class ProductType extends AbstractType
                 'class' => Commodity::class,
                 'choice_label' => 'name',
                 'label_format' => 'form.product.%name%',
+                'choices' => $this->getSortedCommodityChoices(),
             ])
             ->add('name', TextType::class, [
                 'label_format' => 'form.product.%name%',
@@ -68,6 +73,7 @@ class ProductType extends AbstractType
                 'class' => Brand::class,
                 'choice_label' => 'name',
                 'label_format' => 'form.product.%name%',
+                'choices' => $this->getSortedBrandChoices(),
             ])
             ->add('identifierCodes', CollectionType::class, [
                 'entry_type' => IdentifierCodeType::class,
@@ -150,6 +156,42 @@ class ProductType extends AbstractType
             /** @var Packaging $a */
             /** @var Packaging $b */
             return strcmp($this->translator->trans($a->getName()), $this->translator->trans($b->getName()));
+        });
+
+        return $choices;
+    }
+
+    /**
+     * Get the sorted commodity choices
+     * @return array
+     */
+    private function getSortedCommodityChoices(): array
+    {
+        $choices = $this->commodityRepository->findAll();
+
+        // Sort the choices
+        usort($choices, function ($a, $b) {
+            /** @var Commodity $a */
+            /** @var Commodity $b */
+            return strcmp($a->getName(), $b->getName());
+        });
+
+        return $choices;
+    }
+
+    /**
+     * Get the sorted brand choices
+     * @return array
+     */
+    private function getSortedBrandChoices(): array
+    {
+        $choices = $this->brandRepository->findAll();
+
+        // Sort the choices
+        usort($choices, function ($a, $b) {
+            /** @var Brand $a */
+            /** @var Brand $b */
+            return strcmp($a->getName(), $b->getName());
         });
 
         return $choices;
