@@ -80,6 +80,7 @@ class ArticleCheckoutType extends AbstractType
                     'placeholder' => '',
                     'class' => Product::class,
                     'choices' => $this->productRepository->findBy(['id' => intval($productId)]),
+                    'choice_label' => 'name',
                     'label_format' => 'form.article.%name%',
                     'attr' => [
                         'class' => 'form-control select2field',
