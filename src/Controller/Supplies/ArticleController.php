@@ -79,6 +79,7 @@ class ArticleController extends AbstractController
                 'label' => 'form.article.withdrawalDate',
                 'format' => 'Y-m-d',
                 'className' => 'min text-center',
+                'visible' => false, // would be empty anyway, because search criteria is used
             ])
             ->add('createdAt', DateTimeColumn::class, [
                 'label' => 'label.createdAt',
