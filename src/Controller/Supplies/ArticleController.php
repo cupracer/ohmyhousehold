@@ -30,7 +30,9 @@ use App\Repository\Supplies\StorageLocationRepository;
 use DateTime;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Exception;
+use Omines\DataTablesBundle\Adapter\Doctrine\ORM\SearchCriteriaProvider;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
@@ -91,6 +93,20 @@ class ArticleController extends AbstractController
             ->addOrderBy('product')
             ->createAdapter(ORMAdapter::class, [
                 'entity' => Article::class,
+                'query' => function(QueryBuilder $builder) {
+                    $builder
+                        ->select('a')
+                        ->from(Article::class, 'a')
+                        ->leftJoin('a.product', 'product')
+                        ->addSelect('product')
+                    ;
+                },
+                'criteria' => [
+                    function (QueryBuilder $builder) {
+                        $builder->andWhere($builder->expr()->isNull('a.withdrawalDate'));
+                    },
+                    new SearchCriteriaProvider(),
+                ],
             ])
             ->handleRequest($request);
 
