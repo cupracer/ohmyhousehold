@@ -6,13 +6,13 @@ services:
     restart: unless-stopped
 
   web:
-    image: ghcr.io/cupracer/ohmyhousehold2:main
+    image: ghcr.io/cupracer/ohmyhousehold:main
     environment:
       APP_ENV: prod
     restart: unless-stopped
 
   messenger:
-    image: ghcr.io/cupracer/ohmyhousehold2:main
+    image: ghcr.io/cupracer/ohmyhousehold:main
     environment:
       APP_ENV: prod
     restart: unless-stopped

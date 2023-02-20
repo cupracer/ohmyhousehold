@@ -1,4 +1,4 @@
-# ohmyhousehold2
+# ohmyhousehold
 
 ## Docker Compose setup
 for local development (uses `compose.yaml` and `compose.override.yaml` automatically):
