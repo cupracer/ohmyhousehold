@@ -54,6 +54,11 @@ class ArticleController extends AbstractController
     public function index(Request $request, DataTableFactory $dataTableFactory, TranslatorInterface $translator): Response
     {
         $table = $dataTableFactory->create()
+            ->add('commodity', TextColumn::class, [
+                'label' => 'form.article.commodity',
+                'field' => 'commodity.name',
+                'visible' => false,
+            ])
             ->add('product', TextColumn::class, [
                 'label' => 'form.article.product',
                 'field' => 'product.name',
@@ -99,7 +104,9 @@ class ArticleController extends AbstractController
                         ->select('a')
                         ->from(Article::class, 'a')
                         ->leftJoin('a.product', 'product')
+                        ->innerJoin('product.commodity', 'commodity')
                         ->addSelect('product')
+                        ->addSelect('commodity')
                     ;
                 },
                 'criteria' => [
