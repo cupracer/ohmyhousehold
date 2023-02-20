@@ -15,7 +15,7 @@ docker compose -f compose.yaml -f compose.prod_ready.yaml up -d
 
 ## To run Composer and Yarn during development:
 ```shell
- docker compose run -e XDEBUG_MODE=off web /setup.sh 
+ docker compose run web /setup.sh 
 ```
 
 ## Jobs

@@ -64,7 +64,7 @@ fi
 #test -z $APP_DATATABLES_USE_FIXED_COLUMNS || echo "APP_DATATABLES_USE_FIXED_COLUMNS='${APP_DATATABLES_USE_FIXED_COLUMNS}'" >> /var/www/html/.env.local
 
 if [ "${APP_ENV}" == "prod" ]; then
-  su www-data --shell=/bin/bash -c "XDEBUG_MODE=off php bin/console --no-interaction --env=${APP_ENV} doctrine:migrations:migrate"
+  su www-data --shell=/bin/bash -c "php bin/console --no-interaction --env=${APP_ENV} doctrine:migrations:migrate"
 
 # Disable opcache.preload for now, as it causes issues with PHP preloading; see Dockerfile for details
 #  echo 'opcache.preload=/var/www/html/config/preload.php' > /usr/local/etc/php/conf.d/99-opcache-preload.ini
@@ -76,7 +76,7 @@ else
   echo '***'
 fi
 
-su www-data --shell=/bin/bash -c "XDEBUG_MODE=off php bin/console --env=${APP_ENV} cache:clear"
+su www-data --shell=/bin/bash -c "php bin/console --env=${APP_ENV} cache:clear"
 
 RC=$?
 
