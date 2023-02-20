@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="ohmyhousehold2-prod_ready" type="docker-deploy" factoryName="docker-compose.yml" server-name="Docker">
+  <configuration default="false" name="ohmyhousehold-prod_ready" type="docker-deploy" factoryName="docker-compose.yml" server-name="Docker">
     <deployment type="docker-compose.yml">
       <settings>
-        <option name="composeProjectName" value="ohmyhousehold2-prod_ready" />
+        <option name="composeProjectName" value="ohmyhousehold-prod_ready" />
         <option name="envFilePath" value="" />
         <option name="removeImagesOnComposeDown" value="LOCAL" />
         <option name="removeVolumesOnComposeDown" value="true" />
