@@ -4,6 +4,7 @@ FROM php:8.2-apache as common_base
 # Locale settings to avoid issues with Symfony and keyboard input
 RUN apt-get update && \
     apt-get install -y locales && \
+    apt-get clean && \
     localedef -i C -f UTF-8 C.UTF-8
 ENV LANG C.UTF-8
 ENV LANGUAGE C.UTF-8
@@ -47,7 +48,8 @@ RUN apt-get update && apt-get install -y  \
     symfony-cli \
     unzip \
     vim \
-    yarn
+    yarn && \
+    apt-get clean
 
 RUN docker-php-ext-configure intl
 
