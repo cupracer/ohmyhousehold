@@ -107,14 +107,9 @@ class ArticleController extends AbstractController
                         ->innerJoin('product.commodity', 'commodity')
                         ->addSelect('product')
                         ->addSelect('commodity')
+                        ->andWhere($builder->expr()->isNull('a.withdrawalDate'))
                     ;
                 },
-                'criteria' => [
-                    function (QueryBuilder $builder) {
-                        $builder->andWhere($builder->expr()->isNull('a.withdrawalDate'));
-                    },
-                    new SearchCriteriaProvider(),
-                ],
             ])
             ->handleRequest($request);
 
