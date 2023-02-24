@@ -14,3 +14,4 @@ form.supplies.minimumproductstock.not-unique: 'Diese Kombination existiert berei
 form.supplies.packaging.name.not-unique: 'Dieser Name existiert bereits'
 form.supplies.product.not-unique: 'Dieses Produkt existiert bereits'
 form.supplies.storagelocation.name.not-unique: 'Dieser Name existiert bereits'
+form.supplies.stocktaking.name.not-unique: 'Dieser Name existiert bereits'
