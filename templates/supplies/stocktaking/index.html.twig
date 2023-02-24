@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block page_header_buttons %}
+    <div class="col-lg-4 text-right">
+        {% include '_button_new.html.twig' with {
+            'targetUrl': path('app_supplies_stocktaking_new'),
+            'titleKey': 'app.supplies.stocktaking.new.title'
+        } %}
+    </div>
+{% endblock page_header_buttons %}
+
+{% block page_content_body %}
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-md-10 col-lg-8">
+            <!-- This div is used for the Datatables content -->
+            <div id="stocktaking">Loading...</div>
+        </div>
+        <div class="col"></div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    {{ encore_entry_link_tags('datatables') }}
+{% endblock stylesheets %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {{ encore_entry_script_tags('datatables') }}
+{% endblock javascripts %}
+
+{% block javascripts_inline %}
+    <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
+    <script>
+        $(function() {
+            $('#stocktaking').initDataTables({{ datatable_settings(datatable) }});
+        });
+    </script>
+{% endblock javascripts_inline %}

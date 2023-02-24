@@ -1,0 +1,11 @@
+{% set outline = value == -1 ? '' : '-outline' %}
+<button type="button" data-update-url="{{ path(updateUrl, {'id': row.id }) }}" data-id="{{ row.id }}" data-value="-1" class="btn btn{{ outline }}-secondary stocktakingBtn">undecided</button>
+
+{% set outline = value == 1 ? '' : '-outline' %}
+<button type="button" data-update-url="{{ path(updateUrl, {'id': row.id }) }}" data-id="{{ row.id }}" data-value="1" class="btn btn{{ outline }}-success stocktakingBtn">confirmed</button>
+
+{% set outline = value == 2 ? '' : '-outline' %}
+<button type="button" data-update-url="{{ path(updateUrl, {'id': row.id }) }}" data-id="{{ row.id }}" data-value="2" class="btn btn{{ outline }}-danger stocktakingBtn">missing</button>
+
+{% set outline = value == 3 ? '' : '-outline' %}
+<button type="button" data-update-url="{{ path(updateUrl, {'id': row.id }) }}" data-id="{{ row.id }}" data-value="3" class="btn btn{{ outline }}-warning stocktakingBtn">overstocked</button>
