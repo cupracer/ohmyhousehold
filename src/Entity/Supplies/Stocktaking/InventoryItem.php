@@ -60,8 +60,7 @@ class InventoryItem
     private ?\DateTimeInterface $bestBeforeDate = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Assert\NotNull]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Article $article = null;
 
     #[ORM\Column]
