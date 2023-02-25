@@ -17,11 +17,11 @@
                 </div>
                 <div class="form-group">
                     <label>{{ 'form.article.purchaseDate'|trans|capitalize }}</label>
-                    <div>{{ article.purchaseDate|format_date }}</div>
+                    <div>{% if article.purchaseDate is not empty %}{{ article.purchaseDate|format_date }}{% endif %}</div>
                 </div>
                 <div class="form-group">
                     <label>{{ 'form.article.bestBeforeDate'|trans|upper }}</label>
-                    <div>{{ article.bestBeforeDate|format_date }}</div>
+                    <div>{% if article.bestBeforeDate is not empty %}{{ article.bestBeforeDate|format_date }}{% endif %}</div>
                 </div>
             </div>
         </div>

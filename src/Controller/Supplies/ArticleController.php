@@ -70,31 +70,31 @@ class ArticleController extends AbstractController
                         $value);
                 },
             ])
-            ->add('purchaseDate', DateTimeColumn::class, [
+            ->add('purchaseDate', TwigStringColumn::class, [
                 'label' => 'form.article.purchaseDate',
-                'format' => 'Y-m-d',
+                'template' => '{% if value is not empty %}{{ value|format_date }}{% endif %}',
                 'className' => 'min text-center',
                 'visible' => false,
             ])
             ->add('bestBeforeDate', TwigStringColumn::class, [
                 'label' => 'form.article.bestBeforeDate',
-                'template' => '{{ value|format_date }}',
+                'template' => '{% if value is not empty %}{{ value|format_date }}{% endif %}',
                 'className' => 'min text-center',
             ])
             ->add('withdrawalDate', TwigStringColumn::class, [
                 'label' => 'form.article.withdrawalDate',
-                'template' => '{{ value|format_datetime }}',
+                'template' => '{% if value is not empty %}{{ value|format_date }}{% endif %}',
                 'className' => 'min text-center',
                 'visible' => false, // would be empty anyway, because search criteria is used
             ])
             ->add('createdAt', TwigStringColumn::class, [
                 'label' => 'label.createdAt',
-                'template' => '{{ value|format_datetime }}',
+                'template' => '{% if value is not empty %}{{ value|format_datetime }}{% endif %}',
                 'className' => 'min',
             ])
             ->add('updatedAt', TwigStringColumn::class, [
                 'label' => 'label.updatedAt',
-                'template' => '{{ value|format_datetime }}',
+                'template' => '{% if value is not empty %}{{ value|format_datetime }}{% endif %}',
                 'className' => 'min',
             ])
             ->addOrderBy('product')

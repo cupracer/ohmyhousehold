@@ -66,12 +66,12 @@ class StocktakingController extends AbstractController
             ])
             ->add('createdAt', TwigStringColumn::class, [
                 'label' => 'label.createdAt',
-                'template' => '{{ value|format_datetime }}',
+                'template' => '{% if value is not empty %}{{ value|format_datetime }}{% endif %}',
                 'className' => 'min',
             ])
             ->add('updatedAt', TwigStringColumn::class, [
                 'label' => 'label.updatedAt',
-                'template' => '{{ value|format_datetime }}',
+                'template' => '{% if value is not empty %}{{ value|format_datetime }}{% endif %}',
                 'className' => 'min',
             ])
             ->addOrderBy('name')
@@ -131,7 +131,7 @@ class StocktakingController extends AbstractController
             ])
             ->add('bestBeforeData', TwigStringColumn::class, [
                 'label' => 'form.article.bestBeforeDate',
-                'template' => '{{ value|format_date }}',
+                'template' => '{% if value is not empty %}{{ value|format_date }}{% endif %}',
             ])
             ->add('identifierCodes', TextColumn::class, [
                 'label' => 'form.product.identifierCodes',
