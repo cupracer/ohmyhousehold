@@ -129,7 +129,7 @@ class StocktakingController extends AbstractController
             ->add('productName', TextColumn::class, [
                 'label' => 'form.article.product',
             ])
-            ->add('bestBeforeData', TwigStringColumn::class, [
+            ->add('bestBeforeDate', TwigStringColumn::class, [
                 'label' => 'form.article.bestBeforeDate',
                 'template' => '{% if value is not empty %}{{ value|format_date }}{% endif %}',
             ])
