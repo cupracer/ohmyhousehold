@@ -128,6 +128,9 @@ class StocktakingController extends AbstractController
             ->add('productName', TextColumn::class, [
                 'label' => 'form.article.product',
             ])
+            ->add('bestBeforeData', TextColumn::class, [
+                'label' => 'form.article.bestBeforeDate',
+            ])
             ->add('identifierCodes', TextColumn::class, [
                 'label' => 'form.product.identifierCodes',
                 'data' => function(InventoryItem $item) {
