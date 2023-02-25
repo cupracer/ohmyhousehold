@@ -48,17 +48,33 @@
                     dataTable.on("click", ".stocktakingBtn", function(){
                         $(".stocktakingBtn").prop("disabled", true);
                         let button = $(this);
-                        let updateUrl = button.data('update-url');
 
-                        $.ajax({
-                            url: updateUrl,
-                            type: "POST",
-                            dataType: 'json',
-                            data: {
+                        let actionUrl = null;
+                        let data = null;
+
+                        if(button.data('update-url')) {
+                            actionUrl = button.data('update-url');
+                            data = {
                                 'inventory_item': {
                                     'status': button.data('value')
                                 }
-                            },
+                            };
+                        }else if (button.data('delete-url')) {
+                            actionUrl = button.data('delete-url');
+                            data = {
+                                '_token': button.data('csrf')
+                            }
+                        }
+
+                        if(!actionUrl) {
+                            return;
+                        }
+
+                        $.ajax({
+                            url: actionUrl,
+                            type: "POST",
+                            dataType: 'json',
+                            data: data,
                             success: function (data) {
                                 if(data.status === "success") {
                                     dataTable.draw();
@@ -78,6 +94,8 @@
                                         delay: 4000,
                                         icon: 'fas fa-exclamation fa-lg',
                                     });
+
+                                    $(".stocktakingBtn").prop("disabled", false);
                                 }
                             }
                         });

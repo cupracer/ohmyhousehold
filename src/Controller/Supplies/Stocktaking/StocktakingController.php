@@ -118,6 +118,7 @@ class StocktakingController extends AbstractController
     public function show(Request $request, Stocktaking $stocktaking, DataTableFactory $dataTableFactory, Environment $twig): Response
     {
         $twig->addGlobal('updateUrl', 'app_supplies_stocktaking_item_update');
+        $twig->addGlobal('deleteUrl', 'app_supplies_article_delete_ajax');
 
         $table = $dataTableFactory->create()
             ->add('commodityName', TextColumn::class, [

@@ -1,11 +1,39 @@
 {% set outline = value == -1 ? '' : '-outline' %}
-<button type="button" data-update-url="{{ path(updateUrl, {'id': row.id }) }}" data-id="{{ row.id }}" data-value="-1" class="btn btn{{ outline }}-secondary stocktakingBtn">undecided</button>
+{% set disabled = row.article ? '' : 'disabled' %}
+
+<button type="button" class="btn btn{{ outline }}-secondary stocktakingBtn {{ disabled }}"
+        data-update-url="{{ path(updateUrl, {'id': row.id }) }}"
+        data-id="{{ row.id }}"
+        data-value="-1">undecided</button>
 
 {% set outline = value == 1 ? '' : '-outline' %}
-<button type="button" data-update-url="{{ path(updateUrl, {'id': row.id }) }}" data-id="{{ row.id }}" data-value="1" class="btn btn{{ outline }}-success stocktakingBtn">confirmed</button>
+<button type="button" class="btn btn{{ outline }}-success stocktakingBtn {{ disabled }}"
+        data-update-url="{{ path(updateUrl, {'id': row.id }) }}"
+        data-id="{{ row.id }}"
+        data-value="1">confirmed</button>
 
-{% set outline = value == 2 ? '' : '-outline' %}
-<button type="button" data-update-url="{{ path(updateUrl, {'id': row.id }) }}" data-id="{{ row.id }}" data-value="2" class="btn btn{{ outline }}-danger stocktakingBtn">missing</button>
+{% if row.article %}
+    {% set outline = value == 2 ? '' : '-outline' %}
+    <button type="button" class="btn btn{{ outline }}-danger stocktakingBtn {{ disabled }}"
+            {% if value == 2 %}
+                {% if row.article %}
+                    data-delete-url="{{ path(deleteUrl, {'id': row.article.id }) }}"
+    {#                data-csrf="{{ csrf_token('delete_article_ajax_' ~ row.article.id ~ '_token') }}"#}
+                {% endif %}
+            {% else %}
+                data-update-url="{{ path(updateUrl, {'id': row.id }) }}"
+            {% endif %}
+            data-id="{{ row.id }}"
+            data-value="2">missing</button>
+{% else %}
+    <button type="button" class="btn btn-purple disabled">purged</button>
+{% endif %}
 
 {% set outline = value == 3 ? '' : '-outline' %}
-<button type="button" data-update-url="{{ path(updateUrl, {'id': row.id }) }}" data-id="{{ row.id }}" data-value="3" class="btn btn{{ outline }}-warning stocktakingBtn">overstocked</button>
+<button type="button" class="btn btn{{ outline }}-warning stocktakingBtn {{ disabled }}"
+        data-update-url="{{ path(updateUrl, {'id': row.id }) }}"
+        {% if row.article %}
+            data-product-id="{{ row.article.product.id }}"
+        {% endif %}
+        data-id="{{ row.id }}"
+        data-value="3">overstocked</button>

@@ -32,14 +32,13 @@ use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
-use Omines\DataTablesBundle\Adapter\Doctrine\ORM\SearchCriteriaProvider;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
-use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Column\TwigStringColumn;
 use Omines\DataTablesBundle\DataTableFactory;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -52,7 +51,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ArticleController extends AbstractController
 {
     #[Route('/', name: 'app_supplies_article_index', methods: ['GET', 'POST'])]
-    public function index(Request $request, DataTableFactory $dataTableFactory, TranslatorInterface $translator): Response
+    public function index(Request $request, DataTableFactory $dataTableFactory): Response
     {
         $table = $dataTableFactory->create()
             ->add('commodity', TextColumn::class, [
@@ -264,6 +263,44 @@ class ArticleController extends AbstractController
         }
 
         return $this->redirectToRoute('app_supplies_article_show', ['id' => $article->getId()]);
+    }
+
+    #[Route('/delete/ajax/{id}', name: 'app_supplies_article_delete_ajax', methods: ['POST'])]
+    public function deleteAjax(Article $article, EntityManagerInterface $entityManager, LoggerInterface $logger, TranslatorInterface $translator): JsonResponse
+    {
+        $id = $article->getId();
+
+        try {
+            // TODO: find a way to use CSRF for AJAX requests
+//            if ($this->isCsrfTokenValid('delete_article_ajax_' . $article->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($article);
+            $entityManager->flush();
+
+            $logger->info("Article '{name}' ({id}) was deleted.", ['name' => $article->getProduct()->getName(), 'id' => $id]);
+
+            return new JsonResponse([
+                'status' => "success",
+                'message' => $translator->trans(
+                    "app.supplies.article.form.success.deleted", ['%name%' => $article->getProduct()->getName(), '%id%' => $id]),
+                ]);
+//            }else {
+//                $logger->error("Invalid CSRF token used while deleting article '{name}' ({id}).", ['name' => $article->getProduct()->getName(), 'id' => $id]);
+//                throw new Exception('invalid CSRF token');
+//            }
+        } catch (ForeignKeyConstraintViolationException) {
+            return new JsonResponse([
+                'status' => "error",
+                'message' => $translator->trans(
+                    "app.supplies.article.form.delete.error.inuse", ['%name%' => $article->getProduct()->getName(), '%id%' => $id]),
+            ]);
+        }catch (Exception $e) {
+            $logger->error('Error occurred during article deletion: {error}', ['error' => $e->getMessage()]);
+            return new JsonResponse([
+                'status' => "error",
+                'message' => $translator->trans(
+                    "app.supplies.article.form.delete.error", ['%name%' => $article->getProduct()->getName(), '%id%' => $id]),
+            ]);
+        }
     }
 
     #[Route('/checkout/{checkoutArticle}', name: 'app_supplies_article_checkout', requirements: ['checkoutArticle' => '\d+'], methods: ['GET', 'POST'])]
