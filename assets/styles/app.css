@@ -78,3 +78,42 @@ td.min {
 .navbar-nav .dropdown-menu {
     margin-top: -3px;
 }
+
+/* Add purpe button style */
+.btn-purple {
+    color: #fff;
+    background-color: #800080;
+    border-color: #6e026e;
+    box-shadow: none;
+}
+
+.btn-purple:hover {
+    color: #fff;
+    background-color: #6c006c;
+    border-color: #6e026e;
+}
+
+.btn-purple:focus, .btn-purple.focus {
+    color: #fff;
+    background-color: #6c006c;
+    border-color: #6e026e;
+    box-shadow: 0 0 0 0 rgba(225, 83, 97, 0.5);
+}
+
+.btn-purple.disabled, .btn-purple:disabled {
+    color: #fff;
+    background-color: #980198;
+    border-color: #a93ea9;
+}
+
+.btn-purple:not(:disabled):not(.disabled):active, .btn-purple:not(:disabled):not(.disabled).active,
+.show > .btn-purple.dropdown-toggle {
+    color: #fff;
+    background-color: #770077;
+    border-color: #770077;
+}
+
+.btn-purple:not(:disabled):not(.disabled):active:focus, .btn-purple:not(:disabled):not(.disabled).active:focus,
+.show > .btn-purple.dropdown-toggle:focus {
+    box-shadow: 0 0 0 0 rgba(162, 69, 169, 0.5);
+}
