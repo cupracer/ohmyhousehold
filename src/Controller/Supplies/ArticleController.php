@@ -36,6 +36,7 @@ use Omines\DataTablesBundle\Adapter\Doctrine\ORM\SearchCriteriaProvider;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\Column\TwigStringColumn;
 use Omines\DataTablesBundle\DataTableFactory;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -75,25 +76,25 @@ class ArticleController extends AbstractController
                 'className' => 'min text-center',
                 'visible' => false,
             ])
-            ->add('bestBeforeDate', DateTimeColumn::class, [
+            ->add('bestBeforeDate', TwigStringColumn::class, [
                 'label' => 'form.article.bestBeforeDate',
-                'format' => 'Y-m-d',
+                'template' => '{{ value|format_date }}',
                 'className' => 'min text-center',
             ])
-            ->add('withdrawalDate', DateTimeColumn::class, [
+            ->add('withdrawalDate', TwigStringColumn::class, [
                 'label' => 'form.article.withdrawalDate',
-                'format' => 'Y-m-d',
+                'template' => '{{ value|format_datetime }}',
                 'className' => 'min text-center',
                 'visible' => false, // would be empty anyway, because search criteria is used
             ])
-            ->add('createdAt', DateTimeColumn::class, [
+            ->add('createdAt', TwigStringColumn::class, [
                 'label' => 'label.createdAt',
-                'format' => 'Y-m-d H:i:s',
+                'template' => '{{ value|format_datetime }}',
                 'className' => 'min',
             ])
-            ->add('updatedAt', DateTimeColumn::class, [
+            ->add('updatedAt', TwigStringColumn::class, [
                 'label' => 'label.updatedAt',
-                'format' => 'Y-m-d H:i:s',
+                'template' => '{{ value|format_datetime }}',
                 'className' => 'min',
             ])
             ->addOrderBy('product')

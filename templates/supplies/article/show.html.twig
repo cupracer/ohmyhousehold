@@ -17,11 +17,11 @@
                 </div>
                 <div class="form-group">
                     <label>{{ 'form.article.purchaseDate'|trans|capitalize }}</label>
-                    <div>{{ article.purchaseDate|date('Y-m-d') }}</div>
+                    <div>{{ article.purchaseDate|format_date }}</div>
                 </div>
                 <div class="form-group">
                     <label>{{ 'form.article.bestBeforeDate'|trans|upper }}</label>
-                    <div>{{ article.bestBeforeDate|date('Y-m-d') }}</div>
+                    <div>{{ article.bestBeforeDate|format_date }}</div>
                 </div>
             </div>
         </div>

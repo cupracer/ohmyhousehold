@@ -29,6 +29,7 @@ use Exception;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\Column\TwigStringColumn;
 use Omines\DataTablesBundle\DataTableFactory;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -55,14 +56,14 @@ class BrandController extends AbstractController
                         $value);
                 },
             ])
-            ->add('createdAt', DateTimeColumn::class, [
+            ->add('createdAt', TwigStringColumn::class, [
                 'label' => 'label.createdAt',
-                'format' => 'Y-m-d H:i:s',
+                'template' => '{{ value|format_datetime }}',
                 'className' => 'min',
             ])
-            ->add('updatedAt', DateTimeColumn::class, [
+            ->add('updatedAt', TwigStringColumn::class, [
                 'label' => 'label.updatedAt',
-                'format' => 'Y-m-d H:i:s',
+                'template' => '{{ value|format_datetime }}',
                 'className' => 'min',
             ])
             ->addOrderBy('name')
