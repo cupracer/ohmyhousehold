@@ -4,13 +4,13 @@
 <button type="button" class="btn btn{{ outline }}-secondary stocktakingBtn {{ disabled }}"
         data-update-url="{{ path(updateUrl, {'id': row.id }) }}"
         data-id="{{ row.id }}"
-        data-value="-1">undecided</button>
+        data-value="-1">{{ 'app.supplies.stocktaking.item.undecided'|trans }}</button>
 
 {% set outline = value == 1 ? '' : '-outline' %}
 <button type="button" class="btn btn{{ outline }}-success stocktakingBtn {{ disabled }}"
         data-update-url="{{ path(updateUrl, {'id': row.id }) }}"
         data-id="{{ row.id }}"
-        data-value="1">confirmed</button>
+        data-value="1">{{ 'app.supplies.stocktaking.item.confirmed'|trans }}</button>
 
 {% if row.article %}
     {% set outline = value == 2 ? '' : '-outline' %}
@@ -24,9 +24,9 @@
                 data-update-url="{{ path(updateUrl, {'id': row.id }) }}"
             {% endif %}
             data-id="{{ row.id }}"
-            data-value="2">missing</button>
+            data-value="2">{{ 'app.supplies.stocktaking.item.missing'|trans }}</button>
 {% else %}
-    <button type="button" class="btn btn-purple disabled">purged</button>
+    <button type="button" class="btn btn-purple disabled">{{ 'app.supplies.stocktaking.item.purged'|trans }}</button>
 {% endif %}
 
 {% set outline = value == 3 ? '' : '-outline' %}
@@ -36,4 +36,4 @@
             data-product-id="{{ row.article.product.id }}"
         {% endif %}
         data-id="{{ row.id }}"
-        data-value="3">overstocked</button>
+        data-value="3">{{ 'app.supplies.stocktaking.item.overstocked'|trans }}</button>

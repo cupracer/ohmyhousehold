@@ -161,3 +161,8 @@ app.supplies.stocktaking.form.delete.confirm: 'Are you sure you want to delete t
 app.supplies.stocktaking.form.delete.error.inuse: 'The stocktaking "{name}" is still in use and cannot be deleted.'
 app.supplies.stocktaking.form.delete.error: 'An error occurred while deleting the stocktaking "{name}".'
 form.inventory-item.status: 'status'
+app.supplies.stocktaking.item.undecided: 'undecided'
+app.supplies.stocktaking.item.confirmed: 'confirmed'
+app.supplies.stocktaking.item.missing: 'missing'
+app.supplies.stocktaking.item.purged: 'purged'
+app.supplies.stocktaking.item.overstocked: 'overstocked'
