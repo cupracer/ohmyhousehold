@@ -23,7 +23,7 @@
                     {% for n in navbarExpiringArticlesNotifications %}
                         <a href="{{ path('app_supplies_article_show', {'id': n.itemId}) }}" class="dropdown-item text-sm">
                             {{ n.title|u.truncate(40, '...') }}
-                            <span class="float-right text-sm{% if n.cssClass %} text-{{ n.cssClass }}{% else %} text-muted{% endif %}">{{ n.note }}</span>
+                            <span class="float-right text-sm{% if n.cssClass %} text-{{ n.cssClass }}{% else %} text-muted{% endif %}">{{ n.expiryDate|format_date }}</span>
                         </a>
                     {% endfor %}
                 </div>

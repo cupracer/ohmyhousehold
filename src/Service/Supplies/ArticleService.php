@@ -23,6 +23,7 @@ namespace App\Service\Supplies;
 
 use App\Entity\NavbarNotificationItem;
 use App\Entity\Supplies\Article;
+use App\Entity\Supplies\ExpiringArticleNavbarNotificationItem;
 use App\Repository\Supplies\ArticleRepository;
 use DateTime;
 
@@ -43,10 +44,10 @@ class ArticleService {
 
         /** @var Article $article */
         foreach($this->articleRepository->findAllExpiringArticles($daysLeftLimit) as $article) {
-            $navbarNotificationItem = new NavbarNotificationItem();
+            $navbarNotificationItem = new ExpiringArticleNavbarNotificationItem();
             $navbarNotificationItem->setCategory('supplies_article');
             $navbarNotificationItem->setTitle($article->getProduct()->getName());
-            $navbarNotificationItem->setNote($article->getBestBeforeDate()->format('d.m.Y'));
+            $navbarNotificationItem->setExpiryDate($article->getBestBeforeDate());
             $navbarNotificationItem->setItemId($article->getId());
 
             if($article->getBestBeforeDate() < (new DateTime())->modify("midnight")) {
