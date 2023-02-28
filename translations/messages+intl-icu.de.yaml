@@ -161,3 +161,4 @@ app.supplies.stocktaking.form.delete.confirm: 'Soll die Inventur "{name}" wirkli
 app.supplies.stocktaking.form.delete.error.inuse: 'Die Inventur "{name}" wird noch verwendet und kann nicht gelöscht werden.'
 app.supplies.stocktaking.form.delete.error: 'Die Inventur "{name}" konnte aufgrund eines Fehlers nicht gelöscht werden.'
 form.inventory-item.status: 'Status'
+navbar.notification.title.supplies.article.expiring: '{quantity} ablaufende(r) Artikel'

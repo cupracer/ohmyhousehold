@@ -23,6 +23,7 @@ namespace App\Repository\Supplies;
 
 use App\Entity\Supplies\Article;
 use App\Entity\Supplies\Product;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -72,5 +73,24 @@ class ArticleRepository extends ServiceEntityRepository
             ->getQuery()
             ->execute()
         ;
+    }
+
+    public function findAllExpiringArticles(int $remainingDays): array
+    {
+        $dateToCheck = (new DateTime())->modify('midnight');
+
+        $qb = $this->createQueryBuilder('a');
+
+        return $qb
+            ->andWhere($qb->expr()->isNull('a.withdrawalDate'))
+            ->andWhere(
+                $qb->expr()->lte("DATE_SUB(a.bestBeforeDate, :remainingDays, 'DAY')", ":dateToCheck"),
+            )
+            ->setParameter('remainingDays', $remainingDays)
+            ->setParameter('dateToCheck', $dateToCheck)
+            ->orderBy('a.bestBeforeDate', 'ASC')
+            ->getQuery()
+            ->execute()
+            ;
     }
 }

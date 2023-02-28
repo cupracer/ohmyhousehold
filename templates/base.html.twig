@@ -76,6 +76,7 @@ As a workaround, text-sm is instead set on navbar_tag, sidebar_tag and main_cont
 
 
 {% block navbar_notifications_dropdown %}
+    {{ include('supplies/_navbar_notifications_expiring_articles.html.twig') }}
 {% endblock navbar_notifications_dropdown %}
 
 

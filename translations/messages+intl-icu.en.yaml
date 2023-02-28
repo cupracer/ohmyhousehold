@@ -161,3 +161,4 @@ app.supplies.stocktaking.form.delete.confirm: 'Are you sure you want to delete t
 app.supplies.stocktaking.form.delete.error.inuse: 'The stocktaking "{name}" is still in use and cannot be deleted.'
 app.supplies.stocktaking.form.delete.error: 'An error occurred while deleting the stocktaking "{name}".'
 form.inventory-item.status: 'status'
+navbar.notification.title.supplies.article.expiring: '{quantity} expiring article(s)'
