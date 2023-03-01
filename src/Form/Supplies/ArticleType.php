@@ -54,6 +54,16 @@ class ArticleType extends AbstractType
                 'label_format' => 'form.article.%name%',
                 'required' => false,
             ])
+            ->add('withdrawalDate', DateType::class, [
+                'widget' => 'single_text',
+                'label_format' => 'form.article.%name%',
+                'required' => false,
+            ])
+            ->add('discardDate', DateType::class, [
+                'widget' => 'single_text',
+                'label_format' => 'form.article.%name%',
+                'required' => false,
+            ])
         ;
     }
 

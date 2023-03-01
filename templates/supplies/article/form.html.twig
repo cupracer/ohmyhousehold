@@ -26,6 +26,13 @@
                 <div class="col-3">{{ form_row(form.quantity, {'attr': {'class': 'text-center'}}) }}</div>
             {% endif %}
         </div>
+        {% if article is defined %}
+        <hr>
+        <div class="row">
+            <div class="col-4 ml-auto">{{ form_row(form.withdrawalDate, {'attr': {'class': 'text-center'}}) }}</div>
+            <div class="col-4 mr-auto">{{ form_row(form.discardDate, {'attr': {'class': 'text-center'}}) }}</div>
+        </div>
+        {% endif %}
 
         <div class="row mt-5">
             <div class="col-6">
