@@ -82,12 +82,6 @@ class ArticleController extends AbstractController
                 'template' => '{% if value is not empty %}{{ value|format_date }}{% endif %}',
                 'className' => 'min text-center',
             ])
-            ->add('withdrawalDate', TwigStringColumn::class, [
-                'label' => 'form.article.withdrawalDate',
-                'template' => '{% if value is not empty %}{{ value|format_date }}{% endif %}',
-                'className' => 'min text-center',
-                'visible' => false, // would be empty anyway, because search criteria is used
-            ])
             ->add('createdAt', TwigStringColumn::class, [
                 'label' => 'label.createdAt',
                 'template' => '{% if value is not empty %}{{ value|format_datetime }}{% endif %}',
@@ -112,6 +106,7 @@ class ArticleController extends AbstractController
                         ->addSelect('commodity')
                         ->addSelect('brand')
                         ->andWhere($builder->expr()->isNull('a.withdrawalDate'))
+                        ->andWhere($builder->expr()->isNull('a.discardDate'))
                     ;
                 },
             ])
@@ -274,7 +269,7 @@ class ArticleController extends AbstractController
     {
         // if article is given, set withdrawal date to today and redirect to article checkout page
         if($checkoutArticle) {
-            if(!$checkoutArticle->getWithdrawalDate()) {
+            if(!$checkoutArticle->getWithdrawalDate() && !$checkoutArticle->getDiscardDate()) {
                 $checkoutArticle->setWithdrawalDate(new DateTime());
                 $entityManager->flush();
 
@@ -285,9 +280,9 @@ class ArticleController extends AbstractController
                     '%bbd%' => $checkoutArticle->getBestBeforeDate() ? $checkoutArticle->getBestBeforeDate()->format('Y-m-d') : '-',
                 ]));
             }else {
-                $logger->error("Article '{name}' ({id}) was already checked out.", ['name' => $checkoutArticle->getProduct()->getShortName(), 'id' => $checkoutArticle->getId()]);
+                $logger->error("Article '{name}' ({id}) not available for checkout.", ['name' => $checkoutArticle->getProduct()->getShortName(), 'id' => $checkoutArticle->getId()]);
                 $this->addFlash('error', new TranslatableMessage(
-                    "app.supplies.article.form.checkout.error.alreadycheckedout", [
+                    "app.supplies.article.form.checkout.error.checkout.not-available", [
                     '%name%' => $checkoutArticle->getProduct()->getShortName(),
                     '%id%' => $checkoutArticle->getId()
                 ]));

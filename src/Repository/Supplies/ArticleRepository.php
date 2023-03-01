@@ -67,6 +67,7 @@ class ArticleRepository extends ServiceEntityRepository
         return $qb
             ->andWhere('a.product = :product')
             ->andWhere($qb->expr()->isNull('a.withdrawalDate'))
+            ->andWhere($qb->expr()->isNull('a.discardDate'))
             ->setParameter('product', $product)
             ->orderBy('a.bestBeforeDate', 'ASC')
             ->addOrderBy('a.purchaseDate', 'ASC')
@@ -83,6 +84,7 @@ class ArticleRepository extends ServiceEntityRepository
 
         return $qb
             ->andWhere($qb->expr()->isNull('a.withdrawalDate'))
+            ->andWhere($qb->expr()->isNull('a.discardDate'))
             ->andWhere(
                 $qb->expr()->lte("DATE_SUB(a.bestBeforeDate, :remainingDays, 'DAY')", ":dateToCheck"),
             )
