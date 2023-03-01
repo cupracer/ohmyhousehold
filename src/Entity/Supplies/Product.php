@@ -116,11 +116,20 @@ class Product
 
     public function getName(): ?string
     {
-        // return concatenated name and commodity name if name is set, otherwise return commodity name
+        return $this->name;
+    }
+
+    public function getShortName(): ?string
+    {
+        return $this->name ?: $this->getCommodity()?->getName();
+    }
+
+    public function getExtendedName(): ?string
+    {
         if ($this->name) {
-            return '[' . $this->getCommodity()?->getName() . '] ' . $this->name;
+            return '[' . $this->getCommodity()?->getName() . '] ' . $this->name . ' (' . $this->getBrand()?->getName() . ')';
         }else {
-            return $this->getCommodity()?->getName();
+            return $this->getCommodity()?->getName() . ' (' . $this->getBrand()?->getName() . ')';
         }
     }
 
