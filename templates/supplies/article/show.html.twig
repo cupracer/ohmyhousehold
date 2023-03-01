@@ -23,7 +23,13 @@
             <div class="col-6">
                 <div class="form-group">
                     <label>{{ 'form.article.product'|trans|capitalize }}</label>
-                    <div>{{ article.product.name }}</div>
+                    <div>
+                        {% if article.product.name %}
+                            {{ article.product.name }}
+                        {% else %}
+                            dto.
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -54,6 +60,28 @@
                 </div>
             </div>
         </div>
+        {% if article.withdrawalDate or article.discardDate %}
+        <hr>
+        <div class="row">
+            {% if article.withdrawalDate %}
+                <div class="col-6">
+                    <div class="form-group">
+                        <label>{{ 'form.article.withdrawalDate'|trans|capitalize }}</label>
+                        <div>{{ article.withdrawalDate|format_date }}</div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if article.discardDate %}
+                <div class="col-6">
+                    <div class="form-group">
+                        <label>{{ 'form.article.discardDate'|trans|capitalize }}</label>
+                        <div>{{ article.discardDate|format_date }}</div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        {% endif %}
 
         <div class="row mt-5">
             <div class="col-6">
