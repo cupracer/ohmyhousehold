@@ -38,6 +38,7 @@ class ArticleType extends AbstractType
             ->add('purchaseDate', DateType::class, [
                 'widget' => 'single_text',
                 'label_format' => 'form.article.%name%',
+                'required' => false,
             ])
             ->add('storageLocation', EntityType::class, [
                 'class' => StorageLocation::class,
