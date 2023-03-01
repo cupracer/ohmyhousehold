@@ -131,9 +131,9 @@ class ProductController extends AbstractController
             $entityManager->persist($product);
             $entityManager->flush();
 
-            $logger->info("New product '{name} ({id}) was created.", ['name' => $product->getName(), 'id' => $product->getId()]);
+            $logger->info("New product '{name}' ({id}) was created.", ['name' => $product->getShortName(), 'id' => $product->getId()]);
             $this->addFlash('success', new TranslatableMessage(
-                "app.supplies.product.form.success.created", ['%name%' => $product->getName()]));
+                "app.supplies.product.form.success.created", ['%name%' => $product->getShortName()]));
 
             return $this->redirectToRoute('app_supplies_product_new');
         }
@@ -149,7 +149,7 @@ class ProductController extends AbstractController
     {
         return $this->render('supplies/product/show.html.twig', [
             'pageTitle' => new TranslatableMessage(
-                "app.supplies.product.title", ['%name%' => $product->getName()]),
+                "app.supplies.product.title", ['%name%' => $product->getShortName()]),
             'product' => $product,
         ]);
     }
@@ -163,10 +163,10 @@ class ProductController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            $logger->info("Product '{name}' ({id}) was updated.", ['name' => $product->getName(), 'id' => $product->getId()]);
+            $logger->info("Product '{name}' ({id}) was updated.", ['name' => $product->getShortName(), 'id' => $product->getId()]);
             $this->addFlash('success', new TranslatableMessage(
                 "app.supplies.product.form.success.updated", [
-                '%name%' => $product->getName(),
+                '%name%' => $product->getShortName(),
                 '%id%' => $product->getId()
             ]));
 
@@ -175,7 +175,7 @@ class ProductController extends AbstractController
 
         return $this->render('supplies/product/form.html.twig', [
             'pageTitle' => new TranslatableMessage(
-                "app.supplies.product.form.edit.title", ['%name%' => $product->getName()]),
+                "app.supplies.product.form.edit.title", ['%name%' => $product->getShortName()]),
             'form' => $form->createView(),
             'product' => $product,
         ]);
@@ -191,22 +191,22 @@ class ProductController extends AbstractController
                 $entityManager->remove($product);
                 $entityManager->flush();
 
-                $logger->info("Product '{name}' ({id}) was deleted.", ['name' => $product->getName(), 'id' => $id]);
+                $logger->info("Product '{name}' ({id}) was deleted.", ['name' => $product->getShortName(), 'id' => $id]);
                 $this->addFlash('success', new TranslatableMessage(
-                    "app.supplies.product.form.success.deleted", ['%name%' => $product->getName(), '%id%' => $id]));
+                    "app.supplies.product.form.success.deleted", ['%name%' => $product->getShortName(), '%id%' => $id]));
 
                 return $this->redirectToRoute('app_supplies_product_index');
             }else {
-                $logger->error("Invalid CSRF token used while deleting product '{name}' ({id}).", ['name' => $product->getName(), 'id' => $id]);
+                $logger->error("Invalid CSRF token used while deleting product '{name}' ({id}).", ['name' => $product->getShortName(), 'id' => $id]);
                 throw new Exception('invalid CSRF token');
             }
         } catch (ForeignKeyConstraintViolationException) {
             $this->addFlash('error', new TranslatableMessage(
-                "app.supplies.product.form.delete.error.inuse", ['%name%' => $product->getName(), '%id%' => $id]));
+                "app.supplies.product.form.delete.error.inuse", ['%name%' => $product->getShortName(), '%id%' => $id]));
         }catch (Exception $e) {
             $logger->error('Error occurred during commodity deletion: {error}', ['error' => $e->getMessage()]);
             $this->addFlash('error', new TranslatableMessage(
-                "app.supplies.product.form.delete.error", ['%name%' => $product->getName(), '%id%' => $id]));
+                "app.supplies.product.form.delete.error", ['%name%' => $product->getShortName(), '%id%' => $id]));
         }
 
         return $this->redirectToRoute('app_supplies_product_show', ['id' => $product->getId()]);

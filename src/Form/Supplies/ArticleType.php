@@ -46,7 +46,7 @@ class ArticleType extends AbstractType
             ])
             ->add('product', EntityType::class, [
                 'class' => Product::class,
-                'choice_label' => 'name',
+                'choice_label' => 'extendedName',
                 'label_format' => 'form.article.%name%',
             ])
             ->add('bestBeforeDate', DateType::class, [

@@ -55,8 +55,7 @@ class ProductService
             $product = $row[0];
             $rowData = [
                 'id' => $product->getId(),
-                'text' => $product->getName() .
-                    ' - ' . $product->getBrand()->getName() .
+                'text' => $product->getExtendedName() .
                     ' - ' . 1*$product->getQuantity() . ' ' .$this->translator->trans($product->getMeasure()->getUnit()),
             ];
 

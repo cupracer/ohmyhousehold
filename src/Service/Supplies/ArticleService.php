@@ -46,7 +46,7 @@ class ArticleService {
         foreach($this->articleRepository->findAllExpiringArticles($daysLeftLimit) as $article) {
             $navbarNotificationItem = new ExpiringArticleNavbarNotificationItem();
             $navbarNotificationItem->setCategory('supplies_article');
-            $navbarNotificationItem->setTitle($article->getProduct()->getName());
+            $navbarNotificationItem->setTitle($article->getProduct()->getExtendedName());
             $navbarNotificationItem->setExpiryDate($article->getBestBeforeDate());
             $navbarNotificationItem->setItemId($article->getId());
 

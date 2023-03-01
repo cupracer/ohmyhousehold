@@ -32,9 +32,7 @@ use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
-use Omines\DataTablesBundle\Adapter\Doctrine\ORM\SearchCriteriaProvider;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
-use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Column\TwigStringColumn;
 use Omines\DataTablesBundle\DataTableFactory;
@@ -56,9 +54,12 @@ class ArticleController extends AbstractController
     {
         $table = $dataTableFactory->create()
             ->add('commodity', TextColumn::class, [
-                'label' => 'form.article.commodity',
+                'label' => 'form.product.commodity',
                 'field' => 'commodity.name',
-                'visible' => false,
+            ])
+            ->add('brand', TextColumn::class, [
+                'label' => 'form.product.brand',
+                'field' => 'brand.name',
             ])
             ->add('product', TextColumn::class, [
                 'label' => 'form.article.product',
@@ -67,7 +68,7 @@ class ArticleController extends AbstractController
                     return sprintf(
                         '<a href="%s">%s</a>',
                         $this->generateUrl('app_supplies_article_show', ['id' => $article->getId()]),
-                        $value);
+                        $value ?: 'dto.');
                 },
             ])
             ->add('purchaseDate', TwigStringColumn::class, [
@@ -106,8 +107,10 @@ class ArticleController extends AbstractController
                         ->from(Article::class, 'a')
                         ->leftJoin('a.product', 'product')
                         ->innerJoin('product.commodity', 'commodity')
+                        ->innerJoin('product.brand', 'brand')
                         ->addSelect('product')
                         ->addSelect('commodity')
+                        ->addSelect('brand')
                         ->andWhere($builder->expr()->isNull('a.withdrawalDate'))
                     ;
                 },
@@ -165,19 +168,19 @@ class ArticleController extends AbstractController
                 $entityManager->persist($newArticle);
                 $entityManager->flush();
 
-                $logger->info("New article '{name}' was created.", ['name' => $article->getProduct()->getName()]);
+                $logger->info("New article '{name}' was created.", ['name' => $article->getProduct()->getShortName()]);
             }
 
             if($quantity > 1) {
                 $flashMsg = new TranslatableMessage(
                     "app.supplies.article.form.success.created.multiple", [
-                        '%name%' => $article->getProduct()->getName(),
+                        '%name%' => $article->getProduct()->getShortName(),
                         '%quantity%' => $quantity
                     ]);
             }else {
                 $flashMsg = new TranslatableMessage(
                     "app.supplies.article.form.success.created", [
-                        '%name%' => $article->getProduct()->getName()
+                        '%name%' => $article->getProduct()->getShortName()
                     ]);
             }
 
@@ -203,7 +206,7 @@ class ArticleController extends AbstractController
     {
         return $this->render('supplies/article/show.html.twig', [
             'pageTitle' => new TranslatableMessage(
-                "app.supplies.article.title", ['%name%' => $article->getProduct()->getName()]),
+                "app.supplies.article.title", ['%name%' => $article->getProduct()->getShortName()]),
             'article' => $article,
         ]);
     }
@@ -217,10 +220,10 @@ class ArticleController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            $logger->info("Article '{name}' ({id}) was updated.", ['name' => $article->getProduct()->getName(), 'id' => $article->getId()]);
+            $logger->info("Article '{name}' ({id}) was updated.", ['name' => $article->getProduct()->getShortName(), 'id' => $article->getId()]);
             $this->addFlash('success', new TranslatableMessage(
                 "app.supplies.article.form.success.updated", [
-                '%name%' => $article->getProduct()->getName(),
+                '%name%' => $article->getProduct()->getShortName(),
                 '%id%' => $article->getId()
             ]));
 
@@ -229,7 +232,7 @@ class ArticleController extends AbstractController
 
         return $this->render('supplies/article/form.html.twig', [
             'pageTitle' => new TranslatableMessage(
-                "app.supplies.article.form.edit.title", ['%name%' => $article->getProduct()->getName()]),
+                "app.supplies.article.form.edit.title", ['%name%' => $article->getProduct()->getShortName()]),
             'form' => $form->createView(),
             'article' => $article,
         ]);
@@ -245,22 +248,22 @@ class ArticleController extends AbstractController
                 $entityManager->remove($article);
                 $entityManager->flush();
 
-                $logger->info("Article '{name}' ({id}) was deleted.", ['name' => $article->getProduct()->getName(), 'id' => $id]);
+                $logger->info("Article '{name}' ({id}) was deleted.", ['name' => $article->getProduct()->getShortName(), 'id' => $id]);
                 $this->addFlash('success', new TranslatableMessage(
-                    "app.supplies.article.form.success.deleted", ['%name%' => $article->getProduct()->getName(), '%id%' => $id]));
+                    "app.supplies.article.form.success.deleted", ['%name%' => $article->getProduct()->getShortName(), '%id%' => $id]));
 
                 return $this->redirectToRoute('app_supplies_article_index');
             }else {
-                $logger->error("Invalid CSRF token used while deleting article '{name}' ({id}).", ['name' => $article->getProduct()->getName(), 'id' => $id]);
+                $logger->error("Invalid CSRF token used while deleting article '{name}' ({id}).", ['name' => $article->getProduct()->getShortName(), 'id' => $id]);
                 throw new Exception('invalid CSRF token');
             }
         } catch (ForeignKeyConstraintViolationException) {
             $this->addFlash('error', new TranslatableMessage(
-                "app.supplies.article.form.delete.error.inuse", ['%name%' => $article->getProduct()->getName(), '%id%' => $id]));
+                "app.supplies.article.form.delete.error.inuse", ['%name%' => $article->getProduct()->getShortName(), '%id%' => $id]));
         }catch (Exception $e) {
             $logger->error('Error occurred during article deletion: {error}', ['error' => $e->getMessage()]);
             $this->addFlash('error', new TranslatableMessage(
-                "app.supplies.article.form.delete.error", ['%name%' => $article->getProduct()->getName(), '%id%' => $id]));
+                "app.supplies.article.form.delete.error", ['%name%' => $article->getProduct()->getShortName(), '%id%' => $id]));
         }
 
         return $this->redirectToRoute('app_supplies_article_show', ['id' => $article->getId()]);
@@ -275,17 +278,17 @@ class ArticleController extends AbstractController
                 $checkoutArticle->setWithdrawalDate(new DateTime());
                 $entityManager->flush();
 
-                $logger->info("Article '{name}' ({id}) was checked out.", ['name' => $checkoutArticle->getProduct()->getName(), 'id' => $checkoutArticle->getId()]);
+                $logger->info("Article '{name}' ({id}) was checked out.", ['name' => $checkoutArticle->getProduct()->getShortName(), 'id' => $checkoutArticle->getId()]);
                 $this->addFlash('success', new TranslatableMessage(
                     "app.supplies.article.form.success.checkedout", [
-                    '%name%' => $checkoutArticle->getProduct()->getName(),
+                    '%name%' => $checkoutArticle->getProduct()->getShortName(),
                     '%bbd%' => $checkoutArticle->getBestBeforeDate() ? $checkoutArticle->getBestBeforeDate()->format('Y-m-d') : '-',
                 ]));
             }else {
-                $logger->error("Article '{name}' ({id}) was already checked out.", ['name' => $checkoutArticle->getProduct()->getName(), 'id' => $checkoutArticle->getId()]);
+                $logger->error("Article '{name}' ({id}) was already checked out.", ['name' => $checkoutArticle->getProduct()->getShortName(), 'id' => $checkoutArticle->getId()]);
                 $this->addFlash('error', new TranslatableMessage(
                     "app.supplies.article.form.checkout.error.alreadycheckedout", [
-                    '%name%' => $checkoutArticle->getProduct()->getName(),
+                    '%name%' => $checkoutArticle->getProduct()->getShortName(),
                     '%id%' => $checkoutArticle->getId()
                 ]));
             }
@@ -337,10 +340,10 @@ class ArticleController extends AbstractController
                 $selectedArticle->setWithdrawalDate(new DateTime());
                 $entityManager->flush();
 
-                $logger->info("Article '{name}' ({id}) was checked out.", ['name' => $selectedArticle->getProduct()->getName(), 'id' => $selectedArticle->getId()]);
+                $logger->info("Article '{name}' ({id}) was checked out.", ['name' => $selectedArticle->getProduct()->getShortName(), 'id' => $selectedArticle->getId()]);
                 $this->addFlash('success', new TranslatableMessage(
                     "app.supplies.article.form.success.checkedout", [
-                    '%name%' => $selectedArticle->getProduct()->getName(),
+                    '%name%' => $selectedArticle->getProduct()->getShortName(),
                     '%bbd%' => $selectedArticle->getBestBeforeDate() ? $selectedArticle->getBestBeforeDate()->format('Y-m-d') : '-',
                 ]));
 
@@ -351,14 +354,14 @@ class ArticleController extends AbstractController
 
                 // get name and brand of the article's product as array
                 $productData = [
-                    'name' => $checkoutFormData['product']->getName(),
+                    'name' => $checkoutFormData['product']->getShortName(),
                     'brand' => $checkoutFormData['product']->getBrand()->getName(),
                 ];
 
                 // render article selection page
                 return $this->render('supplies/article/form_checkout.html.twig', [
                     'pageTitle' => new TranslatableMessage(
-                        "app.supplies.article.form.checkout.item.title", ['%name%' => $checkoutFormData['product']->getName()]),
+                        "app.supplies.article.form.checkout.item.title", ['%name%' => $checkoutFormData['product']->getExtendedName()]),
                     'product' => $productData,
                     'bestBeforeDates' => $bestBeforeDates,
                 ]);
