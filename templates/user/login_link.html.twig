@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ pageTitle|trans }}{% endblock %}
+
+{% block page_content_body %}
+<div class="row">
+    <div class="col"></div>
+    <div class="col-lg-6">
+        {% if loginLink %}
+            {{ loginLink }}
+        {% endif %}
+        {# TODO: add some better content #}
+    </div>
+    <div class="col"></div>
+</div>
+{% endblock page_content_body %}

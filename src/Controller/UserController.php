@@ -25,7 +25,10 @@ use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
+use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
+use LogicException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -168,6 +171,41 @@ class UserController extends AbstractController
             'pageTitle' => 'app.sign-in',
             'last_username' => $lastUsername,
             'error' => $error,
+        ]);
+    }
+
+    #[Route(path: '/login_check', name: 'user_login_check')]
+    public function loginCheck(): void
+    {
+        throw new LogicException('This will be intercepted by the login link action on the firewall.');
+    }
+
+    #[Route(path: '/login_link', name: 'user_login_link')]
+    public function loginLink(LoggerInterface $logger, UserService $userService): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $loginLink = null;
+
+        try {
+            $loginLink = $userService->getLoginLink($user);
+        } catch (Exception $e) {
+
+            // add error flash message with translation
+            $this->addFlash('error', 'app.login-link.generate.error');
+
+            // log error with context
+            $logger->error($e->getMessage(), [
+                'user' => $user->getUserIdentifier(),
+                'exception' => $e,
+            ]);
+        }
+
+        return $this->render('user/login_link.html.twig', [
+            'pageTitle' => 'app.login-link',
+            'loginLink' => $loginLink,
         ]);
     }
 }
