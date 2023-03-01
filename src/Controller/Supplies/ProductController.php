@@ -28,7 +28,6 @@ use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
-use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Column\TwigStringColumn;
 use Omines\DataTablesBundle\DataTableFactory;
@@ -49,15 +48,14 @@ class ProductController extends AbstractController
     public function index(Request $request, DataTableFactory $dataTableFactory, TranslatorInterface $translator): Response
     {
         $table = $dataTableFactory->create()
+            ->add('commodity', TextColumn::class, [
+                'label' => 'form.product.commodity',
+                'field' => 'commodity.name',
+            ])
             ->add('brand', TextColumn::class, [
                 'label' => 'form.product.brand',
                 'field' => 'brand.name',
                 'className' => 'min',
-            ])
-            ->add('commodity', TextColumn::class, [
-                'label' => 'form.product.commodity',
-                'field' => 'commodity.name',
-                'visible' => false,
             ])
             ->add('name', TextColumn::class, [
                 'label' => 'form.product.name',
@@ -65,7 +63,7 @@ class ProductController extends AbstractController
                     return sprintf(
                         '<a href="%s">%s</a>',
                         $this->generateUrl('app_supplies_product_show', ['id' => $product->getId()]),
-                        $value);
+                        $value ?: 'dto.');
                 },
             ])
             ->add('quantity', TextColumn::class, [
