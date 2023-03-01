@@ -36,6 +36,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ['email'], message: 'form.user.email.not-unique')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    const ROLE_USER = 'ROLE_USER';
+    const ROLE_ADMIN = 'ROLE_ADMIN';
+    const ROLE_ALLOW_LOGIN_LINK = 'ROLE_ALLOW_LOGIN_LINK';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -75,6 +79,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?UserProfile $userProfile = null;
+
+    #[ORM\Column(type: 'integer')]
+    private ?int $loginLinkLifetime;
 
     public function getId(): ?int
     {
@@ -235,6 +242,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         $this->userProfile = $userProfile;
 
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getLoginLinkLifetime(): ?int
+    {
+        return $this->loginLinkLifetime;
+    }
+
+    /**
+     * @param int|null $loginLinkLifetime
+     * @return User
+     */
+    public function setLoginLinkLifetime(?int $loginLinkLifetime): User
+    {
+        $this->loginLinkLifetime = $loginLinkLifetime;
         return $this;
     }
 }

@@ -162,3 +162,5 @@ app.supplies.stocktaking.form.delete.error.inuse: 'The stocktaking "{name}" is s
 app.supplies.stocktaking.form.delete.error: 'An error occurred while deleting the stocktaking "{name}".'
 form.inventory-item.status: 'status'
 navbar.notification.title.supplies.article.expiring: '{quantity} expiring article(s)'
+app.login-link: 'login-link'
+app.login-link.generate.error: 'login-link could not be generated.'
