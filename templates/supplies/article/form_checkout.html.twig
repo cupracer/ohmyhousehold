@@ -12,7 +12,20 @@
                     {# present form to select product and quantity #}
 
                     {{ form_start(form) }}
-                    {{ form_row(form.product) }}
+
+                    <div class="row">
+                        <div class="col-10">{{ form_row(form.product) }}</div>
+                        <div class="col-2">
+                            <div class="form-group">
+                                <label for="cameraBtn">{{ 'app.supplies.article.button.camera'|trans }}</label>
+                                <label id="cameraBtn" class="btn btn-default">
+                                    <input type="file" accept="image/*" capture="camera" id="image-input" hidden>
+                                    {{ 'app.supplies.article.button.capture'|trans }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
 
                     {{ form_row(form.showItems) }}
                     {{ form_row(form.smartCheckout) }}
@@ -72,6 +85,7 @@
     {{ parent() }}
 
     {{ encore_entry_script_tags('forms') }}
+    {{ encore_entry_script_tags('barcode-scanner') }}
 {% endblock javascripts %}
 
 {% block javascripts_inline %}
@@ -97,6 +111,58 @@
             });
 
             productSelect.select2('open');
+
+            // Barcode scanner
+
+            // Process the provided image with Quagga
+            function processImage(img) {
+                console.log("Image processing started...");
+                Quagga.decodeSingle({
+                    decoder: { readers: ["ean_8_reader", "ean_reader"] },
+                    locate: true,
+                    src: img
+                }, function(result) {
+                    if(result && result.codeResult) {
+                        console.log("Barcode detected and processed : [" + result.codeResult.code + "]", result);
+                        // write the barcode to the selected element
+                        // productSelect.select2('open');
+                        productSelect.data('select2').dropdown.$search.val(result.codeResult.code).trigger('input');
+
+                        // productSelect.val(result.codeResult.code).trigger('change');
+                        console.log("Select2 value set to " + result.codeResult.code + ". Triggered change event.");
+                    } else {
+                        console.log("Barcode could not be detected");
+                    }
+                });
+            }
+
+            // Event listener for the image upload
+            document.getElementById("image-input").addEventListener("change", function(e) {
+                let fileInputElement = e.target;
+                console.log("Image input changed: " + fileInputElement.id);
+
+                // get the chosen file
+                if(fileInputElement.files.length !== 1 || fileInputElement.files[0].type.indexOf("image/") !== 0) {
+                    console.log("No image file selected");
+                    return;
+                }
+
+                let file = fileInputElement.files[0];
+
+                // create a URL for the image
+                let imgUrl = URL.createObjectURL(file);
+
+                // create an image object
+                let img = new Image();
+                img.onload = function() {
+                    console.log("Image loaded. Processing...");
+                    processImage(imgUrl);
+                };
+
+                // load the image to trigger the onload event
+                img.src = imgUrl;
+                fileInputElement.value = '';
+            });
         });
     </script>
 {% endblock javascripts_inline %}
