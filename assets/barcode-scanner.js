@@ -75,7 +75,9 @@ window.addBarcodeListenerAndUpdateSelect2field =
                     console.log("Barcode could not be detected");
                     $(document).Toasts('create', {
                         class: 'bg-danger',
-                        body: "{{ 'app.supplies.article.barcode.notfound'|trans }}",
+                        // TODO: make body string translatable
+                        // body: "{{ 'app.supplies.article.barcode.notfound'|trans }}",
+                        body: "Barcode could not be detected",
                         autohide: true,
                         delay: 4000,
                         icon: 'fas fa-exclamation fa-lg',
