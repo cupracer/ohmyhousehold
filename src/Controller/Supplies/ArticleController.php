@@ -143,7 +143,7 @@ class ArticleController extends AbstractController
         $form = $this->createForm(ArticleNewType::class, $article);
 
         // set initial value for quantity to 1
-        $form->get('quantity')->setData(1);
+        // $form->get('quantity')->setData(1);
 
         $form->handleRequest($request);
 
