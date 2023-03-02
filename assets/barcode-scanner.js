@@ -59,7 +59,7 @@ window.addBarcodeListenerAndUpdateSelect2field =
         function processImage(img) {
             // console.log("Image processing started...");
             Quagga.decodeSingle({
-                decoder: { readers: ["ean_8_reader", "ean_reader"] },
+                decoder: { readers: [ "ean_reader", "ean_8_reader"] },
                 locate: true,
                 src: img
             }, function(result) {
