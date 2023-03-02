@@ -3,7 +3,7 @@
 {% block page_content_body %}
 <div class="row">
     <div class="col"></div>
-    <div class="col-md-6 col-lg-5">
+    <div class="col-md-12 col-lg-6">
 
         <div class="row">
             <div class="col-12">
@@ -26,8 +26,11 @@
                         </div>
                     </div>
 
-                    {{ form_row(form.showItems) }}
-                    {{ form_row(form.smartCheckout) }}
+                    <div class="row mt-5">
+                        <div class="col-4 ml-auto text-right">{{ form_row(form.showItems) }}</div>
+                        <div class="col-4 mr-auto">{{ form_row(form.smartCheckout) }}</div>
+                    </div>
+
                     {{ form_end(form) }}
 
                 {% else %}

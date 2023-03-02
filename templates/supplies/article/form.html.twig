@@ -3,17 +3,16 @@
 {% block page_content_body %}
 <div class="row">
     <div class="col"></div>
-    <div class="col-md-6 col-lg-5">
+    <div class="col-md-12 col-lg-6">
         {{ form_start(form) }}
 
         <div class="row">
-            <div class="col-3">{{ form_row(form.purchaseDate, {
+            <div class="col-5">{{ form_row(form.purchaseDate, {
                     'attr': {
                         'autofocus': 'autofocus',
                         'class': 'text-center',
                     }}) }}</div>
-            <div class="col"></div>
-            <div class="col-6">{{ form_row(form.storageLocation, {'attr': {'class': 'select2field'}}) }}</div>
+            <div class="col-6 ml-auto">{{ form_row(form.storageLocation, {'attr': {'class': 'select2field'}}) }}</div>
         </div>
         <div class="row">
             <div class="col-10">{{ form_row(form.product) }}</div>
@@ -28,9 +27,9 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-4">{{ form_row(form.bestBeforeDate, {'attr': {'class': 'text-center'}}) }}</div>
+            <div class="col-5">{{ form_row(form.bestBeforeDate, {'attr': {'class': 'text-center'}}) }}</div>
             {% if article is not defined %}
-                <div class="col-3">{{ form_row(form.quantity, {'attr': {'class': 'text-center'}}) }}</div>
+                <div class="col-3">{{ form_row(form.quantity, {'attr': {'class': 'text-center', 'min': 1}}) }}</div>
             {% endif %}
         </div>
         {% if article is defined %}
