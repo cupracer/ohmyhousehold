@@ -26,7 +26,6 @@
                         </div>
                     </div>
 
-
                     {{ form_row(form.showItems) }}
                     {{ form_row(form.smartCheckout) }}
                     {{ form_end(form) }}
@@ -161,6 +160,8 @@
 
                 // load the image to trigger the onload event
                 img.src = imgUrl;
+
+                // reset the input element to allow the same file to be selected again
                 fileInputElement.value = '';
             });
         });
