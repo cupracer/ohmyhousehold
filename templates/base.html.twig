@@ -109,7 +109,7 @@ As a workaround, text-sm is instead set on navbar_tag, sidebar_tag and main_cont
     {% if is_granted('ROLE_USER') %}
         <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
-                {{ app.user.userProfile.naturalName }} <i class="text-teal far fa-user ml-2"></i>
+                <i class="text-teal far fa-user ml-2"></i>
             </a>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                 <a href="#" class="dropdown-item">
@@ -119,11 +119,12 @@ As a workaround, text-sm is instead set on navbar_tag, sidebar_tag and main_cont
                             {#                            <h3 class="dropdown-item-title">#}
                             {#                                <span class="text-sm">User settings</span>#}
                             {#                            </h3>#}
+                            <div class="dropdown-item">{{ app.user.userProfile.naturalName }} ({{ app.user.username }})</div>
                         </div>
                     </div>
                     <!-- Message End -->
                 </a>
-                {#                <div class="dropdown-divider"></div>#}
+                <div class="dropdown-divider"></div>
                 <div class="dropdown-footer">
                     <a  href="{{ logout_path() }}" class="btn btn-danger btn-sm">{{ 'app.sign-out'|trans|capitalize }}</a>
                 </div>
