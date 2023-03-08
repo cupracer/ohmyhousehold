@@ -3,7 +3,7 @@
 {% block page_content_body %}
 <div class="row">
     <div class="col"></div>
-    <div class="col-md-6 col-lg-5">
+    <div class="col-md-12 col-lg-6">
 
         <div class="row">
             <div class="col-12">
@@ -12,10 +12,25 @@
                     {# present form to select product and quantity #}
 
                     {{ form_start(form) }}
-                    {{ form_row(form.product) }}
 
-                    {{ form_row(form.showItems) }}
-                    {{ form_row(form.smartCheckout) }}
+                    <div class="row">
+                        <div class="col-10">{{ form_row(form.product) }}</div>
+                        <div class="col-2">
+                            <div class="form-group">
+                                <label for="cameraBtn">{{ 'app.supplies.article.button.camera'|trans }}</label>
+                                <label id="cameraBtn" class="btn btn-default">
+                                    <input type="file" accept="image/*" capture="environment" id="camera-input" hidden>
+                                    {{ 'app.supplies.article.button.capture'|trans }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-5">
+                        <div class="col-4 ml-auto text-right">{{ form_row(form.showItems) }}</div>
+                        <div class="col-4 mr-auto">{{ form_row(form.smartCheckout) }}</div>
+                    </div>
+
                     {{ form_end(form) }}
 
                 {% else %}
@@ -72,6 +87,7 @@
     {{ parent() }}
 
     {{ encore_entry_script_tags('forms') }}
+    {{ encore_entry_script_tags('barcode-scanner') }}
 {% endblock javascripts %}
 
 {% block javascripts_inline %}
@@ -95,6 +111,8 @@
                     delay: 250,
                 }
             });
+
+            addBarcodeListenerAndUpdateSelect2field("camera-input", productSelect);
 
             productSelect.select2('open');
         });

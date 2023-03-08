@@ -24,6 +24,19 @@ security:
             login_throttling:
                 max_attempts: 3 # per minute ...
                 interval: '15 minutes'
+            login_link:
+                check_route: user_login_check
+                signature_properties: [ 'id' ]
+            remember_me:
+                secret: '%kernel.secret%' # required
+                lifetime: 604800 # 1 week in seconds
+                samesite: strict
+                # by default, the feature is enabled by checking a
+                # checkbox in the login form (see below), uncomment the
+                # following line to always enable it.
+                #always_remember_me: true
+                token_provider:
+                    doctrine: true
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall

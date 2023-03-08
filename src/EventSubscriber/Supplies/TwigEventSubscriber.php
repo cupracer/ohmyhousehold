@@ -19,30 +19,31 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-namespace App\Controller\Supplies;
+namespace App\EventSubscriber\Supplies;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Service\Supplies\ArticleService;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
+use Twig\Environment;
 
-#[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
-#[Route('/{_locale<%app.supported_locales%>}/supplies')]
-class SuppliesController extends AbstractController
+class TwigEventSubscriber implements EventSubscriberInterface
 {
-    #[Route('/', name: 'app_supplies_index')]
-    public function index(): Response
+    public function __construct(
+        private readonly Environment $twig,
+        private readonly ArticleService $articleService
+    )
     {
-        return $this->render('supplies/index.html.twig', [
-            'pageTitle' => 'app.supplies.title',
-        ]);
     }
 
-    #[Route('/components', name: 'app_supplies_components_index')]
-    public function components(): Response
+    public function onKernelController(): void
     {
-        return $this->render('supplies/components.html.twig', [
-            'pageTitle' => 'app.supplies.components.title',
-        ]);
+        $this->twig->addGlobal('navbarExpiringArticlesNotifications', $this->articleService->getExpiringArticles());
+    }
+
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            KernelEvents::CONTROLLER => 'onKernelController',
+        ];
     }
 }

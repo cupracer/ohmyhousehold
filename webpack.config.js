@@ -42,6 +42,7 @@ Encore
     .addEntry('app', './assets/app.js')
     .addEntry('datatables', './assets/datatables.js')
     .addEntry('forms', './assets/forms.js')
+    .addEntry('barcode-scanner', './assets/barcode-scanner.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')

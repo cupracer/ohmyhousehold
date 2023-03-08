@@ -8,23 +8,80 @@
         <div class="row">
             <div class="col-12">
                 <div class="form-group">
-                    <label>{{ 'form.article.product'|trans|capitalize }}</label>
-                    <div>{{ article.product.name }}</div>
+                    <label>{{ 'form.product.commodity'|trans|capitalize }}</label>
+                    <div>{{ article.product.commodity.name }}</div>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group">
+                    <label>{{ 'form.product.brand'|trans|capitalize }}</label>
+                    <div>{{ article.product.brand.name }}</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>{{ 'form.article.product'|trans|capitalize }}</label>
+                    <div>
+                        {% if article.product.name %}
+                            {{ article.product.name }}
+                        {% else %}
+                            dto.
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
                 <div class="form-group">
                     <label>{{ 'form.article.storageLocation'|trans|capitalize }}</label>
                     <div>{{ article.storageLocation.name }}</div>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
                 <div class="form-group">
                     <label>{{ 'form.article.purchaseDate'|trans|capitalize }}</label>
                     <div>{% if article.purchaseDate is not empty %}{{ article.purchaseDate|format_date }}{% endif %}</div>
                 </div>
+            </div>
+            <div class="col-6">
                 <div class="form-group">
                     <label>{{ 'form.article.bestBeforeDate'|trans|upper }}</label>
-                    <div>{% if article.bestBeforeDate is not empty %}{{ article.bestBeforeDate|format_date }}{% endif %}</div>
+                    <div>
+                        {% if article.bestBeforeDate is not empty %}
+                            {{ article.bestBeforeDate|format_date }}
+                        {% else %}
+                            -
+                        {% endif %}</div>
                 </div>
             </div>
         </div>
+        {% if article.withdrawalDate or article.discardDate %}
+        <hr>
+        <div class="row">
+            {% if article.withdrawalDate %}
+                <div class="col-6">
+                    <div class="form-group">
+                        <label>{{ 'form.article.withdrawalDate'|trans|capitalize }}</label>
+                        <div>{{ article.withdrawalDate|format_date }}</div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if article.discardDate %}
+                <div class="col-6">
+                    <div class="form-group">
+                        <label>{{ 'form.article.discardDate'|trans|capitalize }}</label>
+                        <div>{{ article.discardDate|format_date }}</div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        {% endif %}
 
         <div class="row mt-5">
             <div class="col-6">

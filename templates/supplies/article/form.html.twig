@@ -3,29 +3,42 @@
 {% block page_content_body %}
 <div class="row">
     <div class="col"></div>
-    <div class="col-md-6 col-lg-5">
+    <div class="col-md-12 col-lg-6">
         {{ form_start(form) }}
 
         <div class="row">
-            <div class="col-3">{{ form_row(form.purchaseDate, {
+            <div class="col-5">{{ form_row(form.purchaseDate, {
                     'attr': {
                         'autofocus': 'autofocus',
                         'class': 'text-center',
                     }}) }}</div>
-            <div class="col"></div>
-            <div class="col-6">{{ form_row(form.storageLocation, {'attr': {'class': 'select2field'}}) }}</div>
+            <div class="col-6 ml-auto">{{ form_row(form.storageLocation, {'attr': {'class': 'select2field'}}) }}</div>
         </div>
         <div class="row">
-            <div class="col-12">
-                {{ form_row(form.product) }}
+            <div class="col-10">{{ form_row(form.product) }}</div>
+            <div class="col-2">
+                <div class="form-group">
+                    <label for="cameraBtn">{{ 'app.supplies.article.button.camera'|trans }}</label>
+                    <label id="cameraBtn" class="btn btn-default">
+                        <input type="file" accept="image/*" capture="environment" id="camera-input" hidden>
+                        {{ 'app.supplies.article.button.capture'|trans }}
+                    </label>
+                </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-4">{{ form_row(form.bestBeforeDate, {'attr': {'class': 'text-center'}}) }}</div>
+            <div class="col-5">{{ form_row(form.bestBeforeDate, {'attr': {'class': 'text-center'}}) }}</div>
             {% if article is not defined %}
-                <div class="col-3">{{ form_row(form.quantity, {'attr': {'class': 'text-center'}}) }}</div>
+                <div class="col-3">{{ form_row(form.quantity, {'attr': {'class': 'text-center', 'min': 1}}) }}</div>
             {% endif %}
         </div>
+        {% if article is defined %}
+        <hr>
+        <div class="row">
+            <div class="col-4 ml-auto">{{ form_row(form.withdrawalDate, {'attr': {'class': 'text-center'}}) }}</div>
+            <div class="col-4 mr-auto">{{ form_row(form.discardDate, {'attr': {'class': 'text-center'}}) }}</div>
+        </div>
+        {% endif %}
 
         <div class="row mt-5">
             <div class="col-6">
@@ -54,6 +67,7 @@
     {{ parent() }}
 
     {{ encore_entry_script_tags('forms') }}
+    {{ encore_entry_script_tags('barcode-scanner') }}
 {% endblock javascripts %}
 
 {% block javascripts_inline %}
@@ -77,6 +91,8 @@
                     delay: 250,
                 }
             });
+
+            addBarcodeListenerAndUpdateSelect2field("camera-input", productSelect);
 
             {% if autoFocusProductSelect is defined %}
                 productSelect.select2('open');

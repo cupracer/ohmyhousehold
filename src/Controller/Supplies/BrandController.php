@@ -39,7 +39,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Translation\TranslatableMessage;
 
-#[IsGranted('ROLE_USER')]
+#[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
 #[Route('/{_locale<%app.supported_locales%>}/supplies/components/brand')]
 class BrandController extends AbstractController
 {
@@ -85,6 +85,8 @@ class BrandController extends AbstractController
     #[Route('/new', name: 'app_supplies_brand_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $brand = new Brand();
         $form = $this->createForm(BrandType::class, $brand);
         $form->handleRequest($request);
@@ -119,6 +121,8 @@ class BrandController extends AbstractController
     #[Route('/{id}/edit', name: 'app_supplies_brand_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Brand $brand, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $form = $this->createForm(BrandType::class, $brand);
         $form->handleRequest($request);
 
@@ -146,6 +150,8 @@ class BrandController extends AbstractController
     #[Route('/{id}', name: 'app_supplies_brand_delete', methods: ['POST'])]
     public function delete(Request $request, Brand $brand, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $id = $brand->getId();
 
         try {

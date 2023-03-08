@@ -19,30 +19,30 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-namespace App\Controller\Supplies;
+namespace App\Entity\Supplies;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Entity\NavbarNotificationItem;
+use DateTime;
 
-#[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
-#[Route('/{_locale<%app.supported_locales%>}/supplies')]
-class SuppliesController extends AbstractController
+class ExpiringArticleNavbarNotificationItem extends NavbarNotificationItem
 {
-    #[Route('/', name: 'app_supplies_index')]
-    public function index(): Response
+    private DateTime $expiryDate;
+
+    /**
+     * @return DateTime
+     */
+    public function getExpiryDate(): DateTime
     {
-        return $this->render('supplies/index.html.twig', [
-            'pageTitle' => 'app.supplies.title',
-        ]);
+        return $this->expiryDate;
     }
 
-    #[Route('/components', name: 'app_supplies_components_index')]
-    public function components(): Response
+    /**
+     * @param DateTime $expiryDate
+     * @return ExpiringArticleNavbarNotificationItem
+     */
+    public function setExpiryDate(DateTime $expiryDate): ExpiringArticleNavbarNotificationItem
     {
-        return $this->render('supplies/components.html.twig', [
-            'pageTitle' => 'app.supplies.components.title',
-        ]);
+        $this->expiryDate = $expiryDate;
+        return $this;
     }
 }

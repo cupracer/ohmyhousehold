@@ -19,30 +19,32 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-namespace App\Controller\Supplies;
+namespace App\Service;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Entity\User;
+use Exception;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
-#[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
-#[Route('/{_locale<%app.supported_locales%>}/supplies')]
-class SuppliesController extends AbstractController
+class UserService
 {
-    #[Route('/', name: 'app_supplies_index')]
-    public function index(): Response
+    public function __construct(
+        private readonly Security $security,
+        private readonly LoginLinkHandlerInterface $loginLinkHandler,
+    )
     {
-        return $this->render('supplies/index.html.twig', [
-            'pageTitle' => 'app.supplies.title',
-        ]);
     }
 
-    #[Route('/components', name: 'app_supplies_components_index')]
-    public function components(): Response
+    /**
+     * @throws Exception
+     */
+    public function getLoginLink(User $user): string
     {
-        return $this->render('supplies/components.html.twig', [
-            'pageTitle' => 'app.supplies.components.title',
-        ]);
+        if(!$this->security->isGranted('ROLE_ALLOW_LOGIN_LINK')) {
+            throw new Exception('User is not allowed to login via link');
+        }
+
+        $loginLinkDetails = $this->loginLinkHandler->createLoginLink($user, null, $user->getLoginLinkLifetime());
+        return $loginLinkDetails->getUrl();
     }
 }

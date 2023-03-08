@@ -80,7 +80,10 @@ class ProductRepository extends ServiceEntityRepository
                 ->leftJoin('p.articles',
                     'a',
                     Join::WITH,
-                    $query->expr()->isNull('a.withdrawalDate')
+                    $query->expr()->andX(
+                        $query->expr()->isNull('a.withdrawalDate'),
+                        $query->expr()->isNull('a.discardDate')
+                    )
                 )
                 ->andWhere($query->expr()->isNotNull('a'))
             ;
@@ -125,10 +128,14 @@ class ProductRepository extends ServiceEntityRepository
         // count articles which are not withdrawn
 
             $query
+                // left join p.articles a with a.withdrawalDate is null and a.discardDate is null
                 ->leftJoin('p.articles',
                     'a',
                     Join::WITH,
-                    $query->expr()->isNull('a.withdrawalDate')
+                    $query->expr()->andX(
+                        $query->expr()->isNull('a.withdrawalDate'),
+                        $query->expr()->isNull('a.discardDate')
+                    )
                 )
                 ->addSelect('COUNT(a) AS numUsage')
                 ->groupBy('p.id');

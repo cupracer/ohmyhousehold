@@ -19,30 +19,27 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-namespace App\Controller\Supplies;
+declare(strict_types=1);
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+namespace DoctrineMigrations;
 
-#[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
-#[Route('/{_locale<%app.supported_locales%>}/supplies')]
-class SuppliesController extends AbstractController
+use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
+
+final class Version20230301092447 extends AbstractMigration
 {
-    #[Route('/', name: 'app_supplies_index')]
-    public function index(): Response
+    public function getDescription(): string
     {
-        return $this->render('supplies/index.html.twig', [
-            'pageTitle' => 'app.supplies.title',
-        ]);
+        return 'make login_link_lifetime nullable';
     }
 
-    #[Route('/components', name: 'app_supplies_components_index')]
-    public function components(): Response
+    public function up(Schema $schema): void
     {
-        return $this->render('supplies/components.html.twig', [
-            'pageTitle' => 'app.supplies.components.title',
-        ]);
+        $this->addSql('ALTER TABLE user CHANGE login_link_lifetime login_link_lifetime INT DEFAULT NULL');
+    }
+
+    public function down(Schema $schema): void
+    {
+        $this->addSql('ALTER TABLE user CHANGE login_link_lifetime login_link_lifetime INT NOT NULL');
     }
 }

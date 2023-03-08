@@ -19,30 +19,27 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-namespace App\Controller\Supplies;
+declare(strict_types=1);
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+namespace DoctrineMigrations;
 
-#[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
-#[Route('/{_locale<%app.supported_locales%>}/supplies')]
-class SuppliesController extends AbstractController
+use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
+
+final class Version20230308060409 extends AbstractMigration
 {
-    #[Route('/', name: 'app_supplies_index')]
-    public function index(): Response
+    public function getDescription(): string
     {
-        return $this->render('supplies/index.html.twig', [
-            'pageTitle' => 'app.supplies.title',
-        ]);
+        return 'add remember-me token table';
     }
 
-    #[Route('/components', name: 'app_supplies_components_index')]
-    public function components(): Response
+    public function up(Schema $schema): void
     {
-        return $this->render('supplies/components.html.twig', [
-            'pageTitle' => 'app.supplies.components.title',
-        ]);
+        $this->addSql('CREATE TABLE rememberme_token (series VARCHAR(88) NOT NULL, value VARCHAR(88) NOT NULL, lastUsed DATETIME NOT NULL, class VARCHAR(100) NOT NULL, username VARCHAR(200) NOT NULL, PRIMARY KEY(series)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+    }
+
+    public function down(Schema $schema): void
+    {
+        $this->addSql('DROP TABLE rememberme_token');
     }
 }

@@ -46,7 +46,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[IsGranted('ROLE_USER')]
+#[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
 #[Route('/{_locale<%app.supported_locales%>}/supplies/article')]
 class ArticleController extends AbstractController
 {
@@ -55,9 +55,12 @@ class ArticleController extends AbstractController
     {
         $table = $dataTableFactory->create()
             ->add('commodity', TextColumn::class, [
-                'label' => 'form.article.commodity',
+                'label' => 'form.product.commodity',
                 'field' => 'commodity.name',
-                'visible' => false,
+            ])
+            ->add('brand', TextColumn::class, [
+                'label' => 'form.product.brand',
+                'field' => 'brand.name',
             ])
             ->add('product', TextColumn::class, [
                 'label' => 'form.article.product',
@@ -66,7 +69,7 @@ class ArticleController extends AbstractController
                     return sprintf(
                         '<a href="%s">%s</a>',
                         $this->generateUrl('app_supplies_article_show', ['id' => $article->getId()]),
-                        $value);
+                        $value ?: 'dto.');
                 },
             ])
             ->add('purchaseDate', TwigStringColumn::class, [
@@ -79,12 +82,6 @@ class ArticleController extends AbstractController
                 'label' => 'form.article.bestBeforeDate',
                 'template' => '{% if value is not empty %}{{ value|format_date }}{% endif %}',
                 'className' => 'min text-center',
-            ])
-            ->add('withdrawalDate', TwigStringColumn::class, [
-                'label' => 'form.article.withdrawalDate',
-                'template' => '{% if value is not empty %}{{ value|format_date }}{% endif %}',
-                'className' => 'min text-center',
-                'visible' => false, // would be empty anyway, because search criteria is used
             ])
             ->add('createdAt', TwigStringColumn::class, [
                 'label' => 'label.createdAt',
@@ -105,9 +102,12 @@ class ArticleController extends AbstractController
                         ->from(Article::class, 'a')
                         ->leftJoin('a.product', 'product')
                         ->innerJoin('product.commodity', 'commodity')
+                        ->innerJoin('product.brand', 'brand')
                         ->addSelect('product')
                         ->addSelect('commodity')
+                        ->addSelect('brand')
                         ->andWhere($builder->expr()->isNull('a.withdrawalDate'))
+                        ->andWhere($builder->expr()->isNull('a.discardDate'))
                     ;
                 },
             ])
@@ -126,6 +126,9 @@ class ArticleController extends AbstractController
     #[Route('/new', name: 'app_supplies_article_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, StorageLocationRepository $storageLocationRepository, LoggerInterface $logger): Response
     {
+        // allow remember-me users to access this page
+        // $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $article = new Article();
 
         // if session contains last purchase date, set it as default, if not, set now
@@ -144,7 +147,7 @@ class ArticleController extends AbstractController
         $form = $this->createForm(ArticleNewType::class, $article);
 
         // set initial value for quantity to 1
-        $form->get('quantity')->setData(1);
+        // $form->get('quantity')->setData(1);
 
         $form->handleRequest($request);
 
@@ -164,19 +167,19 @@ class ArticleController extends AbstractController
                 $entityManager->persist($newArticle);
                 $entityManager->flush();
 
-                $logger->info("New article '{name}' was created.", ['name' => $article->getProduct()->getName()]);
+                $logger->info("New article '{name}' was created.", ['name' => $article->getProduct()->getShortName()]);
             }
 
             if($quantity > 1) {
                 $flashMsg = new TranslatableMessage(
                     "app.supplies.article.form.success.created.multiple", [
-                        '%name%' => $article->getProduct()->getName(),
+                        '%name%' => $article->getProduct()->getShortName(),
                         '%quantity%' => $quantity
                     ]);
             }else {
                 $flashMsg = new TranslatableMessage(
                     "app.supplies.article.form.success.created", [
-                        '%name%' => $article->getProduct()->getName()
+                        '%name%' => $article->getProduct()->getShortName()
                     ]);
             }
 
@@ -202,7 +205,7 @@ class ArticleController extends AbstractController
     {
         return $this->render('supplies/article/show.html.twig', [
             'pageTitle' => new TranslatableMessage(
-                "app.supplies.article.title", ['%name%' => $article->getProduct()->getName()]),
+                "app.supplies.article.title", ['%name%' => $article->getProduct()->getShortName()]),
             'article' => $article,
         ]);
     }
@@ -210,16 +213,18 @@ class ArticleController extends AbstractController
     #[Route('/edit/{id}', name: 'app_supplies_article_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Article $article, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            $logger->info("Article '{name}' ({id}) was updated.", ['name' => $article->getProduct()->getName(), 'id' => $article->getId()]);
+            $logger->info("Article '{name}' ({id}) was updated.", ['name' => $article->getProduct()->getShortName(), 'id' => $article->getId()]);
             $this->addFlash('success', new TranslatableMessage(
                 "app.supplies.article.form.success.updated", [
-                '%name%' => $article->getProduct()->getName(),
+                '%name%' => $article->getProduct()->getShortName(),
                 '%id%' => $article->getId()
             ]));
 
@@ -228,7 +233,7 @@ class ArticleController extends AbstractController
 
         return $this->render('supplies/article/form.html.twig', [
             'pageTitle' => new TranslatableMessage(
-                "app.supplies.article.form.edit.title", ['%name%' => $article->getProduct()->getName()]),
+                "app.supplies.article.form.edit.title", ['%name%' => $article->getProduct()->getShortName()]),
             'form' => $form->createView(),
             'article' => $article,
         ]);
@@ -237,6 +242,8 @@ class ArticleController extends AbstractController
     #[Route('/delete/{id}', name: 'app_supplies_article_delete', methods: ['POST'])]
     public function delete(Request $request, Article $article, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $id = $article->getId();
 
         try {
@@ -244,22 +251,22 @@ class ArticleController extends AbstractController
                 $entityManager->remove($article);
                 $entityManager->flush();
 
-                $logger->info("Article '{name}' ({id}) was deleted.", ['name' => $article->getProduct()->getName(), 'id' => $id]);
+                $logger->info("Article '{name}' ({id}) was deleted.", ['name' => $article->getProduct()->getShortName(), 'id' => $id]);
                 $this->addFlash('success', new TranslatableMessage(
-                    "app.supplies.article.form.success.deleted", ['%name%' => $article->getProduct()->getName(), '%id%' => $id]));
+                    "app.supplies.article.form.success.deleted", ['%name%' => $article->getProduct()->getShortName(), '%id%' => $id]));
 
                 return $this->redirectToRoute('app_supplies_article_index');
             }else {
-                $logger->error("Invalid CSRF token used while deleting article '{name}' ({id}).", ['name' => $article->getProduct()->getName(), 'id' => $id]);
+                $logger->error("Invalid CSRF token used while deleting article '{name}' ({id}).", ['name' => $article->getProduct()->getShortName(), 'id' => $id]);
                 throw new Exception('invalid CSRF token');
             }
         } catch (ForeignKeyConstraintViolationException) {
             $this->addFlash('error', new TranslatableMessage(
-                "app.supplies.article.form.delete.error.inuse", ['%name%' => $article->getProduct()->getName(), '%id%' => $id]));
+                "app.supplies.article.form.delete.error.inuse", ['%name%' => $article->getProduct()->getShortName(), '%id%' => $id]));
         }catch (Exception $e) {
             $logger->error('Error occurred during article deletion: {error}', ['error' => $e->getMessage()]);
             $this->addFlash('error', new TranslatableMessage(
-                "app.supplies.article.form.delete.error", ['%name%' => $article->getProduct()->getName(), '%id%' => $id]));
+                "app.supplies.article.form.delete.error", ['%name%' => $article->getProduct()->getShortName(), '%id%' => $id]));
         }
 
         return $this->redirectToRoute('app_supplies_article_show', ['id' => $article->getId()]);
@@ -306,23 +313,26 @@ class ArticleController extends AbstractController
     #[Route('/checkout/{checkoutArticle}', name: 'app_supplies_article_checkout', requirements: ['checkoutArticle' => '\d+'], methods: ['GET', 'POST'])]
     public function checkout(Request $request, EntityManagerInterface $entityManager, ArticleRepository $articleRepository, LoggerInterface $logger, Article $checkoutArticle = null): Response
     {
+        // allow remember-me users to access this page
+        // $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         // if article is given, set withdrawal date to today and redirect to article checkout page
         if($checkoutArticle) {
-            if(!$checkoutArticle->getWithdrawalDate()) {
+            if(!$checkoutArticle->getWithdrawalDate() && !$checkoutArticle->getDiscardDate()) {
                 $checkoutArticle->setWithdrawalDate(new DateTime());
                 $entityManager->flush();
 
-                $logger->info("Article '{name}' ({id}) was checked out.", ['name' => $checkoutArticle->getProduct()->getName(), 'id' => $checkoutArticle->getId()]);
+                $logger->info("Article '{name}' ({id}) was checked out.", ['name' => $checkoutArticle->getProduct()->getShortName(), 'id' => $checkoutArticle->getId()]);
                 $this->addFlash('success', new TranslatableMessage(
                     "app.supplies.article.form.success.checkedout", [
-                    '%name%' => $checkoutArticle->getProduct()->getName(),
+                    '%name%' => $checkoutArticle->getProduct()->getShortName(),
                     '%bbd%' => $checkoutArticle->getBestBeforeDate() ? $checkoutArticle->getBestBeforeDate()->format('Y-m-d') : '-',
                 ]));
             }else {
-                $logger->error("Article '{name}' ({id}) was already checked out.", ['name' => $checkoutArticle->getProduct()->getName(), 'id' => $checkoutArticle->getId()]);
+                $logger->error("Article '{name}' ({id}) not available for checkout.", ['name' => $checkoutArticle->getProduct()->getShortName(), 'id' => $checkoutArticle->getId()]);
                 $this->addFlash('error', new TranslatableMessage(
-                    "app.supplies.article.form.checkout.error.alreadycheckedout", [
-                    '%name%' => $checkoutArticle->getProduct()->getName(),
+                    "app.supplies.article.form.checkout.error.checkout.not-available", [
+                    '%name%' => $checkoutArticle->getProduct()->getShortName(),
                     '%id%' => $checkoutArticle->getId()
                 ]));
             }
@@ -374,10 +384,10 @@ class ArticleController extends AbstractController
                 $selectedArticle->setWithdrawalDate(new DateTime());
                 $entityManager->flush();
 
-                $logger->info("Article '{name}' ({id}) was checked out.", ['name' => $selectedArticle->getProduct()->getName(), 'id' => $selectedArticle->getId()]);
+                $logger->info("Article '{name}' ({id}) was checked out.", ['name' => $selectedArticle->getProduct()->getShortName(), 'id' => $selectedArticle->getId()]);
                 $this->addFlash('success', new TranslatableMessage(
                     "app.supplies.article.form.success.checkedout", [
-                    '%name%' => $selectedArticle->getProduct()->getName(),
+                    '%name%' => $selectedArticle->getProduct()->getShortName(),
                     '%bbd%' => $selectedArticle->getBestBeforeDate() ? $selectedArticle->getBestBeforeDate()->format('Y-m-d') : '-',
                 ]));
 
@@ -388,14 +398,14 @@ class ArticleController extends AbstractController
 
                 // get name and brand of the article's product as array
                 $productData = [
-                    'name' => $checkoutFormData['product']->getName(),
+                    'name' => $checkoutFormData['product']->getShortName(),
                     'brand' => $checkoutFormData['product']->getBrand()->getName(),
                 ];
 
                 // render article selection page
                 return $this->render('supplies/article/form_checkout.html.twig', [
                     'pageTitle' => new TranslatableMessage(
-                        "app.supplies.article.form.checkout.item.title", ['%name%' => $checkoutFormData['product']->getName()]),
+                        "app.supplies.article.form.checkout.item.title", ['%name%' => $checkoutFormData['product']->getExtendedName()]),
                     'product' => $productData,
                     'bestBeforeDates' => $bestBeforeDates,
                 ]);

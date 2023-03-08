@@ -28,7 +28,6 @@ use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
-use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Column\TwigStringColumn;
 use Omines\DataTablesBundle\DataTableFactory;
@@ -41,7 +40,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[IsGranted('ROLE_USER')]
+#[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
 #[Route('/{_locale<%app.supported_locales%>}/supplies/product')]
 class ProductController extends AbstractController
 {
@@ -49,15 +48,14 @@ class ProductController extends AbstractController
     public function index(Request $request, DataTableFactory $dataTableFactory, TranslatorInterface $translator): Response
     {
         $table = $dataTableFactory->create()
+            ->add('commodity', TextColumn::class, [
+                'label' => 'form.product.commodity',
+                'field' => 'commodity.name',
+            ])
             ->add('brand', TextColumn::class, [
                 'label' => 'form.product.brand',
                 'field' => 'brand.name',
                 'className' => 'min',
-            ])
-            ->add('commodity', TextColumn::class, [
-                'label' => 'form.product.commodity',
-                'field' => 'commodity.name',
-                'visible' => false,
             ])
             ->add('name', TextColumn::class, [
                 'label' => 'form.product.name',
@@ -65,7 +63,7 @@ class ProductController extends AbstractController
                     return sprintf(
                         '<a href="%s">%s</a>',
                         $this->generateUrl('app_supplies_product_show', ['id' => $product->getId()]),
-                        $value);
+                        $value ?: 'dto.');
                 },
             ])
             ->add('quantity', TextColumn::class, [
@@ -123,6 +121,8 @@ class ProductController extends AbstractController
     #[Route('/new', name: 'app_supplies_product_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $product = new Product();
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
@@ -131,9 +131,9 @@ class ProductController extends AbstractController
             $entityManager->persist($product);
             $entityManager->flush();
 
-            $logger->info("New product '{name} ({id}) was created.", ['name' => $product->getName(), 'id' => $product->getId()]);
+            $logger->info("New product '{name}' ({id}) was created.", ['name' => $product->getShortName(), 'id' => $product->getId()]);
             $this->addFlash('success', new TranslatableMessage(
-                "app.supplies.product.form.success.created", ['%name%' => $product->getName()]));
+                "app.supplies.product.form.success.created", ['%name%' => $product->getShortName()]));
 
             return $this->redirectToRoute('app_supplies_product_new');
         }
@@ -149,7 +149,7 @@ class ProductController extends AbstractController
     {
         return $this->render('supplies/product/show.html.twig', [
             'pageTitle' => new TranslatableMessage(
-                "app.supplies.product.title", ['%name%' => $product->getName()]),
+                "app.supplies.product.title", ['%name%' => $product->getShortName()]),
             'product' => $product,
         ]);
     }
@@ -157,16 +157,18 @@ class ProductController extends AbstractController
     #[Route('/{id}/edit', name: 'app_supplies_product_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Product $product, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            $logger->info("Product '{name}' ({id}) was updated.", ['name' => $product->getName(), 'id' => $product->getId()]);
+            $logger->info("Product '{name}' ({id}) was updated.", ['name' => $product->getShortName(), 'id' => $product->getId()]);
             $this->addFlash('success', new TranslatableMessage(
                 "app.supplies.product.form.success.updated", [
-                '%name%' => $product->getName(),
+                '%name%' => $product->getShortName(),
                 '%id%' => $product->getId()
             ]));
 
@@ -175,7 +177,7 @@ class ProductController extends AbstractController
 
         return $this->render('supplies/product/form.html.twig', [
             'pageTitle' => new TranslatableMessage(
-                "app.supplies.product.form.edit.title", ['%name%' => $product->getName()]),
+                "app.supplies.product.form.edit.title", ['%name%' => $product->getShortName()]),
             'form' => $form->createView(),
             'product' => $product,
         ]);
@@ -184,6 +186,8 @@ class ProductController extends AbstractController
     #[Route('/{id}/delete', name: 'app_supplies_product_delete', methods: ['POST'])]
     public function delete(Request $request, Product $product, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $id = $product->getId();
 
         try {
@@ -191,22 +195,22 @@ class ProductController extends AbstractController
                 $entityManager->remove($product);
                 $entityManager->flush();
 
-                $logger->info("Product '{name}' ({id}) was deleted.", ['name' => $product->getName(), 'id' => $id]);
+                $logger->info("Product '{name}' ({id}) was deleted.", ['name' => $product->getShortName(), 'id' => $id]);
                 $this->addFlash('success', new TranslatableMessage(
-                    "app.supplies.product.form.success.deleted", ['%name%' => $product->getName(), '%id%' => $id]));
+                    "app.supplies.product.form.success.deleted", ['%name%' => $product->getShortName(), '%id%' => $id]));
 
                 return $this->redirectToRoute('app_supplies_product_index');
             }else {
-                $logger->error("Invalid CSRF token used while deleting product '{name}' ({id}).", ['name' => $product->getName(), 'id' => $id]);
+                $logger->error("Invalid CSRF token used while deleting product '{name}' ({id}).", ['name' => $product->getShortName(), 'id' => $id]);
                 throw new Exception('invalid CSRF token');
             }
         } catch (ForeignKeyConstraintViolationException) {
             $this->addFlash('error', new TranslatableMessage(
-                "app.supplies.product.form.delete.error.inuse", ['%name%' => $product->getName(), '%id%' => $id]));
+                "app.supplies.product.form.delete.error.inuse", ['%name%' => $product->getShortName(), '%id%' => $id]));
         }catch (Exception $e) {
             $logger->error('Error occurred during commodity deletion: {error}', ['error' => $e->getMessage()]);
             $this->addFlash('error', new TranslatableMessage(
-                "app.supplies.product.form.delete.error", ['%name%' => $product->getName(), '%id%' => $id]));
+                "app.supplies.product.form.delete.error", ['%name%' => $product->getShortName(), '%id%' => $id]));
         }
 
         return $this->redirectToRoute('app_supplies_product_show', ['id' => $product->getId()]);

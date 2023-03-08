@@ -56,6 +56,10 @@ class Article
     #[Assert\Type("DateTimeInterface")]
     private ?DateTimeInterface $withdrawalDate = null;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Assert\Type("DateTimeInterface")]
+    private ?DateTimeInterface $discardDate = null;
+
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull]
@@ -116,6 +120,18 @@ class Article
     public function setWithdrawalDate(?DateTimeInterface $withdrawalDate): self
     {
         $this->withdrawalDate = $withdrawalDate;
+
+        return $this;
+    }
+
+    public function getDiscardDate(): ?DateTimeInterface
+    {
+        return $this->discardDate;
+    }
+
+    public function setDiscardDate(?DateTimeInterface $discardDate): self
+    {
+        $this->discardDate = $discardDate;
 
         return $this;
     }

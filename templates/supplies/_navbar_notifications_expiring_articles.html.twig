@@ -1,0 +1,33 @@
+{% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+    {% if navbarExpiringArticlesNotifications is defined %}
+        {% set total = navbarExpiringArticlesNotifications|length %}
+
+        {% if total > 0 %}
+            {% set badgeColor = 'warning' %}
+
+            {% for n in navbarExpiringArticlesNotifications %}
+                {% if n.cssClass == 'danger' %}
+                    {% set badgeColor = 'danger' %}
+                {% endif %}
+            {% endfor %}
+
+            <!-- Notifications Dropdown Menu -->
+            <li class="nav-item dropdown">
+                <a class="nav-link" data-toggle="dropdown" href="#">
+                    <i class="far fa-shopping-cart"></i>
+                    <span class="badge badge-{{ badgeColor }} navbar-badge">{{ total }}</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-xl">
+                    <span class="dropdown-item dropdown-header">{{ 'navbar.notification.title.supplies.article.expiring'|trans({'{quantity}': total}) }}</span>
+                    <div class="dropdown-divider"></div>
+                    {% for n in navbarExpiringArticlesNotifications %}
+                        <a href="{{ path('app_supplies_article_show', {'id': n.itemId}) }}" class="dropdown-item text-sm">
+                            {{ n.title|u.truncate(40, '...') }}
+                            <span class="float-right text-sm{% if n.cssClass %} text-{{ n.cssClass }}{% else %} text-muted{% endif %}">{{ n.expiryDate|format_date }}</span>
+                        </a>
+                    {% endfor %}
+                </div>
+            </li>
+        {% endif %}
+    {% endif %}
+{% endif %}

@@ -38,6 +38,7 @@ class ArticleType extends AbstractType
             ->add('purchaseDate', DateType::class, [
                 'widget' => 'single_text',
                 'label_format' => 'form.article.%name%',
+                'required' => false,
             ])
             ->add('storageLocation', EntityType::class, [
                 'class' => StorageLocation::class,
@@ -46,10 +47,20 @@ class ArticleType extends AbstractType
             ])
             ->add('product', EntityType::class, [
                 'class' => Product::class,
-                'choice_label' => 'name',
+                'choice_label' => 'extendedName',
                 'label_format' => 'form.article.%name%',
             ])
             ->add('bestBeforeDate', DateType::class, [
+                'widget' => 'single_text',
+                'label_format' => 'form.article.%name%',
+                'required' => false,
+            ])
+            ->add('withdrawalDate', DateType::class, [
+                'widget' => 'single_text',
+                'label_format' => 'form.article.%name%',
+                'required' => false,
+            ])
+            ->add('discardDate', DateType::class, [
                 'widget' => 'single_text',
                 'label_format' => 'form.article.%name%',
                 'required' => false,

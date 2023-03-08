@@ -30,6 +30,7 @@ class TwigEventSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly string $siteName,
+        private readonly bool $registrationEnabled,
         private readonly Environment $twig,
         private readonly LocaleService $localeService
     )
@@ -40,6 +41,7 @@ class TwigEventSubscriber implements EventSubscriberInterface
     {
         $this->twig->addGlobal("siteName", $this->siteName);
         $this->twig->addGlobal('supportedLocales', $this->localeService->getSupportedLocales());
+        $this->twig->addGlobal('registrationEnabled', $this->registrationEnabled);
     }
 
     public static function getSubscribedEvents(): array
