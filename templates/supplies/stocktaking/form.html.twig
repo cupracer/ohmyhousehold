@@ -7,12 +7,19 @@
         {{ form_start(form) }}
 
         <div class="row">
+            <div class="col-8">
+                {{ form_row(form.storageLocation, {'attr': {'class': 'select2field'}}) }}
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col-12">
                 {{ form_row(form.name, {'attr': {'autofocus': 'autofocus'}}) }}
             </div>
         </div>
-        <div class="row">
-            <div class="col-6 mt-3">
+        
+        <div class="row mt-5">
+            <div class="col-6">
                 {% if stocktaking is defined %}
                     {% set targetUrl = path('app_supplies_stocktaking_show', {id: stocktaking.id}) %}
                 {% else %}
@@ -23,7 +30,7 @@
                     'targetUrl': targetUrl,
                 } %}
             </div>
-            <div class="col-6 text-right mt-3">
+            <div class="col-6 text-right">
                 {% include '_button_submit.html.twig' %}
             </div>
         </div>
@@ -33,3 +40,9 @@
     <div class="col-md"></div>
 </div>
 {% endblock page_content_body %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {{ encore_entry_script_tags('forms') }}
+{% endblock javascripts %}

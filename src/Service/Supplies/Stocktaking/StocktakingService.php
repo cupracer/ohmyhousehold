@@ -38,8 +38,11 @@ class StocktakingService
     // create InventoryItem for each current supply article
     public function createInventoryItemsForAllCurrentArticles(Stocktaking $stocktaking): array
     {
-        // get all supply articles that are not withdrawn
-        $articles = $this->articleRepository->findBy(['withdrawalDate' => null]);
+        // get all supply articles for the selected storage location that are not withdrawn
+        $articles = $this->articleRepository->findBy([
+            'storageLocation' => $stocktaking->getStorageLocation(),
+            'withdrawalDate' => null,
+        ]);
         $inventoryItems = [];
 
         // create InventoryItem for each supply article
