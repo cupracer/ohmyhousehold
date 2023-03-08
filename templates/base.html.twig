@@ -124,11 +124,13 @@ As a workaround, text-sm is instead set on navbar_tag, sidebar_tag and main_cont
         </li>
 
     {% else %}
-        <li class="nav-item">
-            <a class="nav-link" href="{{ path('user_register') }}">
-                <i class="fas fa-user-plus mr-1"></i> {{ 'app.register'|trans|capitalize }}
-            </a>
-        </li>
+        {% if registrationEnabled %}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ path('user_register') }}">
+                    <i class="fas fa-user-plus mr-1"></i> {{ 'app.register'|trans|capitalize }}
+                </a>
+            </li>
+        {% endif %}
         <li class="nav-item">
             <a class="nav-link" href="{{ path('user_login') }}">
                 <i class="fas fa-sign-in-alt mr-1"></i> {{ 'app.sign-in'|trans|capitalize }}
