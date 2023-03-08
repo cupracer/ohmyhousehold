@@ -183,7 +183,7 @@ class UserController extends AbstractController
     #[Route(path: '/login_link', name: 'user_login_link')]
     public function loginLink(LoggerInterface $logger, UserService $userService): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         /** @var User $user */
         $user = $this->getUser();
