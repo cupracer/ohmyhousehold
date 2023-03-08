@@ -83,6 +83,11 @@ class ArticleController extends AbstractController
                 'template' => '{% if value is not empty %}{{ value|format_date }}{% endif %}',
                 'className' => 'min text-center',
             ])
+            ->add('storageLocation', TextColumn::class, [
+                'label' => 'form.article.storageLocation',
+                'field' => 'article.storageLocation.name',
+                'className' => 'min',
+            ])
             ->add('createdAt', TwigStringColumn::class, [
                 'label' => 'label.createdAt',
                 'template' => '{% if value is not empty %}{{ value|format_datetime }}{% endif %}',

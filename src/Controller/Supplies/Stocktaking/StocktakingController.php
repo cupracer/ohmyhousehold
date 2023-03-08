@@ -64,6 +64,11 @@ class StocktakingController extends AbstractController
                         $value);
                 },
             ])
+            ->add('storageLocation', TextColumn::class, [
+                'label' => 'form.article.storageLocation',
+                'field' => 'stocktaking.storageLocation.name',
+                'className' => 'min',
+            ])
             ->add('createdAt', TwigStringColumn::class, [
                 'label' => 'label.createdAt',
                 'template' => '{% if value is not empty %}{{ value|format_datetime }}{% endif %}',
