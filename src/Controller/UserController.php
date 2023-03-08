@@ -152,7 +152,8 @@ class UserController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
-        if($user) {
+        if($user && $this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            // TODO: User might not be logging in but just accessing this page while being logged in.
             $logger->info("User '{username}' successfully logged in.", ['username' => $user->getUserIdentifier()]);
 
             return $this->redirectToRoute('app_start');
