@@ -9,6 +9,7 @@ parameters:
     app.secret: "%env(APP_SECRET)%"
     app.session_ttl: "%env(APP_SESSION_TTL)%"
     session.save_path: "%env(REDIS_URL)%"
+    app.registration_enabled: "%env(REGISTRATION_ENABLED)%"
 
 services:
     # default configuration for services in *this* file
@@ -40,6 +41,7 @@ services:
     App\EventSubscriber\TwigEventSubscriber:
         arguments:
             $siteName: '%app.site_name%'
+            $registrationEnabled: '%app.registration_enabled%'
 
     App\Service\LocaleService:
         arguments:

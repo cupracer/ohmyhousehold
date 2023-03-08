@@ -54,6 +54,12 @@ class UserController extends AbstractController
     #[Route('/register', name: 'user_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        if(!$this->getParameter('app.registration_enabled')) {
+            return $this->render('user/registration_disabled.html.twig', [
+                'pageTitle' => 'app.register',
+            ]);
+        }
+
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
