@@ -40,7 +40,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[IsGranted('ROLE_USER')]
+#[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
 #[Route('/{_locale<%app.supported_locales%>}/supplies/product')]
 class ProductController extends AbstractController
 {
@@ -121,6 +121,8 @@ class ProductController extends AbstractController
     #[Route('/new', name: 'app_supplies_product_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $product = new Product();
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
@@ -155,6 +157,8 @@ class ProductController extends AbstractController
     #[Route('/{id}/edit', name: 'app_supplies_product_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Product $product, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
@@ -182,6 +186,8 @@ class ProductController extends AbstractController
     #[Route('/{id}/delete', name: 'app_supplies_product_delete', methods: ['POST'])]
     public function delete(Request $request, Product $product, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $id = $product->getId();
 
         try {

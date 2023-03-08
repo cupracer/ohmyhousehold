@@ -1,4 +1,4 @@
-{% if is_granted('ROLE_USER') %}
+{% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
     {% if navbarExpiringArticlesNotifications is defined %}
         {% set total = navbarExpiringArticlesNotifications|length %}
 

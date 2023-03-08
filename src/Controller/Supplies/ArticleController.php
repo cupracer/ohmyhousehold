@@ -45,7 +45,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[IsGranted('ROLE_USER')]
+#[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
 #[Route('/{_locale<%app.supported_locales%>}/supplies/article')]
 class ArticleController extends AbstractController
 {
@@ -125,6 +125,9 @@ class ArticleController extends AbstractController
     #[Route('/new', name: 'app_supplies_article_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, StorageLocationRepository $storageLocationRepository, LoggerInterface $logger): Response
     {
+        // allow remember-me users to access this page
+        // $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $article = new Article();
 
         // if session contains last purchase date, set it as default, if not, set now
@@ -209,6 +212,8 @@ class ArticleController extends AbstractController
     #[Route('/edit/{id}', name: 'app_supplies_article_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Article $article, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
 
@@ -236,6 +241,8 @@ class ArticleController extends AbstractController
     #[Route('/delete/{id}', name: 'app_supplies_article_delete', methods: ['POST'])]
     public function delete(Request $request, Article $article, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $id = $article->getId();
 
         try {
@@ -267,6 +274,9 @@ class ArticleController extends AbstractController
     #[Route('/checkout/{checkoutArticle}', name: 'app_supplies_article_checkout', requirements: ['checkoutArticle' => '\d+'], methods: ['GET', 'POST'])]
     public function checkout(Request $request, EntityManagerInterface $entityManager, ArticleRepository $articleRepository, LoggerInterface $logger, Article $checkoutArticle = null): Response
     {
+        // allow remember-me users to access this page
+        // $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         // if article is given, set withdrawal date to today and redirect to article checkout page
         if($checkoutArticle) {
             if(!$checkoutArticle->getWithdrawalDate() && !$checkoutArticle->getDiscardDate()) {

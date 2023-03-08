@@ -39,7 +39,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Translation\TranslatableMessage;
 
-#[IsGranted('ROLE_USER')]
+#[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
 #[Route('/{_locale<%app.supported_locales%>}/supplies/components/storagelocation')]
 class StorageLocationController extends AbstractController
 {
@@ -85,6 +85,8 @@ class StorageLocationController extends AbstractController
     #[Route('/new', name: 'app_supplies_storagelocation_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $storageLocation = new StorageLocation();
         $form = $this->createForm(StorageLocationType::class, $storageLocation);
         $form->handleRequest($request);
@@ -119,6 +121,8 @@ class StorageLocationController extends AbstractController
     #[Route('/{id}/edit', name: 'app_supplies_storagelocation_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, StorageLocation $storageLocation, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $form = $this->createForm(StorageLocationType::class, $storageLocation);
         $form->handleRequest($request);
 
@@ -146,6 +150,8 @@ class StorageLocationController extends AbstractController
     #[Route('/{id}', name: 'app_supplies_storagelocation_delete', methods: ['POST'])]
     public function delete(Request $request, StorageLocation $storageLocation, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $id = $storageLocation->getId();
 
         try {

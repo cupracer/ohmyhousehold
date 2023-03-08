@@ -47,7 +47,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
-#[IsGranted('ROLE_USER')]
+#[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
 #[Route('/{_locale<%app.supported_locales%>}/supplies/stocktaking')]
 class StocktakingController extends AbstractController
 {
@@ -93,6 +93,8 @@ class StocktakingController extends AbstractController
     #[Route('/new', name: 'app_supplies_stocktaking_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, LoggerInterface $logger, StocktakingService $stocktakingService): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $stocktaking = new Stocktaking();
         $form = $this->createForm(StocktakingType::class, $stocktaking);
         $form->handleRequest($request);
@@ -177,6 +179,8 @@ class StocktakingController extends AbstractController
     #[Route('/item/{id}/update', name: 'app_supplies_stocktaking_item_update', methods: ['POST'])]
     public function edit(Request $request, InventoryItem $inventoryItem, EntityManagerInterface $entityManager, LoggerInterface $logger, TranslatorInterface $translator): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $form = $this->createForm(InventoryItemType::class, $inventoryItem);
         $form->handleRequest($request);
 
@@ -209,6 +213,8 @@ class StocktakingController extends AbstractController
     #[Route('/{id}', name: 'app_supplies_stocktaking_delete', methods: ['POST'])]
     public function delete(Request $request, Stocktaking $stocktaking, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $id = $stocktaking->getId();
 
         try {

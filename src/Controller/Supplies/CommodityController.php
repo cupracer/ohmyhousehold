@@ -40,7 +40,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[IsGranted('ROLE_USER')]
+#[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
 #[Route('/{_locale<%app.supported_locales%>}/supplies/commodity')]
 class CommodityController extends AbstractController
 {
@@ -94,6 +94,8 @@ class CommodityController extends AbstractController
     #[Route('/new', name: 'app_supplies_commodity_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $commodity = new Commodity();
         $form = $this->createForm(CommodityType::class, $commodity);
         $form->handleRequest($request);
@@ -128,6 +130,8 @@ class CommodityController extends AbstractController
     #[Route('/{id}/edit', name: 'app_supplies_commodity_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Commodity $commodity, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $form = $this->createForm(CommodityType::class, $commodity);
         $form->handleRequest($request);
 
@@ -155,6 +159,8 @@ class CommodityController extends AbstractController
     #[Route('/{id}', name: 'app_supplies_commodity_delete', methods: ['POST'])]
     public function delete(Request $request, Commodity $commodity, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $id = $commodity->getId();
 
         try {
