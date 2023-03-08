@@ -21,6 +21,7 @@
 
 namespace App\Entity\Supplies\Stocktaking;
 
+use App\Entity\Supplies\StorageLocation;
 use App\Repository\Supplies\Stocktaking\StocktakingRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -47,6 +48,11 @@ class Stocktaking
     #[Assert\Length(min: 2, max: 255)]
     #[Assert\Regex(pattern: '/^[[:alpha:][:digit:]äöüÄÖÜ][[:alpha:][:digit:]äöüÄÖÜ\-\s_:;!]*[[:alpha:][:digit:]äöüÄÖÜ!]$/', message: 'form.regex.invalid')]
     private ?string $name = null;
+
+    #[ORM\ManyToOne(inversedBy: 'articles')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
+    private ?StorageLocation $storageLocation = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ["default" => "CURRENT_TIMESTAMP"])]
     private DateTimeInterface $createdAt;
@@ -75,6 +81,18 @@ class Stocktaking
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getStorageLocation(): ?StorageLocation
+    {
+        return $this->storageLocation;
+    }
+
+    public function setStorageLocation(?StorageLocation $storageLocation): self
+    {
+        $this->storageLocation = $storageLocation;
 
         return $this;
     }

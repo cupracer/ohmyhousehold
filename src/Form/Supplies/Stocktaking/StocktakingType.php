@@ -22,6 +22,8 @@
 namespace App\Form\Supplies\Stocktaking;
 
 use App\Entity\Supplies\Stocktaking\Stocktaking;
+use App\Entity\Supplies\StorageLocation;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -34,6 +36,11 @@ class StocktakingType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label_format' => 'form.stocktaking.%name%',
+            ])
+            ->add('storageLocation', EntityType::class, [
+                'class' => StorageLocation::class,
+                'choice_label' => 'name',
+                'label_format' => 'form.article.%name%',
             ])
         ;
     }

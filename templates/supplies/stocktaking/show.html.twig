@@ -1,5 +1,10 @@
 {% extends 'base-with-footer.html.twig' %}
 
+{% block page_header %}
+    {% if pageTitle is defined %}{{ pageTitle|trans|capitalize }}{% endif %}
+    {% if stocktaking is defined %} - {{ stocktaking.storageLocation.name }}{% endif %}
+{% endblock page_header %}
+
 {% block page_content_body %}
     <div class="row">
         <div class="col"></div>
