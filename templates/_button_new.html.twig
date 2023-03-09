@@ -2,5 +2,5 @@
     <span class="icon text mr-1">
         <i class="far fa-plus-circle"></i>
     </span>
-    <span class="text">{{ titleKey|default('app.new')|trans|capitalize }}</span>
+    <span class="text">{{ titleKey|default('app.new')|trans|u.title }}</span>
 </a>
