@@ -41,7 +41,9 @@
     <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
     <script>
         $(function() {
-            $('#articles').initDataTables({{ datatable_settings(datatable) }});
+            $('#articles').initDataTables({{ datatable_settings(datatable) }}, {
+                'responsive': true,
+            });
         });
     </script>
 {% endblock javascripts_inline %}

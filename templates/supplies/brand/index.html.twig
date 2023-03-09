@@ -36,7 +36,9 @@
     <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
     <script>
         $(function() {
-            $('#brands').initDataTables({{ datatable_settings(datatable) }});
+            $('#brands').initDataTables({{ datatable_settings(datatable) }}, {
+                'responsive': true,
+            });
         });
     </script>
 {% endblock javascripts_inline %}

@@ -42,8 +42,13 @@
         $(document).ready(function() {
             let dataTable = null;
 
-            $('#inventoryItems').initDataTables({{ datatable_settings(datatable) }})
-                .then(function(dt) {
+            $('#inventoryItems').initDataTables({{ datatable_settings(datatable) }}, {
+                'responsive': true,
+                'columnDefs': [
+                    // always show the last column (actions)
+                    { responsivePriority: 1, targets: -1 }
+                ]
+            }).then(function(dt) {
                     dataTable = dt;
 
                     // remember to use event delegation by providing selector
