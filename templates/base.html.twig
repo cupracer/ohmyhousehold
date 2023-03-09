@@ -3,7 +3,7 @@
 {% block htmltag %}<html lang="{{ app.request.locale }}">{% endblock htmltag %}
 
 {% block title %}
-    {% if pageTitle is defined %}{{ pageTitle|trans|capitalize }} - {% endif %}{{ siteName }}
+    {% if pageTitle is defined %}{{ pageTitle|trans|u.title }} - {% endif %}{{ siteName }}
 {% endblock title %}
 
 {% block stylesheets %}
@@ -93,7 +93,7 @@ As a workaround, text-sm is instead set on navbar_tag, sidebar_tag and main_cont
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown-language">
             {% for key, value in supportedLocales %}
                 <a class="dropdown-item" href="{{ path('app_set_locale', {_locale: key}) }}">
-                    {{ value|capitalize }}
+                    {{ value|u.title }}
                 </a>
             {% endfor %}
         </div>
@@ -126,7 +126,7 @@ As a workaround, text-sm is instead set on navbar_tag, sidebar_tag and main_cont
                 </a>
                 <div class="dropdown-divider"></div>
                 <div class="dropdown-footer">
-                    <a  href="{{ logout_path() }}" class="btn btn-danger btn-sm">{{ 'app.sign-out'|trans|capitalize }}</a>
+                    <a  href="{{ logout_path() }}" class="btn btn-danger btn-sm">{{ 'app.sign-out'|trans|u.title }}</a>
                 </div>
 
             </div>
@@ -136,13 +136,13 @@ As a workaround, text-sm is instead set on navbar_tag, sidebar_tag and main_cont
         {% if registrationEnabled %}
             <li class="nav-item">
                 <a class="nav-link" href="{{ path('user_register') }}">
-                    <i class="fas fa-user-plus mr-1"></i> {{ 'app.register'|trans|capitalize }}
+                    <i class="fas fa-user-plus mr-1"></i> {{ 'app.register'|trans|u.title }}
                 </a>
             </li>
         {% endif %}
         <li class="nav-item">
             <a class="nav-link" href="{{ path('user_login') }}">
-                <i class="fas fa-sign-in-alt mr-1"></i> {{ 'app.sign-in'|trans|capitalize }}
+                <i class="fas fa-sign-in-alt mr-1"></i> {{ 'app.sign-in'|trans|u.title }}
             </a>
         </li>
     {% endif %}
@@ -172,7 +172,7 @@ As a workaround, text-sm is instead set on navbar_tag, sidebar_tag and main_cont
                             <div class="col-lg">
                                 <h3 class="card-title page-title">
                                     {% block page_header %}
-                                        {% if pageTitle is defined %}{{ pageTitle|trans|capitalize }}{% endif %}
+                                        {% if pageTitle is defined %}{{ pageTitle|trans|u.title }}{% endif %}
                                     {% endblock page_header %}
                                 </h3>
                             </div>
