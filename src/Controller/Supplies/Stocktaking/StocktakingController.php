@@ -201,7 +201,7 @@ class StocktakingController extends AbstractController
                 'status' => 'success',
                 'message' => $translator->trans(
                     "app.supplies.stocktaking.item.updated", [
-                    '%name%' => $inventoryItem->getProductName(),
+                    '%name%' => $inventoryItem->getExtendedProductName(),
                 ]),
             ]);
         }
@@ -210,7 +210,7 @@ class StocktakingController extends AbstractController
             'status' => 'error',
             'message' => $translator->trans(
                 "app.supplies.stocktaking.item.update.failed", [
-                '%name%' => $inventoryItem->getProductName(),
+                '%name%' => $inventoryItem->getExtendedProductName(),
             ]),
         ]);
     }

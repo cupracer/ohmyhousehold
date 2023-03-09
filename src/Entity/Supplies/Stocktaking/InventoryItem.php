@@ -53,6 +53,9 @@ class InventoryItem
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $productName = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $extendedProductName = null;
+
     #[ORM\Column(length: 255)]
     private ?string $categoryName = null;
 
@@ -118,6 +121,18 @@ class InventoryItem
     public function setProductName(?string $productName): self
     {
         $this->productName = $productName;
+
+        return $this;
+    }
+
+    public function getExtendedProductName(): ?string
+    {
+        return $this->extendedProductName;
+    }
+
+    public function setExtendedProductName(?string $extendedProductName): self
+    {
+        $this->extendedProductName = $extendedProductName;
 
         return $this;
     }

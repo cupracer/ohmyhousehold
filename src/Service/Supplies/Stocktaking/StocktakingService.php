@@ -53,6 +53,7 @@ class StocktakingService
             $inventoryItem->setBrandName($article->getProduct()->getBrand()->getName());
             $inventoryItem->setCommodityName($article->getProduct()->getCommodity()->getName());
             $inventoryItem->setProductName($article->getProduct()->getName());
+            $inventoryItem->setExtendedProductName($article->getProduct()->getExtendedName());
             $inventoryItem->setBestBeforeDate($article->getBestBeforeDate());
 
             foreach ($article->getProduct()->getIdentifierCodes() as $identifierCode) {
