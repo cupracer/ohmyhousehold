@@ -22,6 +22,7 @@
 namespace App\EventSubscriber\Supplies;
 
 use App\Service\Supplies\ArticleService;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Twig\Environment;
@@ -30,14 +31,18 @@ class TwigEventSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly Environment $twig,
-        private readonly ArticleService $articleService
+        private readonly ArticleService $articleService,
+        private readonly Security $security,
     )
     {
     }
 
     public function onKernelController(): void
     {
-        $this->twig->addGlobal('navbarExpiringArticlesNotifications', $this->articleService->getExpiringArticles());
+        // TODO: Limit to user role once they are implemented
+        if($this->security->isGranted('ROLE_USER')) {
+            $this->twig->addGlobal('navbarExpiringArticlesNotifications', $this->articleService->getExpiringArticles());
+        }
     }
 
     public static function getSubscribedEvents(): array
