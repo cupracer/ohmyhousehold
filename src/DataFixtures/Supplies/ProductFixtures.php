@@ -33,7 +33,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class ProductFixtures extends Fixture implements FixtureGroupInterface, DependentFixtureInterface
 {
-    public const NUM_OBJECTS = 50;
+    public const NUM_OBJECTS = 200;
     public const REFERENCE_ID = 'supplies-product-';
 
     public function __construct(

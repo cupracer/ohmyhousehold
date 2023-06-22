@@ -30,7 +30,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class IdentifierCodeFixtures extends Fixture implements FixtureGroupInterface, DependentFixtureInterface
 {
-    public const NUM_OBJECTS = 50;
+    public const NUM_OBJECTS = 1000;
     public const REFERENCE_ID = 'supplies-identifiercode-';
 
     public function load(ObjectManager $manager): void

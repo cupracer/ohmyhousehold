@@ -29,7 +29,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class CommodityFixtures extends Fixture implements FixtureGroupInterface
 {
-    public const NUM_OBJECTS = 50;
+    public const NUM_OBJECTS = 200;
     public const REFERENCE_ID = 'supplies-commodity-';
 
     public function __construct(
