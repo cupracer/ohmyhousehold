@@ -23,6 +23,7 @@ namespace App\DataFixtures\Supplies;
 
 use App\Entity\Supplies\Brand;
 use App\Entity\Supplies\Commodity;
+use App\Entity\Supplies\IdentifierCode;
 use App\Entity\Supplies\Product;
 use App\Repository\Supplies\MeasureRepository;
 use App\Repository\Supplies\PackagingRepository;
@@ -41,6 +42,25 @@ class ProductFixtures extends Fixture implements FixtureGroupInterface, Dependen
         private readonly PackagingRepository $packagingRepository
     )
     {
+    }
+
+    protected function createProductIdentifierCode(ObjectManager $manager, Product $product): IdentifierCode
+    {
+        $type = IdentifierCode::TYPES[array_rand(IdentifierCode::TYPES)];
+
+        $identifierCode = new IdentifierCode();
+        $identifierCode->setType($type['name']);
+
+        $identifierCode->setCode(mt_rand(
+            (int) str_pad("1", $type['length'], "0"),
+            (int) str_pad("9", $type['length'], "9")
+        ));
+
+        $identifierCode->setProduct($product);
+
+        $manager->persist($identifierCode);
+
+        return $identifierCode;
     }
 
     public function load(ObjectManager $manager): void
@@ -65,6 +85,12 @@ class ProductFixtures extends Fixture implements FixtureGroupInterface, Dependen
             $product->setPackaging($packaging[array_rand($packaging)]);
 
             $manager->persist($product);
+
+            // create identifier codes for product (20% chance for multiple codes)
+            for($j = 0; $j < (mt_rand(0,19) ? 1 : mt_rand(2, 4)); $j++) {
+                $this->createProductIdentifierCode($manager, $product);
+            }
+
             $this->addReference(self::REFERENCE_ID . $i, $product);
         }
 
