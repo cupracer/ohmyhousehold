@@ -42,6 +42,7 @@ class StocktakingService
         $articles = $this->articleRepository->findBy([
             'storageLocation' => $stocktaking->getStorageLocation(),
             'withdrawalDate' => null,
+            'discardDate' => null,
         ]);
         $inventoryItems = [];
 
