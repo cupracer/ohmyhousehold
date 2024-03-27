@@ -79,6 +79,11 @@ td.min {
     margin-top: -3px;
 }
 
+.dropdown-menu-expiring-articles {
+    overflow-y: auto;
+    max-height: 450px;
+}
+
 /* Add purpe button style */
 .btn-purple {
     color: #fff;
