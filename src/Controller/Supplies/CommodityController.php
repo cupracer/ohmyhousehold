@@ -27,7 +27,6 @@ use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
-use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Column\TwigStringColumn;
 use Omines\DataTablesBundle\DataTableFactory;
@@ -44,6 +43,28 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route('/{_locale<%app.supported_locales%>}/supplies/commodity')]
 class CommodityController extends AbstractController
 {
+    protected function getNumArticlesByCommodity(Commodity $commodity): int
+    {
+        $total = 0;
+
+        foreach($commodity->getProducts() as $product) {
+            $total+= count($product->getArticles());
+        }
+
+        return $total;
+    }
+
+    protected function getMinimumProductsStock(Commodity $commodity): int
+    {
+        $total = 0;
+
+        foreach($commodity->getProducts() as $product) {
+            $total+= $product->getMinimumGlobalStock();
+        }
+
+        return $total;
+    }
+
     #[Route('/', name: 'app_supplies_commodity_index', methods: ['GET', 'POST'])]
     public function index(Request $request, DataTableFactory $dataTableFactory, TranslatorInterface $translator): Response
     {
@@ -65,6 +86,49 @@ class CommodityController extends AbstractController
                     return $translator->trans($value);
                 },
             ])
+            ->add('minimumGlobalStock', TextColumn::class, [
+                'visible' => false,
+            ])
+            ->add('numStock', TextColumn::class, [
+                'label' => 'form.commodity.in-stock',
+                'render' => function($value, Commodity $commodity) {
+                    $numArticles = $this->getNumArticlesByCommodity($commodity);
+                    $minGlobalStock = $commodity->getMinimumGlobalStock();
+                    $minProductStock = $this->getMinimumProductsStock($commodity);
+
+                    $minStock = $minGlobalStock >= $minProductStock ? $minGlobalStock : $minProductStock;
+
+                    $buttonColor = 'primary';
+                    $buttonText = $numArticles;
+                    $titleText = "current: " . $numArticles;
+
+                    if($minStock) {
+                        $buttonText = $numArticles . ' / ' . $minStock;
+                        $titleText = "current: " . $numArticles . ' / min: ' . $minStock;
+                    }
+
+                    if($minStock && $numArticles >= $minStock) {
+                        $buttonColor = 'success';
+                    }
+
+                    if($minStock && $numArticles < $minStock && $numArticles > 0) {
+                        $buttonColor = 'warning';
+                    }
+
+                    if($minStock && $numArticles < $minStock && $numArticles <= 0) {
+                        $buttonColor = 'danger';
+                    }
+
+                    $button = sprintf('<button class="btn btn-xs no-padding btn-block bg-gradient-%s" title="%s">%s</button>', $buttonColor, $titleText, $buttonText);
+
+                    if(!$minStock && $numArticles == 0) {
+                        return '';
+                    }else {
+                        return $button;
+                    }
+                },
+                'className' => 'min text-center',
+            ])
             ->add('createdAt', TwigStringColumn::class, [
                 'label' => 'label.createdAt',
                 'template' => '{% if value is not empty %}{{ value|format_datetime }}{% endif %}',
@@ -80,6 +144,10 @@ class CommodityController extends AbstractController
                 'entity' => Commodity::class,
             ])
             ->handleRequest($request);
+
+//        $table->addEventListener(ORMAdapterEvents::PRE_QUERY, function(ORMAdapterQueryEvent $event) {
+//            $event->getQuery()->disableResultCache()->useQueryCache(false);
+//        });
 
         if ($table->isCallback()) {
             return $table->getResponse();
@@ -120,6 +188,7 @@ class CommodityController extends AbstractController
     #[Route('/{id}', name: 'app_supplies_commodity_show', methods: ['GET'])]
     public function show(Commodity $commodity): Response
     {
+        dump($commodity);
         return $this->render('supplies/commodity/show.html.twig', [
             'pageTitle' => new TranslatableMessage(
                 "app.supplies.commodity.title", ['%name%' => $commodity->getName()]),

@@ -93,6 +93,45 @@ class ProductController extends AbstractController
                     return $translator->trans($value);
                 },
             ])
+            ->add('minimumGlobalStock', TextColumn::class, [
+                'visible' => false,
+            ])
+            ->add('numStock', TextColumn::class, [
+                'label' => 'form.commodity.in-stock',
+                'render' => function($value, Product $product) {
+                    $numArticles = count($product->getArticles());
+                    $minGlobalStock = $product->getMinimumGlobalStock();
+                    $buttonColor = 'primary';
+                    $buttonText = $numArticles;
+                    $titleText = "current: " . $numArticles;
+
+                    if($minGlobalStock) {
+                        $buttonText = $numArticles . ' / ' . $minGlobalStock;
+                        $titleText = "current: " . $numArticles . ' / min: ' . $minGlobalStock;
+                    }
+
+                    if($minGlobalStock && $numArticles >= $minGlobalStock) {
+                        $buttonColor = 'success';
+                    }
+
+                    if($minGlobalStock && $numArticles < $minGlobalStock && $numArticles > 0) {
+                        $buttonColor = 'warning';
+                    }
+
+                    if($minGlobalStock && $numArticles < $minGlobalStock && $numArticles <= 0) {
+                        $buttonColor = 'danger';
+                    }
+
+                    $button = sprintf('<button class="btn btn-xs no-padding btn-block bg-gradient-%s" title="%s">%s</button>', $buttonColor, $titleText, $buttonText);
+
+                    if(!$minGlobalStock && $numArticles == 0) {
+                        return '';
+                    }else {
+                        return $button;
+                    }
+                },
+                'className' => 'min text-center',
+            ])
             ->add('createdAt', TwigStringColumn::class, [
                 'label' => 'label.createdAt',
                 'template' => '{% if value is not empty %}{{ value|format_datetime }}{% endif %}',
@@ -104,6 +143,10 @@ class ProductController extends AbstractController
                 'className' => 'min',
             ])
             ->addOrderBy('name')
+//            ->setTransformer(function ($row, Product $product) {
+//                $row['quantity'] = sprintf('%s (%s)', $product->getId(), "huhu");
+//                return $row;
+//            })
             ->createAdapter(ORMAdapter::class, [
                 'entity' => Product::class,
             ])
