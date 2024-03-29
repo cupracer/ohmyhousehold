@@ -188,7 +188,6 @@ class CommodityController extends AbstractController
     #[Route('/{id}', name: 'app_supplies_commodity_show', methods: ['GET'])]
     public function show(Commodity $commodity): Response
     {
-        dump($commodity);
         return $this->render('supplies/commodity/show.html.twig', [
             'pageTitle' => new TranslatableMessage(
                 "app.supplies.commodity.title", ['%name%' => $commodity->getName()]),
