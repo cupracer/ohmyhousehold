@@ -122,3 +122,7 @@ td.min {
 .show > .btn-purple.dropdown-toggle:focus {
     box-shadow: 0 0 0 0 rgba(162, 69, 169, 0.5);
 }
+
+.no-padding {
+    padding: 0;
+}
