@@ -25,6 +25,7 @@ use App\Entity\Supplies\Commodity;
 use App\Form\Supplies\CommodityType;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
 use Omines\DataTablesBundle\Adapter\Doctrine\FetchJoinORMAdapter;
@@ -150,9 +151,7 @@ class CommodityController extends AbstractController
                         ->from(Commodity::class, 'c')
                         ->leftJoin('c.category', 'category')
                         ->leftJoin('c.products', 'products')
-                        ->leftJoin('products.articles', 'articles')
-                        ->andWhere($builder->expr()->isNull('articles.withdrawalDate'))
-                        ->andWhere($builder->expr()->isNull('articles.discardDate'))
+                        ->leftJoin('products.articles', 'articles', Join::WITH, 'articles.withdrawalDate IS NULL AND articles.discardDate IS NULL')
                     ;
                 },
             ])

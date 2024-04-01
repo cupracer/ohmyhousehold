@@ -26,6 +26,7 @@ use App\Form\Supplies\ProductType;
 use App\Service\Supplies\ProductService;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
 use Omines\DataTablesBundle\Adapter\Doctrine\FetchJoinORMAdapter;
@@ -154,13 +155,11 @@ class ProductController extends AbstractController
                         ->addSelect('measure')
                         ->addSelect('packaging')
                         ->from(Product::class, 'p')
-                        ->leftJoin('p.articles', 'articles')
                         ->leftJoin('p.commodity', 'commodity')
                         ->leftJoin('p.brand', 'brand')
                         ->leftJoin('p.measure', 'measure')
                         ->leftJoin('p.packaging', 'packaging')
-                        ->andWhere($builder->expr()->isNull('articles.withdrawalDate'))
-                        ->andWhere($builder->expr()->isNull('articles.discardDate'))
+                        ->leftJoin('p.articles', 'articles', Join::WITH, 'articles.withdrawalDate IS NULL AND articles.discardDate IS NULL')
                     ;
                 },
             ])
