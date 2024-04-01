@@ -150,7 +150,7 @@ class CommodityController extends AbstractController
                         ->from(Commodity::class, 'c')
                         ->innerJoin('c.category', 'category')
                         ->innerJoin('c.products', 'products')
-                        ->innerJoin('products.articles', 'articles')
+                        ->leftJoin('products.articles', 'articles')
                         ->andWhere($builder->expr()->isNull('articles.withdrawalDate'))
                         ->andWhere($builder->expr()->isNull('articles.discardDate'))
                     ;

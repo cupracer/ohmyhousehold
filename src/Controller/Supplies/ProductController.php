@@ -154,7 +154,7 @@ class ProductController extends AbstractController
                         ->addSelect('measure')
                         ->addSelect('packaging')
                         ->from(Product::class, 'p')
-                        ->innerJoin('p.articles', 'articles')
+                        ->leftJoin('p.articles', 'articles')
                         ->innerJoin('p.commodity', 'commodity')
                         ->innerJoin('p.brand', 'brand')
                         ->innerJoin('p.measure', 'measure')
