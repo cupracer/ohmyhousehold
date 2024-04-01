@@ -26,8 +26,9 @@ use App\Form\Supplies\ProductType;
 use App\Service\Supplies\ProductService;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Exception;
-use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Adapter\Doctrine\FetchJoinORMAdapter;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Column\TwigStringColumn;
 use Omines\DataTablesBundle\DataTableFactory;
@@ -93,9 +94,6 @@ class ProductController extends AbstractController
                     return $translator->trans($value);
                 },
             ])
-            ->add('minimumGlobalStock', TextColumn::class, [
-                'visible' => false,
-            ])
             ->add('numStock', TextColumn::class, [
                 'label' => 'form.commodity.in-stock',
                 'render' => function($value, Product $product) {
@@ -143,12 +141,28 @@ class ProductController extends AbstractController
                 'className' => 'min',
             ])
             ->addOrderBy('name')
-//            ->setTransformer(function ($row, Product $product) {
-//                $row['quantity'] = sprintf('%s (%s)', $product->getId(), "huhu");
-//                return $row;
-//            })
-            ->createAdapter(ORMAdapter::class, [
+            ->createAdapter(FetchJoinORMAdapter::class, [
                 'entity' => Product::class,
+                'query' => function(QueryBuilder $builder) {
+                    // Note: It's important to include all relevant fields with "addSelect" if "where/andWhere" is used.
+                    // Otherwise, omitted fields would be fetched by additional queries and *without* the conditions.
+                    $builder
+                        ->select('p')
+                        ->addSelect('articles')
+                        ->addSelect('commodity')
+                        ->addSelect('brand')
+                        ->addSelect('measure')
+                        ->addSelect('packaging')
+                        ->from(Product::class, 'p')
+                        ->innerJoin('p.articles', 'articles')
+                        ->innerJoin('p.commodity', 'commodity')
+                        ->innerJoin('p.brand', 'brand')
+                        ->innerJoin('p.measure', 'measure')
+                        ->innerJoin('p.packaging', 'packaging')
+                        ->andWhere($builder->expr()->isNull('articles.withdrawalDate'))
+                        ->andWhere($builder->expr()->isNull('articles.discardDate'))
+                    ;
+                },
             ])
             ->handleRequest($request);
 

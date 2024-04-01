@@ -25,8 +25,9 @@ use App\Entity\Supplies\Commodity;
 use App\Form\Supplies\CommodityType;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Exception;
-use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Adapter\Doctrine\FetchJoinORMAdapter;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Column\TwigStringColumn;
 use Omines\DataTablesBundle\DataTableFactory;
@@ -86,9 +87,6 @@ class CommodityController extends AbstractController
                     return $translator->trans($value);
                 },
             ])
-            ->add('minimumGlobalStock', TextColumn::class, [
-                'visible' => false,
-            ])
             ->add('numStock', TextColumn::class, [
                 'label' => 'form.commodity.in-stock',
                 'render' => function($value, Commodity $commodity) {
@@ -140,14 +138,25 @@ class CommodityController extends AbstractController
                 'className' => 'min',
             ])
             ->addOrderBy('name')
-            ->createAdapter(ORMAdapter::class, [
+            ->createAdapter(FetchJoinORMAdapter::class, [
                 'entity' => Commodity::class,
+                'query' => function(QueryBuilder $builder) {
+                    // Note: It's important to include all relevant fields with "addSelect" if "where/andWhere" is used.
+                    // Otherwise, omitted fields would be fetched by additional queries and *without* the conditions.
+                    $builder
+                        ->select('c')
+                        ->addSelect('products')
+                        ->addSelect('articles')
+                        ->from(Commodity::class, 'c')
+                        ->innerJoin('c.category', 'category')
+                        ->innerJoin('c.products', 'products')
+                        ->innerJoin('products.articles', 'articles')
+                        ->andWhere($builder->expr()->isNull('articles.withdrawalDate'))
+                        ->andWhere($builder->expr()->isNull('articles.discardDate'))
+                    ;
+                },
             ])
             ->handleRequest($request);
-
-//        $table->addEventListener(ORMAdapterEvents::PRE_QUERY, function(ORMAdapterQueryEvent $event) {
-//            $event->getQuery()->disableResultCache()->useQueryCache(false);
-//        });
 
         if ($table->isCallback()) {
             return $table->getResponse();
