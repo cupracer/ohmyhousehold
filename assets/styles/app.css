@@ -82,6 +82,7 @@ td.min {
 .dropdown-menu-expiring-articles {
     overflow-y: auto;
     max-height: 450px;
+    min-width: 420px;
 }
 
 /* Add purpe button style */
