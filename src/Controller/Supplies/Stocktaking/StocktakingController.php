@@ -21,6 +21,7 @@
 
 namespace App\Controller\Supplies\Stocktaking;
 
+use App\Entity\Supplies\Article;
 use App\Entity\Supplies\Stocktaking\InventoryItem;
 use App\Entity\Supplies\Stocktaking\Stocktaking;
 use App\Form\Supplies\Stocktaking\InventoryItemType;
@@ -147,6 +148,16 @@ class StocktakingController extends AbstractController
                 },
                 'raw' => true,
                 'visible' => false,
+            ])
+            ->add('article', TextColumn::class, [
+                'label' => 'form.article.id',
+                'field' => 'product.name',
+                'render' => function($value, Article $article) {
+                    return sprintf(
+                        '<a href="%s">%s</a>',
+                        $this->generateUrl('app_supplies_article_show', ['id' => $article->getId()]),
+                        $value);
+                },
             ])
             ->add('status', TwigColumn::class, [
                 'label' => 'form.inventory-item.status',
