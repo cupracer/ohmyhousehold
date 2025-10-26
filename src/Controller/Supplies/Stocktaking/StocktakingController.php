@@ -128,6 +128,16 @@ class StocktakingController extends AbstractController
         $twig->addGlobal('updateUrl', 'app_supplies_stocktaking_item_update');
 
         $table = $dataTableFactory->create()
+            ->add('article', TextColumn::class, [
+                'label' => 'app.supplies.stocktaking.form.article',
+                'className' => 'min text-center',
+                'render' => function($value, InventoryItem $inventoryItem) {
+                    return sprintf(
+                        '<a href="%s">%s</a>',
+                        $this->generateUrl('app_supplies_article_show', ['id' => $inventoryItem->getArticle()->getId()]),
+                        $inventoryItem->getArticle()->getId());
+                },
+            ])
             ->add('commodityName', TextColumn::class, [
                 'label' => 'form.product.commodity',
             ])
@@ -148,16 +158,6 @@ class StocktakingController extends AbstractController
                 },
                 'raw' => true,
                 'visible' => false,
-            ])
-            ->add('article', TextColumn::class, [
-                'label' => 'form.article.id',
-                'field' => 'product.name',
-                'render' => function($value, Article $article) {
-                    return sprintf(
-                        '<a href="%s">%s</a>',
-                        $this->generateUrl('app_supplies_article_show', ['id' => $article->getId()]),
-                        $value);
-                },
             ])
             ->add('status', TwigColumn::class, [
                 'label' => 'form.inventory-item.status',
