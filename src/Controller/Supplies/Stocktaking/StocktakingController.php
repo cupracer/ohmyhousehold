@@ -132,10 +132,14 @@ class StocktakingController extends AbstractController
                 'label' => 'app.supplies.stocktaking.form.article',
                 'className' => 'min text-center',
                 'render' => function($value, InventoryItem $inventoryItem) {
-                    return sprintf(
-                        '<a href="%s">%s</a>',
-                        $this->generateUrl('app_supplies_article_show', ['id' => $inventoryItem->getArticle()->getId()]),
-                        $inventoryItem->getArticle()->getId());
+                    if($inventoryItem->getArticle() !== null) {
+                        return sprintf(
+                            '<a href="%s">%s</a>',
+                            $this->generateUrl('app_supplies_article_show', ['id' => $inventoryItem->getArticle()->getId()]),
+                            $inventoryItem->getArticle()->getId());
+                    }else {
+                        return '';
+                    }
                 },
             ])
             ->add('commodityName', TextColumn::class, [
