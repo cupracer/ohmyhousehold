@@ -125,6 +125,7 @@ COPY --from=thick_app /usr/local/lib/php/extensions/ /usr/local/lib/php/extensio
 COPY --from=thick_app /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d
 COPY --from=thick_app --chown=www-data:www-data /var/www/html/ /var/www/html
 
+RUN apt update && apt install -y libicu-dev && docker-php-ext-configure intl && docker-php-ext-install intl
 RUN echo APP_ENV=$APP_ENV > /var/www/html/.env.local
 
 CMD [ "/start.sh" ]
