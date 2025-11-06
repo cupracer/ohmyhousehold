@@ -25,6 +25,7 @@ use App\Entity\Supplies\Article;
 use App\Entity\Supplies\Product;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -83,6 +84,12 @@ class ArticleRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('a');
 
         return $qb
+            // optimize fetching of related entities (fetch eager)
+            ->addSelect('p', 'pb', 'pc')
+            ->leftJoin('a.product', 'p', Join::WITH, 'p.id = a.product')
+            ->leftJoin('p.brand', 'pb', Join::WITH, 'pb.id = p.brand')
+            ->leftJoin('p.commodity', 'pc', Join::WITH, 'pc.id = p.commodity')
+
             ->andWhere($qb->expr()->isNull('a.withdrawalDate'))
             ->andWhere($qb->expr()->isNull('a.discardDate'))
             ->andWhere(

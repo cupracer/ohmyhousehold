@@ -28,7 +28,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class BrandFixtures extends Fixture implements FixtureGroupInterface
 {
-    public const NUM_OBJECTS = 50;
+    public const NUM_OBJECTS = 200;
     public const REFERENCE_ID = 'supplies-brand-';
 
     public function load(ObjectManager $manager): void

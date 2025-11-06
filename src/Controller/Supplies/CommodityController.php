@@ -25,9 +25,10 @@ use App\Entity\Supplies\Commodity;
 use App\Form\Supplies\CommodityType;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Exception;
-use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
-use Omines\DataTablesBundle\Column\DateTimeColumn;
+use Omines\DataTablesBundle\Adapter\Doctrine\FetchJoinORMAdapter;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Column\TwigStringColumn;
 use Omines\DataTablesBundle\DataTableFactory;
@@ -44,6 +45,28 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route('/{_locale<%app.supported_locales%>}/supplies/commodity')]
 class CommodityController extends AbstractController
 {
+    protected function getNumArticlesByCommodity(Commodity $commodity): int
+    {
+        $total = 0;
+
+        foreach($commodity->getProducts() as $product) {
+            $total+= count($product->getArticles());
+        }
+
+        return $total;
+    }
+
+    protected function getMinimumProductsStock(Commodity $commodity): int
+    {
+        $total = 0;
+
+        foreach($commodity->getProducts() as $product) {
+            $total+= $product->getMinimumGlobalStock();
+        }
+
+        return $total;
+    }
+
     #[Route('/', name: 'app_supplies_commodity_index', methods: ['GET', 'POST'])]
     public function index(Request $request, DataTableFactory $dataTableFactory, TranslatorInterface $translator): Response
     {
@@ -65,6 +88,46 @@ class CommodityController extends AbstractController
                     return $translator->trans($value);
                 },
             ])
+            ->add('numStock', TextColumn::class, [
+                'label' => 'form.commodity.in-stock',
+                'render' => function($value, Commodity $commodity) {
+                    $numArticles = $this->getNumArticlesByCommodity($commodity);
+                    $minGlobalStock = $commodity->getMinimumGlobalStock();
+                    $minProductStock = $this->getMinimumProductsStock($commodity);
+
+                    $minStock = $minGlobalStock >= $minProductStock ? $minGlobalStock : $minProductStock;
+
+                    $buttonColor = 'primary';
+                    $buttonText = $numArticles;
+                    $titleText = "current: " . $numArticles;
+
+                    if($minStock) {
+                        $buttonText = $numArticles . ' / ' . $minStock;
+                        $titleText = "current: " . $numArticles . ' / min: ' . $minStock;
+                    }
+
+                    if($minStock && $numArticles >= $minStock) {
+                        $buttonColor = 'success';
+                    }
+
+                    if($minStock && $numArticles < $minStock && $numArticles > 0) {
+                        $buttonColor = 'warning';
+                    }
+
+                    if($minStock && $numArticles < $minStock && $numArticles <= 0) {
+                        $buttonColor = 'danger';
+                    }
+
+                    $button = sprintf('<button class="btn btn-xs no-padding btn-block bg-gradient-%s" title="%s">%s</button>', $buttonColor, $titleText, $buttonText);
+
+                    if(!$minStock && $numArticles == 0) {
+                        return '';
+                    }else {
+                        return $button;
+                    }
+                },
+                'className' => 'min text-center',
+            ])
             ->add('createdAt', TwigStringColumn::class, [
                 'label' => 'label.createdAt',
                 'template' => '{% if value is not empty %}{{ value|format_datetime }}{% endif %}',
@@ -76,8 +139,21 @@ class CommodityController extends AbstractController
                 'className' => 'min',
             ])
             ->addOrderBy('name')
-            ->createAdapter(ORMAdapter::class, [
+            ->createAdapter(FetchJoinORMAdapter::class, [
                 'entity' => Commodity::class,
+                'query' => function(QueryBuilder $builder) {
+                    // Note: It's important to include all relevant fields with "addSelect" if "where/andWhere" is used.
+                    // Otherwise, omitted fields would be fetched by additional queries and *without* the conditions.
+                    $builder
+                        ->select('c')
+                        ->addSelect('products')
+                        ->addSelect('articles')
+                        ->from(Commodity::class, 'c')
+                        ->leftJoin('c.category', 'category')
+                        ->leftJoin('c.products', 'products')
+                        ->leftJoin('products.articles', 'articles', Join::WITH, 'articles.withdrawalDate IS NULL AND articles.discardDate IS NULL')
+                    ;
+                },
             ])
             ->handleRequest($request);
 

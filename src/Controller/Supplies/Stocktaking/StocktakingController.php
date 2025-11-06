@@ -21,6 +21,7 @@
 
 namespace App\Controller\Supplies\Stocktaking;
 
+use App\Entity\Supplies\Article;
 use App\Entity\Supplies\Stocktaking\InventoryItem;
 use App\Entity\Supplies\Stocktaking\Stocktaking;
 use App\Form\Supplies\Stocktaking\InventoryItemType;
@@ -128,6 +129,20 @@ class StocktakingController extends AbstractController
         $twig->addGlobal('deleteUrl', 'app_supplies_article_delete_ajax');
 
         $table = $dataTableFactory->create()
+            ->add('article', TextColumn::class, [
+                'label' => 'app.supplies.stocktaking.form.article',
+                'className' => 'min text-center',
+                'render' => function($value, InventoryItem $inventoryItem) {
+                    if($inventoryItem->getArticle() !== null) {
+                        return sprintf(
+                            '<a href="%s">%s</a>',
+                            $this->generateUrl('app_supplies_article_show', ['id' => $inventoryItem->getArticle()->getId()]),
+                            $inventoryItem->getArticle()->getId());
+                    }else {
+                        return '';
+                    }
+                },
+            ])
             ->add('commodityName', TextColumn::class, [
                 'label' => 'form.product.commodity',
             ])
@@ -202,7 +217,7 @@ class StocktakingController extends AbstractController
                 'status' => 'success',
                 'message' => $translator->trans(
                     "app.supplies.stocktaking.item.updated", [
-                    '%name%' => $inventoryItem->getProductName(),
+                    '%name%' => $inventoryItem->getExtendedProductName(),
                 ]),
             ]);
         }
@@ -211,7 +226,7 @@ class StocktakingController extends AbstractController
             'status' => 'error',
             'message' => $translator->trans(
                 "app.supplies.stocktaking.item.update.failed", [
-                '%name%' => $inventoryItem->getProductName(),
+                '%name%' => $inventoryItem->getExtendedProductName(),
             ]),
         ]);
     }

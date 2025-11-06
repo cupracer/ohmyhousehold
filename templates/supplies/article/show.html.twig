@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="form-group">
-                    <label>{{ 'form.product.commodity'|trans|capitalize }}</label>
+                    <label>{{ 'form.product.commodity'|trans|u.title }}</label>
                     <div>{{ article.product.commodity.name }}</div>
                 </div>
             </div>
@@ -16,13 +16,13 @@
         <div class="row">
             <div class="col-6">
                 <div class="form-group">
-                    <label>{{ 'form.product.brand'|trans|capitalize }}</label>
+                    <label>{{ 'form.product.brand'|trans|u.title }}</label>
                     <div>{{ article.product.brand.name }}</div>
                 </div>
             </div>
             <div class="col-6">
                 <div class="form-group">
-                    <label>{{ 'form.article.product'|trans|capitalize }}</label>
+                    <label>{{ 'form.article.product'|trans|u.title }}</label>
                     <div>
                         {% if article.product.name %}
                             {{ article.product.name }}
@@ -36,7 +36,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="form-group">
-                    <label>{{ 'form.article.storageLocation'|trans|capitalize }}</label>
+                    <label>{{ 'form.article.storageLocation'|trans|u.title }}</label>
                     <div>{{ article.storageLocation.name }}</div>
                 </div>
             </div>
@@ -44,7 +44,7 @@
         <div class="row">
             <div class="col-6">
                 <div class="form-group">
-                    <label>{{ 'form.article.purchaseDate'|trans|capitalize }}</label>
+                    <label>{{ 'form.article.purchaseDate'|trans|u.title }}</label>
                     <div>{% if article.purchaseDate is not empty %}{{ article.purchaseDate|format_date }}{% endif %}</div>
                 </div>
             </div>
@@ -66,7 +66,7 @@
             {% if article.withdrawalDate %}
                 <div class="col-6">
                     <div class="form-group">
-                        <label>{{ 'form.article.withdrawalDate'|trans|capitalize }}</label>
+                        <label>{{ 'form.article.withdrawalDate'|trans|u.title }}</label>
                         <div>{{ article.withdrawalDate|format_date }}</div>
                     </div>
                 </div>
@@ -75,7 +75,7 @@
             {% if article.discardDate %}
                 <div class="col-6">
                     <div class="form-group">
-                        <label>{{ 'form.article.discardDate'|trans|capitalize }}</label>
+                        <label>{{ 'form.article.discardDate'|trans|u.title }}</label>
                         <div>{{ article.discardDate|format_date }}</div>
                     </div>
                 </div>

@@ -46,3 +46,28 @@
 
     {{ encore_entry_script_tags('forms') }}
 {% endblock javascripts %}
+
+{% block javascripts_inline %}
+    {{ parent() }}
+
+    <script>
+        $(document).ready(function() {
+            $('.select2field').select2({
+                theme: 'bootstrap4',
+                width: '100%',
+            });
+
+            let stocktakingSelect = $('#supplies_new_stocktaking');
+
+            stocktakingSelect.select2({
+                theme: 'bootstrap4',
+                placeholder: '',
+                ajax: {
+                    dataType: 'json',
+                    url: stocktakingSelect.data('json-url'),
+                    delay: 250,
+                }
+            });
+        });
+    </script>
+{% endblock javascripts_inline %}

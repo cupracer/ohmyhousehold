@@ -5,6 +5,6 @@
         <span class="icon mr-1">
             <i class="far fa-trash-alt"></i>
         </span>
-        <span class="text">{{ titleKey|default('app.delete')|trans|capitalize }}</span>
+        <span class="text">{{ titleKey|default('app.delete')|trans|u.title }}</span>
     </button>
 </form>

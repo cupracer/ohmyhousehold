@@ -8,13 +8,13 @@
         <li class="nav-item">
             <a href="{{ path('app_supplies_brand_index') }}" class="nav-link {% if app.request.pathInfo starts with path('app_supplies_brand_index') %}active{% endif %}">
                 <i class="nav-icon fas fa-copyright"></i>
-                <p>{{ 'app.supplies.brands.title'|trans|capitalize }}</p>
+                <p>{{ 'app.supplies.brands.title'|trans|u.title }}</p>
             </a>
         </li>
         <li class="nav-item">
             <a href="{{ path('app_supplies_storagelocation_index') }}" class="nav-link {% if app.request.pathInfo starts with path('app_supplies_storagelocation_index') %}active{% endif %}">
                 <i class="nav-icon fas fa-warehouse"></i>
-                <p>{{ 'app.supplies.storagelocations.title'|trans|capitalize }}</p>
+                <p>{{ 'app.supplies.storagelocations.title'|trans|u.title }}</p>
             </a>
         </li>
     </ul>
@@ -22,24 +22,24 @@
 <li class="nav-item">
     <a href="{{ path('app_supplies_commodity_index') }}" class="nav-link {% if app.request.pathInfo starts with path('app_supplies_commodity_index') %}active{% endif %}">
         <i class="nav-icon fas fa-cubes"></i>
-        <p>{{ 'app.supplies.commodities.title'|trans|capitalize }}</p>
+        <p>{{ 'app.supplies.commodities.title'|trans|u.title }}</p>
     </a>
 </li>
 <li class="nav-item">
     <a href="{{ path('app_supplies_product_index') }}" class="nav-link {% if app.request.pathInfo starts with path('app_supplies_product_index') %}active{% endif %}">
         <i class="nav-icon fas fa-barcode"></i>
-        <p>{{ 'app.supplies.products.title'|trans|capitalize }}</p>
+        <p>{{ 'app.supplies.products.title'|trans|u.title }}</p>
     </a>
 </li>
 <li class="nav-item">
     <a href="{{ path('app_supplies_article_index') }}" class="nav-link {% if app.request.pathInfo starts with path('app_supplies_article_index') %}active{% endif %}">
         <i class="nav-icon fas fa-shopping-cart"></i>
-        <p>{{ 'app.supplies.articles.title'|trans|capitalize }}</p>
+        <p>{{ 'app.supplies.articles.title'|trans|u.title }}</p>
     </a>
 </li>
 <li class="nav-item">
     <a href="{{ path('app_supplies_stocktaking_index') }}" class="nav-link {% if app.request.pathInfo starts with path('app_supplies_stocktaking_index') %}active{% endif %}">
         <i class="nav-icon fas fa-clipboard-check"></i>
-        <p>{{ 'app.supplies.stocktakings.title'|trans|capitalize }}</p>
+        <p>{{ 'app.supplies.stocktakings.title'|trans|u.title }}</p>
     </a>
 </li>

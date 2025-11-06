@@ -61,7 +61,7 @@ RUN docker-php-ext-install  \
     pdo_mysql
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&  \
-    php -r "if (hash_file('sha384', 'composer-setup.php') === '55ce33d7678c5a611085589f1f3ddf8b3c52d662cd01d4ba75c0ee0459970c2200a51f492d557530c71c15d8dba01eae') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
+    php -r "if (hash_file('sha384', 'composer-setup.php') === 'c8b085408188070d5f52bcfe4ecfbee5f727afa458b2573b8eaaf77b3419b0bf2768dc67c86944da1544f06fa544fd47') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
     php composer-setup.php --install-dir=/usr/local/bin --filename=composer &&  \
     php -r "unlink('composer-setup.php');"
 
@@ -125,6 +125,7 @@ COPY --from=thick_app /usr/local/lib/php/extensions/ /usr/local/lib/php/extensio
 COPY --from=thick_app /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d
 COPY --from=thick_app --chown=www-data:www-data /var/www/html/ /var/www/html
 
+RUN apt update && apt install -y libicu-dev && docker-php-ext-configure intl && docker-php-ext-install intl
 RUN echo APP_ENV=$APP_ENV > /var/www/html/.env.local
 
 CMD [ "/start.sh" ]

@@ -19,36 +19,27 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-namespace App\EventSubscriber\Supplies;
+declare(strict_types=1);
 
-use App\Service\Supplies\ArticleService;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\KernelEvents;
-use Twig\Environment;
+namespace DoctrineMigrations;
 
-class TwigEventSubscriber implements EventSubscriberInterface
+use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
+
+final class Version20230309074217 extends AbstractMigration
 {
-    public function __construct(
-        private readonly Environment $twig,
-        private readonly ArticleService $articleService,
-        private readonly Security $security,
-    )
+    public function getDescription(): string
     {
+        return 'add extended_product_name to supplies_stocktaking_inventory_item';
     }
 
-    public function onKernelController(): void
+    public function up(Schema $schema): void
     {
-        // TODO: Limit to user role once they are implemented
-        if($this->security->isGranted('ROLE_USER')) {
-            $this->twig->addGlobal('navbarExpiringArticlesNotifications', $this->articleService->getExpiringArticles());
-        }
+        $this->addSql('ALTER TABLE supplies_stocktaking_inventory_item ADD extended_product_name VARCHAR(255) DEFAULT NULL');
     }
 
-    public static function getSubscribedEvents(): array
+    public function down(Schema $schema): void
     {
-        return [
-            KernelEvents::CONTROLLER => 'onKernelController',
-        ];
+        $this->addSql('ALTER TABLE supplies_stocktaking_inventory_item DROP extended_product_name');
     }
 }

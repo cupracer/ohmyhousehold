@@ -85,7 +85,7 @@ class ArticleController extends AbstractController
             ])
             ->add('storageLocation', TextColumn::class, [
                 'label' => 'form.article.storageLocation',
-                'field' => 'article.storageLocation.name',
+                'field' => 'storageLocation.name',
                 'className' => 'min',
             ])
             ->add('createdAt', TwigStringColumn::class, [
@@ -108,6 +108,7 @@ class ArticleController extends AbstractController
                         ->leftJoin('a.product', 'product')
                         ->innerJoin('product.commodity', 'commodity')
                         ->innerJoin('product.brand', 'brand')
+                        ->innerJoin('a.storageLocation', 'storageLocation')
                         ->addSelect('product')
                         ->addSelect('commodity')
                         ->addSelect('brand')

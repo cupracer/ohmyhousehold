@@ -26,8 +26,10 @@ use App\Form\Supplies\ProductType;
 use App\Service\Supplies\ProductService;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Exception;
-use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Adapter\Doctrine\FetchJoinORMAdapter;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Column\TwigStringColumn;
 use Omines\DataTablesBundle\DataTableFactory;
@@ -93,6 +95,42 @@ class ProductController extends AbstractController
                     return $translator->trans($value);
                 },
             ])
+            ->add('numStock', TextColumn::class, [
+                'label' => 'form.commodity.in-stock',
+                'render' => function($value, Product $product) {
+                    $numArticles = count($product->getArticles());
+                    $minGlobalStock = $product->getMinimumGlobalStock();
+                    $buttonColor = 'primary';
+                    $buttonText = $numArticles;
+                    $titleText = "current: " . $numArticles;
+
+                    if($minGlobalStock) {
+                        $buttonText = $numArticles . ' / ' . $minGlobalStock;
+                        $titleText = "current: " . $numArticles . ' / min: ' . $minGlobalStock;
+                    }
+
+                    if($minGlobalStock && $numArticles >= $minGlobalStock) {
+                        $buttonColor = 'success';
+                    }
+
+                    if($minGlobalStock && $numArticles < $minGlobalStock && $numArticles > 0) {
+                        $buttonColor = 'warning';
+                    }
+
+                    if($minGlobalStock && $numArticles < $minGlobalStock && $numArticles <= 0) {
+                        $buttonColor = 'danger';
+                    }
+
+                    $button = sprintf('<button class="btn btn-xs no-padding btn-block bg-gradient-%s" title="%s">%s</button>', $buttonColor, $titleText, $buttonText);
+
+                    if(!$minGlobalStock && $numArticles == 0) {
+                        return '';
+                    }else {
+                        return $button;
+                    }
+                },
+                'className' => 'min text-center',
+            ])
             ->add('createdAt', TwigStringColumn::class, [
                 'label' => 'label.createdAt',
                 'template' => '{% if value is not empty %}{{ value|format_datetime }}{% endif %}',
@@ -104,8 +142,26 @@ class ProductController extends AbstractController
                 'className' => 'min',
             ])
             ->addOrderBy('name')
-            ->createAdapter(ORMAdapter::class, [
+            ->createAdapter(FetchJoinORMAdapter::class, [
                 'entity' => Product::class,
+                'query' => function(QueryBuilder $builder) {
+                    // Note: It's important to include all relevant fields with "addSelect" if "where/andWhere" is used.
+                    // Otherwise, omitted fields would be fetched by additional queries and *without* the conditions.
+                    $builder
+                        ->select('p')
+                        ->addSelect('articles')
+                        ->addSelect('commodity')
+                        ->addSelect('brand')
+                        ->addSelect('measure')
+                        ->addSelect('packaging')
+                        ->from(Product::class, 'p')
+                        ->leftJoin('p.commodity', 'commodity')
+                        ->leftJoin('p.brand', 'brand')
+                        ->leftJoin('p.measure', 'measure')
+                        ->leftJoin('p.packaging', 'packaging')
+                        ->leftJoin('p.articles', 'articles', Join::WITH, 'articles.withdrawalDate IS NULL AND articles.discardDate IS NULL')
+                    ;
+                },
             ])
             ->handleRequest($request);
 

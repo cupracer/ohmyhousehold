@@ -22,7 +22,7 @@
 
         <div class="row">
             <div class="col-12">
-                <h5 class="mt-4 mb-4">{{ 'app.supplies.product.minimumstocks.title'|trans|capitalize }}</h5>
+                <h5 class="mt-4 mb-4">{{ 'app.supplies.product.minimumstocks.title'|trans|u.title }}</h5>
 
                 <div class="row">
                     <div class="col-4">
@@ -43,14 +43,14 @@
                         <span class="icon text mr-1">
                             <i class="far fa-plus-circle"></i>
                         </span>
-                        <span class="text">{{ 'app.add'|trans|capitalize }}...</span>
+                        <span class="text">{{ 'app.add'|trans|u.title }}...</span>
                     </a>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-12">
-                <h5 class="mt-4 mb-4">{{ 'app.supplies.product.identifiercodes.title'|trans|capitalize }}</h5>
+                <h5 class="mt-4 mb-4">{{ 'app.supplies.product.identifiercodes.title'|trans|u.title }}</h5>
 
                 {% set identifierCodeHtml = include('supplies/product/_form_identifier_code.html.twig', { 'item': form.identifierCodes.vars.prototype }) %}
                 <div class="js-identifier-code-wrapper"
@@ -65,7 +65,7 @@
                         <span class="icon text mr-1">
                             <i class="far fa-plus-circle"></i>
                         </span>
-                        <span class="text">{{ 'app.add'|trans|capitalize }}...</span>
+                        <span class="text">{{ 'app.add'|trans|u.title }}...</span>
                     </a>
                 </div>
             </div>
