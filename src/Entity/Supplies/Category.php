@@ -23,9 +23,9 @@ namespace App\Entity\Supplies;
 
 use App\Repository\Supplies\CategoryRepository;
 use DateTimeImmutable;
-use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -43,11 +43,11 @@ class Category
     #[ORM\Column(length: 255, unique: true)]
     private ?string $name = null;
 
-    #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
-    private DateTimeInterface $createdAt;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, options: ["default" => "CURRENT_TIMESTAMP"])]
+    private DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
-    private DateTimeInterface $updatedAt;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, options: ["default" => "CURRENT_TIMESTAMP"])]
+    private DateTimeImmutable $updatedAt;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Commodity::class)]
     private Collection $commodities;
@@ -75,18 +75,18 @@ class Category
     }
 
     /**
-     * @return DateTimeInterface
+     * @return DateTimeImmutable
      */
-    public function getCreatedAt(): DateTimeInterface
+    public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }
 
     /**
-     * @param DateTimeInterface $createdAt
+     * @param DateTimeImmutable $createdAt
      * @return self
      */
-    public function setCreatedAt(DateTimeInterface $createdAt): self
+    public function setCreatedAt(DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
         return $this;
@@ -100,18 +100,18 @@ class Category
     }
 
     /**
-     * @return DateTimeInterface|null
+     * @return DateTimeImmutable|null
      */
-    public function getUpdatedAt(): ?DateTimeInterface
+    public function getUpdatedAt(): ?DateTimeImmutable
     {
         return $this->updatedAt;
     }
 
     /**
-     * @param DateTimeInterface $updatedAt
+     * @param DateTimeImmutable $updatedAt
      * @return self
      */
-    public function setUpdatedAt(DateTimeInterface $updatedAt): self
+    public function setUpdatedAt(DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
         return $this;

@@ -23,7 +23,7 @@ namespace App\Entity\Supplies;
 
 use App\Repository\Supplies\IdentifierCodeRepository;
 use DateTimeImmutable;
-use DateTimeInterface;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -69,11 +69,11 @@ class IdentifierCode
     #[Assert\Regex(pattern: '/^[0-9]+$/', message: 'form.supplies.identifiercode.code.not-valid')]
     private ?string $code = null;
 
-    #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
-    private DateTimeInterface $createdAt;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, options: ["default" => "CURRENT_TIMESTAMP"])]
+    private DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
-    private DateTimeInterface $updatedAt;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, options: ["default" => "CURRENT_TIMESTAMP"])]
+    private DateTimeImmutable $updatedAt;
 
     #[ORM\ManyToOne(inversedBy: 'identifierCodes')]
     #[ORM\JoinColumn(nullable: false)]
@@ -109,18 +109,18 @@ class IdentifierCode
     }
 
     /**
-     * @return DateTimeInterface
+     * @return DateTimeImmutable
      */
-    public function getCreatedAt(): DateTimeInterface
+    public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }
 
     /**
-     * @param DateTimeInterface $createdAt
+     * @param DateTimeImmutable $createdAt
      * @return self
      */
-    public function setCreatedAt(DateTimeInterface $createdAt): self
+    public function setCreatedAt(DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
         return $this;
@@ -134,18 +134,18 @@ class IdentifierCode
     }
 
     /**
-     * @return DateTimeInterface|null
+     * @return DateTimeImmutable|null
      */
-    public function getUpdatedAt(): ?DateTimeInterface
+    public function getUpdatedAt(): ?DateTimeImmutable
     {
         return $this->updatedAt;
     }
 
     /**
-     * @param DateTimeInterface $updatedAt
+     * @param DateTimeImmutable $updatedAt
      * @return self
      */
-    public function setUpdatedAt(DateTimeInterface $updatedAt): self
+    public function setUpdatedAt(DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
         return $this;
