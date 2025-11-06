@@ -28,7 +28,6 @@ security:
                 check_route: user_login_check
                 signature_properties: [ 'id' ]
             remember_me:
-                secret: '%kernel.secret%' # required
                 lifetime: 604800 # 1 week in seconds
                 samesite: strict
                 # by default, the feature is enabled by checking a
